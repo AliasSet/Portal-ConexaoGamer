@@ -1,0 +1,21 @@
+backend:
+  name: github
+  repo: seu-usuario/conexao-gamer # Substitua pelo seu repositório
+  branch: main
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "posts"
+    label: "Notícias e Reviews"
+    folder: "content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Categoria", name: "category", widget: "select", options: ["PC Hardware", "PlayStation", "Xbox", "Nintendo", "Reviews", "Indie"] }
+      - { label: "Imagem de Capa", name: "image", widget: "image" }
+      - { label: "Resumo", name: "summary", widget: "text" }
+      - { label: "Nota do Review (0-10)", name: "rating", widget: "number", value_type: "float", required: false }
+      - { label: "Conteúdo da Matéria", name: "body", widget: "markdown" }
