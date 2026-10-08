@@ -1,12 +1,354 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR" class="dark">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Controle - Conexão Gamer</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conexão Gamer - O Seu Portal de Notícias, Reviews e Hardware</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            neon: '#00ff88',
+                            cyan: '#00f2fe',
+                            purple: '#7928ca',
+                            darkBg: '#090d16',
+                            cardBg: '#111827'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-green': '0 0 15px rgba(0, 255, 136, 0.4)',
+                        'neon-cyan': '0 0 15px rgba(0, 242, 254, 0.4)',
+                        'neon-purple': '0 0 15px rgba(121, 40, 202, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090d16;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff88;
+        }
+
+        .bg-glass {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 255, 136, 0.2);
+        }
+        
+        .modal-blur {
+            backdrop-filter: blur(10px);
+        }
+    </style>
 </head>
-<body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+<body class="min-h-screen flex flex-col bg-[#090d16] text-gray-100 antialiased selection:bg-emerald-400 selection:text-black">
+
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-glass border-b border-gray-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <div class="flex items-center gap-3">
+                    <a href="#" class="flex items-center gap-2.5 group">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 flex items-center justify-center text-black font-black text-xl shadow-neon-green group-hover:scale-105 transition transform">
+                            <i class="fa-solid fa-gamepad text-black"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-black tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-white via-emerald-200 to-emerald-400">
+                                CONEXÃO<span class="text-emerald-400">GAMER</span>
+                            </span>
+                            <span class="text-[9px] tracking-widest text-gray-400 font-semibold uppercase -mt-1">Notícias & Reviews de Games</span>
+                        </div>
+                    </a>
+                </div>
+
+                <nav class="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-semibold text-gray-300">
+                    <a href="#" onclick="filterCategory('TODOS')" class="px-3 py-2 rounded-lg text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 transition">Início</a>
+                    <a href="#noticias" onclick="filterCategory('PC Hardware')" class="px-3 py-2 rounded-lg hover:text-emerald-400 hover:bg-gray-800/50 transition">PC Hardware</a>
+                    <a href="#noticias" onclick="filterCategory('Consoles')" class="px-3 py-2 rounded-lg hover:text-emerald-400 hover:bg-gray-800/50 transition">Consoles</a>
+                    <a href="#reviews" class="px-3 py-2 rounded-lg hover:text-emerald-400 hover:bg-gray-800/50 transition">Reviews</a>
+                    <a href="#lancamentos" class="px-3 py-2 rounded-lg hover:text-emerald-400 hover:bg-gray-800/50 transition">Lançamentos</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <div class="relative hidden sm:block">
+                        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Buscar jogos, peças..." 
+                            class="bg-gray-900/90 border border-gray-700/80 rounded-full px-4 py-1.5 pl-9 text-xs focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 text-gray-200 placeholder-gray-500 w-44 focus:w-64 transition-all">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-gray-500"></i>
+                    </div>
+
+                    <button onclick="openAuthModal()" class="bg-emerald-400 hover:bg-emerald-300 text-black font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-neon-green flex items-center gap-2">
+                        <i class="fa-solid fa-user"></i> Entrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Carrossel de Destaques -->
+    <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-6">
+        <div class="relative rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 shadow-2xl h-[400px] sm:h-[480px]" id="heroSlider">
+            <div id="heroSlideContainer" class="w-full h-full relative"></div>
+
+            <button onclick="prevHero()" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-gray-900/80 hover:bg-emerald-400 hover:text-black text-white backdrop-blur border border-gray-700/60 flex items-center justify-center transition z-20">
+                <i class="fa-solid fa-chevron-left text-sm"></i>
+            </button>
+            <button onclick="nextHero()" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-gray-900/80 hover:bg-emerald-400 hover:text-black text-white backdrop-blur border border-gray-700/60 flex items-center justify-center transition z-20">
+                <i class="fa-solid fa-chevron-right text-sm"></i>
+            </button>
+
+            <div id="heroDots" class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20"></div>
+        </div>
+    </section>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow">
+        <div class="flex items-center justify-between flex-wrap gap-4 mb-8 bg-gray-900/80 border border-gray-800 rounded-xl p-3.5 backdrop-blur">
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 text-xs font-semibold" id="filterContainer">
+                <button onclick="filterCategory('TODOS')" class="filter-btn active px-3.5 py-2 rounded-lg bg-emerald-400 text-black font-extrabold transition">Todas as Notícias</button>
+                <button onclick="filterCategory('PC Hardware')" class="filter-btn px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition">PC Hardware</button>
+                <button onclick="filterCategory('PlayStation')" class="filter-btn px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition">PlayStation</button>
+                <button onclick="filterCategory('Xbox')" class="filter-btn px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition">Xbox</button>
+                <button onclick="filterCategory('Nintendo')" class="filter-btn px-3.5 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition">Nintendo</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-10">
+                <section id="noticias">
+                    <div class="flex items-center justify-between mb-6 border-b border-gray-800 pb-3">
+                        <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2">
+                            <span class="w-3 h-6 bg-emerald-400 rounded-sm"></span> Destaques & Notícias
+                        </h2>
+                    </div>
+
+                    <div id="articlesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+                </section>
+            </div>
+
+            <aside class="space-y-8">
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-emerald-400 flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
+                        <i class="fa-solid fa-fire text-orange-500"></i> Mais Lidos
+                    </h3>
+                    <div class="space-y-4" id="trendingList"></div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Modal de Artigo -->
+    <div id="articleModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-6 modal-blur bg-black/80">
+        <div class="relative bg-gray-900 border border-gray-700 w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col my-auto">
+            <div class="sticky top-0 z-30 bg-gray-900/95 backdrop-blur border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+                <span class="text-xs text-emerald-400 font-bold uppercase" id="modalCategory"></span>
+                <button onclick="closeArticleModal()" class="w-9 h-9 rounded-full bg-gray-800 hover:bg-red-600 hover:text-white text-gray-400 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-6 sm:p-8 overflow-y-auto space-y-6 flex-grow" id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Autenticação / Login -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-blur bg-black/80">
+        <div class="relative bg-gray-900 border border-gray-800 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <h3 class="text-base font-bold text-white">Entrar no Conexão Gamer</h3>
+                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <button onclick="handleGoogleLogin()" class="w-full bg-white text-gray-900 font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-100 transition text-xs">
+                <i class="fa-brands fa-google text-red-500"></i> Continuar com o Google
+            </button>
+
+            <div class="text-center text-xs text-gray-500 uppercase">ou</div>
+
+            <form onsubmit="handleEmailLogin(event)" class="space-y-3 text-xs">
+                <input type="email" required placeholder="Seu e-mail..." class="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:outline-none focus:border-emerald-400">
+                <input type="password" required placeholder="Sua senha..." class="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:outline-none focus:border-emerald-400">
+                <button type="submit" class="w-full bg-emerald-400 text-black font-extrabold py-3 rounded-xl hover:bg-emerald-300 transition uppercase">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-gray-950 text-gray-500 text-xs py-8 border-t border-gray-900 text-center">
+        <p>&copy; 2026 Conexão Gamer (conexaogamer.com.br). Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const articlesData = [
+            {
+                id: 1,
+                title: "Análise: A Evolução das Placas de Vídeo e o Impacto no Gaming em 4K",
+                category: "PC Hardware",
+                image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=800&q=80",
+                author: "Equipe Conexão Gamer",
+                date: "08 de Outubro, 2026",
+                readTime: "5 min",
+                featured: true,
+                summary: "Avaliamos os lançamentos mais recentes de GPUs e como as novas tecnologias de upscaling mantêm os jogos rodando fluidos.",
+                content: "<p>Com o avanço dos chips gráficos, rodar jogos com Ray Tracing ativado deixou de ser um luxo e passou a ser o padrão da indústria...</p>"
+            },
+            {
+                id: 2,
+                title: "Os Títulos Mais Aguardados para Consoles no Segundo Semestre",
+                category: "Consoles",
+                image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=80",
+                author: "Equipe Conexão Gamer",
+                date: "06 de Outubro, 2026",
+                readTime: "4 min",
+                featured: true,
+                summary: "Confira a lista dos lançamentos que prometem movimentar PlayStation, Xbox e Nintendo.",
+                content: "<p>Os próximos meses reservam grandes produções de estúdios renomados e indies surpreendentes...</p>"
+            }
+        ];
+
+        let currentHeroIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHero();
+            renderArticles(articlesData);
+            renderTrending();
+        });
+
+        function renderHero() {
+            const container = document.getElementById('heroSlideContainer');
+            const item = articlesData[currentHeroIndex];
+            if (!item) return;
+
+            container.innerHTML = `
+                <div class="relative w-full h-full">
+                    <img src="${item.image}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/50 to-transparent flex flex-col justify-end p-6 sm:p-10">
+                        <span class="bg-emerald-400 text-black text-[10px] font-black px-2.5 py-0.5 rounded w-fit mb-2 uppercase">${item.category}</span>
+                        <h1 class="text-2xl sm:text-3xl font-black text-white hover:text-emerald-300 cursor-pointer" onclick="openArticleModal(${item.id})">${item.title}</h1>
+                        <p class="text-xs text-gray-300 mt-2 max-w-xl line-clamp-2">${item.summary}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function nextHero() {
+            currentHeroIndex = (currentHeroIndex + 1) % articlesData.length;
+            renderHero();
+        }
+
+        function prevHero() {
+            currentHeroIndex = (currentHeroIndex - 1 + articlesData.length) % articlesData.length;
+            renderHero();
+        }
+
+        function renderArticles(items) {
+            const grid = document.getElementById('articlesGrid');
+            grid.innerHTML = items.map(item => `
+                <article class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover cursor-pointer" onclick="openArticleModal(${item.id})">
+                    <img src="${item.image}" class="w-full h-44 object-cover">
+                    <div class="p-4 space-y-2">
+                        <span class="text-[10px] text-emerald-400 font-bold uppercase">${item.category}</span>
+                        <h3 class="text-sm font-bold text-white hover:text-emerald-300">${item.title}</h3>
+                        <p class="text-xs text-gray-400 line-clamp-2">${item.summary}</p>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function renderTrending() {
+            const container = document.getElementById('trendingList');
+            container.innerHTML = articlesData.map((art, i) => `
+                <div class="flex items-center gap-3 cursor-pointer" onclick="openArticleModal(${art.id})">
+                    <span class="text-lg font-black text-gray-700">0${i + 1}</span>
+                    <h4 class="text-xs font-bold text-gray-300 hover:text-emerald-300 line-clamp-2">${art.title}</h4>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            if (cat === 'TODOS') {
+                renderArticles(articlesData);
+            } else {
+                renderArticles(articlesData.filter(a => a.category.toLowerCase().includes(cat.toLowerCase())));
+            }
+        }
+
+        function openArticleModal(id) {
+            const item = articlesData.find(a => a.id === id);
+            if (!item) return;
+
+            document.getElementById('modalCategory').innerText = item.category;
+            document.getElementById('modalContent').innerHTML = `
+                <h1 class="text-2xl font-black text-white">${item.title}</h1>
+                <img src="${item.image}" class="w-full h-60 object-cover rounded-xl my-4">
+                <div class="text-gray-300 text-sm leading-relaxed">${item.content}</div>
+            `;
+            document.getElementById('articleModal').classList.remove('hidden');
+        }
+
+        function closeArticleModal() {
+            document.getElementById('articleModal').classList.add('hidden');
+        }
+
+        function openAuthModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function handleGoogleLogin() {
+            alert('Conexão com o Supabase Auth para Google configurada!');
+            closeAuthModal();
+        }
+
+        function handleEmailLogin(e) {
+            e.preventDefault();
+            alert('Login efetuado!');
+            closeAuthModal();
+        }
+
+        function handleSearch() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            renderArticles(articlesData.filter(a => a.title.toLowerCase().includes(q)));
+        }
+    </script>
 </body>
 </html>
