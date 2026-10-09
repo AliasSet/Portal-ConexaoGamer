@@ -94,9 +94,12 @@
         </div>
     </header>
 
-    <!-- BARRA TENDÊNCIAS EM ALTA (TRENDING TICKER) -->
-    <div class="bg-gray-950 border-b border-gray-800/80 py-2">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-4 text-xs">
+    <!-- BARRA TENDÊNCIAS EM ALTA + REDES SOCIAIS -->
+<div class="bg-gray-950 border-b border-gray-800/80 py-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 text-xs">
+        
+        <!-- LADO ESQUERDO: ASSUNTOS EM ALTA -->
+        <div class="flex items-center gap-4 overflow-hidden">
             <span class="flex items-center gap-1.5 text-cyan-400 font-extrabold uppercase tracking-wider flex-shrink-0">
                 <i class="fa-solid fa-bolt text-xs animate-pulse"></i> Em Alta:
             </span>
@@ -112,7 +115,29 @@
                 <a href="#" class="hover:text-cyan-400 transition font-medium"># WARDOGS</a>
             </div>
         </div>
+
+        <!-- LADO DIREITO: ÍCONES DAS REDES SOCIAIS (CORRIGIDO) -->
+        <div class="hidden md:flex items-center gap-3.5 border-l border-gray-800/80 pl-4 flex-shrink-0 text-gray-400">
+            <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">SIGA:</span>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="hover:text-red-500 transition text-sm flex items-center" title="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition text-sm flex items-center" title="Facebook">
+                <i class="fa-brands fa-facebook"></i>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="hover:text-pink-500 transition text-sm flex items-center" title="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 transition text-sm flex items-center" title="X (Twitter)">
+                <i class="fa-brands fa-twitter"></i>
+            </a>
+            <a href="https://reddit.com" target="_blank" rel="noopener noreferrer" class="hover:text-orange-500 transition text-sm flex items-center" title="Reddit">
+                <i class="fa-brands fa-reddit-alien"></i>
+            </a>
+        </div>
+
     </div>
+</div>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
         
