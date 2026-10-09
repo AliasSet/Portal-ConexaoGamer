@@ -21,9 +21,10 @@
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         brand: {
-                            green: '#00ff66',
+                            cyan: '#00f2fe',
                             purple: '#7928ca',
-                            darkBg: '#090d16',
+                            magenta: '#f50057',
+                            darkBg: '#0b0f19',
                             cardBg: '#111827',
                             sidebarBg: '#0f172a'
                         }
@@ -33,53 +34,60 @@
         }
     </script>
     <style>
-        body { background-color: #090d16; color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Inter', sans-serif; }
         .bg-glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(14px); }
         .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 255, 102, 0.2); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.2); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#090d16] text-gray-100 antialiased">
+<body class="min-h-screen flex flex-col bg-[#0b0f19] text-gray-100 antialiased">
 
-    <!-- BARRA SUPERIOR E CABEÇALHO (Estilo Mein-MMO + Login) -->
+    <!-- BARRA SUPERIOR E CABEÇALHO (Estilo Mein-MMO + Login + Nova Logo) -->
     <header class="sticky top-0 z-40 bg-glass border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 
-                <!-- Logo Conexão Gamer -->
-                <a href="#" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-black font-black text-xl shadow-[0_0_15px_rgba(0,255,102,0.4)]">
-                        <i class="fa-solid fa-gamepad"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-2xl font-black tracking-wider uppercase text-white">
-                            CONEXÃO<span class="text-emerald-400">GAMER</span>
-                        </span>
-                        <span class="text-[9px] tracking-widest text-gray-400 uppercase -mt-1 font-semibold">conexaogamer.com.br</span>
-                    </div>
-                </a>
+                <!-- LOGO E IDENTIDADE VISUAL EXCLUSIVA -->
+<a href="#" class="flex items-center gap-3 group">
+    <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-fuchsia-600 p-[2px] shadow-[0_0_20px_rgba(0,242,254,0.35)] group-hover:scale-105 transition transform">
+        <div class="w-full h-full bg-[#0b0f19] rounded-[14px] flex items-center justify-center relative overflow-hidden">
+            <i class="fa-solid fa-wifi text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-lg group-hover:rotate-12 transition"></i>
+            <span class="absolute -bottom-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-ping"></span>
+        </div>
+    </div>
+    <div class="flex flex-col">
+        <span class="text-2xl font-black tracking-wider uppercase text-white leading-none">
+            CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span>
+        </span>
+        <div class="flex items-center gap-1.5 mt-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            <!-- SUBTÍTULO ATUALIZADO -->
+            <span class="text-[9px] font-bold tracking-[0.15em] text-gray-400 uppercase">Notícias, Reviews e Lançamentos</span>
+        </div>
+    </div>
+</a>
 
                 <!-- Navegação Principal -->
                 <nav class="hidden lg:flex items-center gap-2 text-sm font-semibold text-gray-300">
-                    <a href="#" class="px-3 py-2 rounded-lg text-emerald-400 bg-emerald-950/40 border border-emerald-500/30">Início</a>
-                    <a href="#pc" class="px-3 py-2 rounded-lg hover:text-emerald-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-desktop text-xs mr-1"></i> PC Games</a>
-                    <a href="#consoles" class="px-3 py-2 rounded-lg hover:text-emerald-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-gamepad text-xs mr-1"></i> Consoles</a>
-                    <a href="#hardware" class="px-3 py-2 rounded-lg hover:text-emerald-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-microchip text-xs mr-1"></i> Hardware</a>
-                    <a href="#reviews" class="px-3 py-2 rounded-lg hover:text-emerald-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-star text-xs mr-1"></i> Reviews</a>
+                    <a href="#" class="px-3 py-2 rounded-lg text-cyan-400 bg-cyan-950/40 border border-cyan-500/30">Início</a>
+                    <a href="#pc" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-desktop text-xs mr-1"></i> PC Games</a>
+                    <a href="#consoles" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-gamepad text-xs mr-1"></i> Consoles</a>
+                    <a href="#hardware" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-microchip text-xs mr-1"></i> Hardware</a>
+                    <a href="#reviews" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-star text-xs mr-1"></i> Reviews</a>
                 </nav>
 
                 <!-- Busca & Botão de Login (Supabase Integrado) -->
                 <div class="flex items-center gap-4">
                     <div class="relative hidden sm:block">
                         <input type="text" placeholder="Buscar jogos, peças, notícias..." 
-                            class="bg-gray-900 border border-gray-700 rounded-full px-4 py-1.5 pl-9 text-xs focus:outline-none focus:border-emerald-400 text-gray-200 w-48 focus:w-60 transition-all">
+                            class="bg-gray-900 border border-gray-700 rounded-full px-4 py-1.5 pl-9 text-xs focus:outline-none focus:border-cyan-400 text-gray-200 w-48 focus:w-60 transition-all">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-gray-500"></i>
                     </div>
 
                     <!-- Botão de Login do Leitor -->
-                    <button onclick="toggleAuthModal()" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-black font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-[0_0_15px_rgba(0,255,102,0.3)]">
-                        <i class="fa-solid fa-user-circle text-sm"></i>
-                        <span id="userStatusText">Entrar / Cadastrar</span>
+                    <button onclick="toggleAuthModal()" class="flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-indigo-600 hover:from-cyan-300 hover:to-indigo-500 text-black font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-[0_0_15px_rgba(0,242,254,0.3)]">
+                        <i class="fa-solid fa-user-circle text-sm text-black"></i>
+                        <span id="userStatusText" class="text-black">Entrar / Cadastrar</span>
                     </button>
                 </div>
 
@@ -96,12 +104,12 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent flex flex-col justify-end p-6 sm:p-10">
                     
                     <div class="flex items-center gap-3 mb-3">
-                        <span class="bg-emerald-400 text-black text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider">LANÇAMENTO PC</span>
+                        <span class="bg-cyan-400 text-black text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider">LANÇAMENTO PC</span>
                         <span class="bg-purple-900/80 border border-purple-500/40 text-purple-200 text-xs font-semibold px-2.5 py-0.5 rounded-md"><i class="fa-solid fa-gamepad mr-1"></i> Cyberpunk 2</span>
-                        <span class="text-xs text-gray-300 font-medium"><i class="fa-regular fa-clock text-emerald-400"></i> 6 min de leitura</span>
+                        <span class="text-xs text-gray-300 font-medium"><i class="fa-regular fa-clock text-cyan-400"></i> 6 min de leitura</span>
                     </div>
 
-                    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight cursor-pointer hover:text-emerald-300 transition max-w-4xl">
+                    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight cursor-pointer hover:text-cyan-300 transition max-w-4xl">
                         Análise de Desempenho no PC: RTX 5080 e a Nova Era do Ray Tracing em Tempo Real
                     </h1>
 
@@ -112,11 +120,11 @@
                     <!-- Metadados no Estilo MMOByte -->
                     <div class="flex items-center gap-6 mt-6 pt-4 border-t border-gray-800/80 text-xs text-gray-300">
                         <div class="flex items-center gap-2">
-                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" class="w-7 h-7 rounded-full border border-emerald-400">
+                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" class="w-7 h-7 rounded-full border border-cyan-400">
                             <span class="font-bold text-gray-100">Mateus Silva</span>
                         </div>
-                        <span><i class="fa-regular fa-calendar text-emerald-400 mr-1"></i> 08 de Outubro, 2026</span>
-                        <span><i class="fa-regular fa-comment text-emerald-400 mr-1"></i> 48 Comentários</span>
+                        <span><i class="fa-regular fa-calendar text-cyan-400 mr-1"></i> 08 de Outubro, 2026</span>
+                        <span><i class="fa-regular fa-comment text-cyan-400 mr-1"></i> 48 Comentários</span>
                     </div>
 
                 </div>
@@ -131,7 +139,7 @@
                 
                 <div class="flex items-center justify-between border-b border-gray-800 pb-3">
                     <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
-                        <span class="w-3 h-6 bg-emerald-400 rounded-sm"></span> Últimas Notícias & Reviews
+                        <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> Principais Matérias
                     </h2>
                 </div>
 
@@ -141,28 +149,26 @@
                     <article class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group">
                         <div class="relative h-48 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <span class="absolute top-3 left-3 bg-black/80 text-emerald-400 border border-emerald-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded uppercase">Hardware</span>
-                            <span class="absolute top-3 right-3 bg-emerald-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA 9.5</span>
+                            <span class="absolute top-3 left-3 bg-black/80 text-cyan-400 border border-cyan-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded uppercase">Hardware</span>
+                            <span class="absolute top-3 right-3 bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA 9.5</span>
                         </div>
                         <div class="p-5 flex flex-col flex-grow">
-                            <!-- Metadados de Topo -->
                             <div class="flex items-center text-[11px] text-gray-400 gap-3 mb-2">
-                                <span><i class="fa-regular fa-folder text-emerald-400"></i> PC / Processadores</span>
-                                <span><i class="fa-regular fa-clock text-emerald-400"></i> 4 min de leitura</span>
+                                <span><i class="fa-regular fa-folder text-cyan-400"></i> PC / Processadores</span>
+                                <span><i class="fa-regular fa-clock text-cyan-400"></i> 4 min de leitura</span>
                             </div>
-                            <h3 class="text-base font-bold text-white group-hover:text-emerald-300 transition line-clamp-2 mb-2">
+                            <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-2 mb-2">
                                 AMD Ryzen 7 9800X3D: O Novo Rei dos Games para Competitivo?
                             </h3>
                             <p class="text-xs text-gray-400 line-clamp-2 mb-4 leading-relaxed">
                                 Avaliamos a estabilidade de 1% low em jogos eSports como CS2, Valorant e Warzone.
                             </p>
-                            <!-- Metadados de Rodapé (Estilo MMOByte) -->
                             <div class="mt-auto pt-3 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
                                 <div class="flex items-center gap-2">
                                     <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=100&q=80" class="w-6 h-6 rounded-full border border-gray-700">
                                     <span class="text-gray-300 text-[11px]">Lucas Mendes</span>
                                 </div>
-                                <span class="text-[11px]"><i class="fa-regular fa-comment text-emerald-400"></i> 32</span>
+                                <span class="text-[11px]"><i class="fa-regular fa-comment text-cyan-400"></i> 32</span>
                             </div>
                         </div>
                     </article>
@@ -175,10 +181,10 @@
                         </div>
                         <div class="p-5 flex flex-col flex-grow">
                             <div class="flex items-center text-[11px] text-gray-400 gap-3 mb-2">
-                                <span><i class="fa-regular fa-folder text-emerald-400"></i> PS5 Pro</span>
-                                <span><i class="fa-regular fa-clock text-emerald-400"></i> 5 min de leitura</span>
+                                <span><i class="fa-regular fa-folder text-cyan-400"></i> PS5 Pro</span>
+                                <span><i class="fa-regular fa-clock text-cyan-400"></i> 5 min de leitura</span>
                             </div>
-                            <h3 class="text-base font-bold text-white group-hover:text-emerald-300 transition line-clamp-2 mb-2">
+                            <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-2 mb-2">
                                 Atualização do PS5 Pro Traz PSSR Aprimorado para Mais de 40 Títulos
                             </h3>
                             <p class="text-xs text-gray-400 line-clamp-2 mb-4 leading-relaxed">
@@ -189,7 +195,7 @@
                                     <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" class="w-6 h-6 rounded-full border border-gray-700">
                                     <span class="text-gray-300 text-[11px]">Camila Rocha</span>
                                 </div>
-                                <span class="text-[11px]"><i class="fa-regular fa-comment text-emerald-400"></i> 19</span>
+                                <span class="text-[11px]"><i class="fa-regular fa-comment text-cyan-400"></i> 19</span>
                             </div>
                         </div>
                     </article>
@@ -197,12 +203,54 @@
                 </div>
             </div>
 
-            <!-- SIDEBAR DIREITA (Últimos Comentários & Posts Populares) -->
+            <!-- SIDEBAR DIREITA COMPLETA (ÚLTIMOS POSTS + ÚLTIMOS COMENTÁRIOS + MAIS LIDOS) -->
             <aside class="space-y-8">
                 
-                <!-- WIDGET 1: ÚLTIMOS COMENTÁRIOS DA COMUNIDADE -->
+                <!-- WIDGET 1: ÚLTIMOS POSTS PUBLICADOS -->
                 <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
-                    <h3 class="font-bold text-sm uppercase tracking-wider text-emerald-400 flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-cyan-400 flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
+                        <i class="fa-solid fa-clock-rotate-left text-base"></i> Últimos Posts
+                    </h3>
+                    
+                    <div class="space-y-3.5">
+                        <!-- Post Recente 1 -->
+                        <a href="#" class="flex gap-3 group items-center">
+                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=150&q=80" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-cyan-400 font-semibold uppercase">Há 25 minutos</span>
+                                <h4 class="text-xs font-bold text-gray-200 group-hover:text-cyan-300 transition line-clamp-2">
+                                    Steam Deck 2 Ganha Detalhes Iniciais Sobre Nova GPU RDNA 4
+                                </h4>
+                            </div>
+                        </a>
+
+                        <!-- Post Recente 2 -->
+                        <a href="#" class="flex gap-3 group items-center">
+                            <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=150&q=80" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-cyan-400 font-semibold uppercase">Há 2 horas</span>
+                                <h4 class="text-xs font-bold text-gray-200 group-hover:text-cyan-300 transition line-clamp-2">
+                                    Novo Teclado Magnético Apresenta Chaves Magnéticas com 0.1mm
+                                </h4>
+                            </div>
+                        </a>
+
+                        <!-- Post Recente 3 -->
+                        <a href="#" class="flex gap-3 group items-center">
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=150&q=80" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-cyan-400 font-semibold uppercase">Há 4 horas</span>
+                                <h4 class="text-xs font-bold text-gray-200 group-hover:text-cyan-300 transition line-clamp-2">
+                                    Unreal Engine 5.5 Lançada com Otimização Massiva de Lumen
+                                </h4>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- WIDGET 2: ÚLTIMOS COMENTÁRIOS DA COMUNIDADE -->
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-purple-400 flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
                         <i class="fa-regular fa-comments text-base"></i> Últimos Comentários
                     </h3>
                     
@@ -217,7 +265,7 @@
                                 <span class="text-[10px] text-gray-500">Há 15 min</span>
                             </div>
                             <p class="text-gray-400 line-clamp-2 italic">"A diferença de frames no teste da 5080 impressiona demais, valeu pela análise!"</p>
-                            <a href="#" class="text-[10px] text-emerald-400 hover:underline block font-semibold">Em: Análise RTX 5080</a>
+                            <a href="#" class="text-[10px] text-cyan-400 hover:underline block font-semibold">Em: Análise RTX 5080</a>
                         </div>
 
                         <!-- Comentário 2 -->
@@ -230,24 +278,24 @@
                                 <span class="text-[10px] text-gray-500">Há 1 hora</span>
                             </div>
                             <p class="text-gray-400 line-clamp-2 italic">"O 9800X3D é sem dúvidas o melhor processador gamer da atualidade."</p>
-                            <a href="#" class="text-[10px] text-emerald-400 hover:underline block font-semibold">Em: Review Ryzen 7 9800X3D</a>
+                            <a href="#" class="text-[10px] text-cyan-400 hover:underline block font-semibold">Em: Review Ryzen 7 9800X3D</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- WIDGET 2: POPULARES DA SEMANA -->
+                <!-- WIDGET 3: MAIS LIDOS DA SEMANA -->
                 <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
                     <h3 class="font-bold text-sm uppercase tracking-wider text-white flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
                         <i class="fa-solid fa-fire text-orange-500"></i> Mais Lidos da Semana
                     </h3>
                     <div class="space-y-3 text-xs">
                         <a href="#" class="flex items-center gap-3 group">
-                            <span class="text-lg font-black text-gray-700 group-hover:text-emerald-400 transition">01</span>
-                            <span class="font-semibold text-gray-300 group-hover:text-emerald-300 transition line-clamp-2">Guia Completo de Montagem de PC Gamer para 2026</span>
+                            <span class="text-lg font-black text-gray-700 group-hover:text-cyan-400 transition">01</span>
+                            <span class="font-semibold text-gray-300 group-hover:text-cyan-300 transition line-clamp-2">Guia Completo de Montagem de PC Gamer para 2026</span>
                         </a>
                         <a href="#" class="flex items-center gap-3 group">
-                            <span class="text-lg font-black text-gray-700 group-hover:text-emerald-400 transition">02</span>
-                            <span class="font-semibold text-gray-300 group-hover:text-emerald-300 transition line-clamp-2">GTA VI: Tudo o que Sabemos Sobre o Lançamento</span>
+                            <span class="text-lg font-black text-gray-700 group-hover:text-cyan-400 transition">02</span>
+                            <span class="font-semibold text-gray-300 group-hover:text-cyan-300 transition line-clamp-2">GTA VI: Tudo o que Sabemos Sobre o Lançamento</span>
                         </a>
                     </div>
                 </div>
@@ -271,9 +319,9 @@
             <div class="text-center text-[10px] text-gray-500 uppercase tracking-widest my-4">ou com e-mail</div>
 
             <form onsubmit="handleEmailAuth(event)" class="space-y-3">
-                <input type="email" placeholder="Seu e-mail..." required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400">
-                <input type="password" placeholder="Sua senha..." required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400">
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs py-3 rounded-xl transition">Entrar / Cadastrar</button>
+                <input type="email" placeholder="Seu e-mail..." required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                <input type="password" placeholder="Sua senha..." required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs py-3 rounded-xl transition">Entrar / Cadastrar</button>
             </form>
         </div>
     </div>
