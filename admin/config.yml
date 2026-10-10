@@ -2,8 +2,7 @@ backend:
   name: github
   repo: AliasSet/Portal-ConexaoGamer
   branch: main
-  base_url: https://decap-cms-oauth-provider.vercel.app
-  auth_endpoint: oauth
+  auth_type: implicit
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
