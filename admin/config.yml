@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: seu-usuario/conexao-gamer # Substitua pelo seu repositório
+  repo: AliasSet/Portal-ConexaoGamer
   branch: main
 
 media_folder: "public/uploads"
@@ -14,7 +14,7 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "Título", name: "title", widget: "string" }
-      - { label: "Categoria", name: "category", widget: "select", options: ["PC Hardware", "PlayStation", "Xbox", "Nintendo", "Reviews", "Indie"] }
+      - { label: "Categoria", name: "category", widget: "select", options: ["PC Games", "PlayStation", "Xbox", "Nintendo", "Reviews", "Hardware"] }
       - { label: "Imagem de Capa", name: "image", widget: "image" }
       - { label: "Resumo", name: "summary", widget: "text" }
       - { label: "Nota do Review (0-10)", name: "rating", widget: "number", value_type: "float", required: false }
