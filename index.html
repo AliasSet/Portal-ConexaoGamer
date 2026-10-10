@@ -456,62 +456,7 @@
             checkUserSession();
         }
     }
-<!-- Parser de Frontmatter (YAML/Markdown) para ler matérias do CMS -->
-<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 
-<script>
-    const GITHUB_REPO = "AliasSet/Portal-ConexaoGamer";
-    const POSTS_FOLDER = "content/posts";
-
-    async function loadCMSPosts() {
-        try {
-            // Busca a lista de arquivos de posts no GitHub
-            const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${POSTS_FOLDER}`);
-            if (!response.ok) return; // Se a pasta ainda não existir, mantém os destaques padrão
-            
-            const files = await response.json();
-            const mdFiles = files.filter(file => file.name.endsWith('.md'));
-
-            if (mdFiles.length === 0) return;
-
-            const posts = [];
-
-            // Lê o conteúdo de cada post salvo
-            for (const file of mdFiles) {
-                const res = await fetch(file.download_url);
-                const text = await res.text();
-                
-                // Separa o cabeçalho YAML do corpo Markdown
-                const parts = text.split('---');
-                if (parts.length >= 3) {
-                    const metadata = jsyaml.load(parts[1]);
-                    const body = parts.slice(2).join('---');
-                    posts.push({ ...metadata, body, filename: file.name });
-                }
-            }
-
-            if (posts.length > 0) {
-                renderHeroPost(posts[0]); // O post mais recente vira o Destaque Principal
-            }
-        } catch (err) {
-            console.log("Aguardando primeiras postagens do CMS...", err);
-        }
-    }
-
-    function renderHeroPost(post) {
-        const heroTitle = document.querySelector('section h1');
-        const heroSummary = document.querySelector('section h1 + p');
-        const heroImage = document.querySelector('section img');
-        const heroCategory = document.querySelector('section span.bg-cyan-400');
-
-        if (heroTitle && post.title) heroTitle.innerText = post.title;
-        if (heroSummary && post.summary) heroSummary.innerText = post.summary;
-        if (heroImage && post.image) heroImage.src = post.image;
-        if (heroCategory && post.category) heroCategory.innerText = post.category.toUpperCase();
-    }
-
-    document.addEventListener("DOMContentLoaded", loadCMSPosts);
-</script>
     // Verificar Usuário Logado e Atualizar Interface
     async function checkUserSession() {
         const { data: { session } } = await supabaseClient.auth.getSession();
