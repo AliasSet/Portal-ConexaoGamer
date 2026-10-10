@@ -1,16 +1,16 @@
 export default async function handler(req, res) {
-  const { code, provider } = req.query;
+  const { code } = req.query;
   const client_id = process.env.OAUTH_CLIENT_ID;
   const client_secret = process.env.OAUTH_CLIENT_SECRET;
 
-  // 1. Se não houver código, redireciona o utilizador para a tela de autorização do GitHub
+  // 1. Redireciona para o GitHub se não houver código
   if (!code) {
     return res.redirect(
       `https://github.com/login/oauth/authorize?client_id=${client_id}&scope=repo`
     );
   }
 
-  // 2. Se houver código, troca-o pelo Token de Acesso
+  // 2. Troca o código pelo Token de Acesso
   try {
     const response = await fetch("https://github.com/login/oauth/access_token", {
       method: "POST",
@@ -22,26 +22,40 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+
+    if (data.error || !data.access_token) {
+      return res.status(400).send(`Erro na autenticação: ${data.error_description || data.error}`);
+    }
+
     const token = data.access_token;
 
-    const content = token
-      ? `authorization:github:success:${JSON.stringify({ token, provider: "github" })}`
-      : `authorization:github:error:${JSON.stringify(data)}`;
-
-    const script = `
-      <script>
-        (function() {
-          function recieveMessage(e) {
-            window.opener.postMessage("${content}", e.origin);
-          }
-          window.addEventListener("message", recieveMessage, false);
-          window.opener.postMessage("authorizing:github", "*");
-        })();
-      </script>
+    // 3. Envia o token para a janela principal do Decap CMS e fecha a popup
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head><title>Autenticado</title></head>
+      <body>
+        <p>Autenticação concluída com sucesso! A fechar janela...</p>
+        <script>
+          (function() {
+            function receiveMessage(e) {
+              console.log("A enviar token para:", e.origin);
+              window.opener.postMessage(
+                'authorization:github:success:${JSON.stringify({ token, provider: "github" })}',
+                e.origin
+              );
+            }
+            window.addEventListener("message", receiveMessage, false);
+            window.opener.postMessage("authorizing:github", "*");
+          })();
+        </script>
+      </body>
+      </html>
     `;
 
-    return res.send(script);
+    res.setHeader("Content-Type", "text/html");
+    return res.status(200).send(html);
   } catch (err) {
-    return res.status(500).send("Erro na autenticação: " + err.message);
+    return res.status(500).send("Erro interno no servidor: " + err.message);
   }
 }
