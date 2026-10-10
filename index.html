@@ -398,20 +398,79 @@
     </div>
 
     <!-- SCRIPT DE INTERAÇÕES E LÓGICA DE LOGIN -->
-    <script>
-        function toggleAuthModal() {
-            document.getElementById('authModal').classList.toggle('hidden');
-        }
+<!-- SCRIPT DE CONEXÃO DIRETA COM O SUPABASE -->
+<script>
+    // Cole aqui suas chaves obtidas no painel do Supabase (Project Settings > API Keys)
+    const SUPABASE_URL = 'https://emgcyonjopyitvaosgfi.supabase.co/rest/v1/'; 
+    const SUPABASE_ANON_KEY = 'sb_publishable_dkrs4imRqGkht2vpB4zUDA_ggIGgjUf';
 
-        function handleEmailAuth(e) {
-            e.preventDefault();
-            alert('Autenticação pronta para conectar ao seu Supabase URL e Anon Key!');
+    // Inicialização do cliente Supabase
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Controle do Modal de Auth
+    function toggleAuthModal() {
+        document.getElementById('authModal').classList.toggle('hidden');
+    }
+
+    // Login Social com a Conta Google (Via Supabase Auth)
+    async function loginGoogle() {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin
+            }
+        });
+        if (error) alert('Erro ao autenticar com o Google: ' + error.message);
+    }
+
+    // Login / Cadastro com E-mail e Senha
+    async function handleEmailAuth(e) {
+        e.preventDefault();
+        const inputs = e.target.querySelectorAll('input');
+        const email = inputs[0].value;
+        const password = inputs[1].value;
+
+        // Tenta fazer login primeiro
+        const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (loginError) {
+            // Se falhar o login, tenta criar a conta (Sign Up)
+            const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+                email,
+                password
+            });
+
+            if (signUpError) {
+                alert('Erro na autenticação: ' + signUpError.message);
+            } else {
+                alert('Conta criada com sucesso! Verifique seu e-mail para confirmar.');
+                toggleAuthModal();
+            }
+        } else {
+            alert('Login efetuado com sucesso!');
             toggleAuthModal();
+            checkUserSession();
         }
+    }
 
-        function loginGoogle() {
-            alert('Redirecionando para login com Google via Supabase Auth...');
+    // Verificar Usuário Logado e Atualizar Interface
+    async function checkUserSession() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const statusText = document.getElementById('userStatusText');
+
+        if (session && session.user) {
+            // Usuário logado: exibe e-mail ou nome
+            statusText.innerText = session.user.email.split('@')[0];
+        } else {
+            statusText.innerText = 'Entrar / Cadastrar';
         }
-    </script>
+    }
+
+    // Executa verificação ao carregar a página
+    document.addEventListener('DOMContentLoaded', checkUserSession);
+</script>
 </body>
 </html>
