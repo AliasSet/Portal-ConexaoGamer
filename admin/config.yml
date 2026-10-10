@@ -2,7 +2,8 @@ backend:
   name: github
   repo: AliasSet/Portal-ConexaoGamer
   branch: main
-  site_domain: conexaogamer-seven.vercel.app # URL da sua Vercel
+  base_url: https://decap-cms-oauth-provider.vercel.app
+  auth_endpoint: oauth
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
