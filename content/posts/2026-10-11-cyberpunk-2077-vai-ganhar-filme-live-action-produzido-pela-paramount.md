@@ -14,8 +14,6 @@ summary: Cyberpunk 2077 vai ganhar um filme live-action desenvolvido pela
 author: Redação Conexão Gamer
 date: 09/10/2026T02:56
 ---
-# Cyberpunk 2077 vai ganhar filme live-action produzido pela Paramount
-
 O universo de *Cyberpunk 2077* está prestes a ganhar uma nova adaptação para as telas. A Paramount Pictures está desenvolvendo um filme live-action inspirado no RPG da CD Projekt RED, levando a atmosfera futurista de Night City para o cinema.
 
 O projeto terá a participação da própria CD Projekt RED na produção e contará com Lorenzo di Bonaventura, conhecido por trabalhar nas franquias *Transformers* e *G.I. Joe*, como produtor. A novidade foi divulgada em outubro de 2026 e já movimenta a comunidade de fãs do game.
