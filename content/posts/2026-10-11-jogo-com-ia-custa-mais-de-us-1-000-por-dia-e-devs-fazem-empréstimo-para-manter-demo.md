@@ -5,7 +5,7 @@ category:
   - PC
 tags:
   - Notícia
-image: https://static-cdn.jtvnw.net/ttv-boxart/501028374_IGDB-272x380.jpg
+image: https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3948460/1be962b719bd02192190adc7acf0418fa8dd373c/capsule_616x353.jpg?t=1791367602
 summary: A demo gratuita de Teach My Little Sister How to Drive ficou tão
   popular que seus desenvolvedores passaram a gastar mais de US$ 1.000 por dia
   com inteligência artificial. Para manter o jogo disponível no Steam, a pequena
