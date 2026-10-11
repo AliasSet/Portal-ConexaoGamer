@@ -3,6 +3,7 @@ title: Intel explica como a IA pode transformar os PCs gamers e mudar os jogos
 category:
   - Notícias
   - PC
+  - Hardware
 tags:
   - Intel
   - IA
