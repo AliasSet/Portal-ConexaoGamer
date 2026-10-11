@@ -233,17 +233,17 @@ function articleHtml(p) {
 const fmtDateShort = (ms) => new Date(ms).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Sao_Paulo' });
 
 function cardHtml(p) {
-  const main = p.categories[0] || 'Notícias';
+  const cats = (p.categories.length ? p.categories : ['Notícias'])
+    .map((c) => `<span class="border text-[10px] font-bold px-2.5 py-0.5 rounded uppercase ${catStyle(c)}">${esc(c)}</span>`).join('');
   return `
                         <a href="${esc(p.url)}" class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group">
                             <div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">
                                 ${okImg(p.image) ? `<img src="${esc(p.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
-                                <span class="absolute top-3 left-3 border text-[10px] font-bold px-2.5 py-0.5 rounded uppercase ${catStyle(main)}">${esc(main)}</span>
+                                <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 ${p.rating != null ? 'max-w-[68%]' : 'max-w-[calc(100%-1.5rem)]'}">${cats}</div>
                                 ${p.rating != null ? `<span class="absolute top-3 right-3 bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ${esc(p.rating)}</span>` : ''}
                             </div>
                             <div class="p-5 flex flex-col flex-grow">
                                 <div class="flex items-center text-[11px] text-gray-400 gap-3 mb-2">
-                                    <span class="truncate"><i class="fa-regular fa-folder text-cyan-400"></i> ${esc(p.categories.join(' / ') || 'Notícias')}</span>
                                     <span class="flex-shrink-0"><i class="fa-regular fa-clock text-cyan-400"></i> ${p.readMin} min</span>
                                 </div>
                                 <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-2 mb-2">${esc(p.title)}</h3>

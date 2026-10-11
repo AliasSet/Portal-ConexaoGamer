@@ -69,10 +69,10 @@
                 </a>
 
                 <!-- Navegação Principal -->
-                <nav class="hidden lg:flex items-center gap-2 text-sm font-semibold text-gray-300">
-                    <a href="/categoria/noticias/" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-newspaper text-xs mr-1"></i> Notícias</a>
+                <nav class="hidden lg:flex items-center gap-0.5 text-sm font-semibold text-gray-300">
+                    <a href="/categoria/noticias/" class="px-2.5 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-newspaper text-xs mr-1"></i> Notícias</a>
                     <div class="nav-dd relative">
-                        <a href="/categoria/pc/" class="inline-flex items-center px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-desktop text-xs mr-1"></i> PC <i class="fa-solid fa-chevron-down text-[9px] ml-1.5 opacity-60"></i></a>
+                        <a href="/categoria/pc/" class="inline-flex items-center px-2.5 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-desktop text-xs mr-1"></i> PC <i class="fa-solid fa-chevron-down text-[9px] ml-1.5 opacity-60"></i></a>
                         <div class="nav-dd-menu">
                             <div class="min-w-[190px] bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/60 p-1.5">
                                 <a href="/categoria/pc/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-400 hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-solid fa-layer-group w-4 text-center"></i> Todos de PC</a>
@@ -82,7 +82,7 @@
                         </div>
                     </div>
                     <div class="nav-dd relative">
-                        <a href="/categoria/consoles/" class="inline-flex items-center px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-gamepad text-xs mr-1"></i> Consoles <i class="fa-solid fa-chevron-down text-[9px] ml-1.5 opacity-60"></i></a>
+                        <a href="/categoria/consoles/" class="inline-flex items-center px-2.5 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-gamepad text-xs mr-1"></i> Consoles <i class="fa-solid fa-chevron-down text-[9px] ml-1.5 opacity-60"></i></a>
                         <div class="nav-dd-menu">
                             <div class="min-w-[190px] bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/60 p-1.5">
                                 <a href="/categoria/consoles/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-400 hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-solid fa-layer-group w-4 text-center"></i> Todos os consoles</a>
@@ -92,14 +92,14 @@
                             </div>
                         </div>
                     </div>
-                    <a href="/categoria/hardware/" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-microchip text-xs mr-1"></i> Hardware</a>
-                    <a href="/categoria/reviews/" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-star text-xs mr-1"></i> Reviews</a>
+                    <a href="/categoria/hardware/" class="px-2.5 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-microchip text-xs mr-1"></i> Hardware</a>
+                    <a href="/categoria/reviews/" class="px-2.5 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-star text-xs mr-1"></i> Reviews</a>
                 </nav>
 
                 <!-- Busca & Botão de Login (Supabase Integrado) -->
-           <div class="relative hidden sm:flex items-center">
-    <input type="text" placeholder="Pesquisa..." 
-        class="bg-gray-900 border border-gray-700 rounded-full px-4 py-1.5 pl-9 text-xs focus:outline-none focus:border-cyan-400 text-gray-200 w-48 focus:w-60 transition-all">
+           <div class="relative hidden sm:flex lg:hidden xl:flex items-center">
+    <input type="text" placeholder="Buscar" aria-label="Buscar no site"
+        class="bg-gray-900 border border-gray-700 rounded-full px-3 py-1.5 pl-8 text-xs focus:outline-none focus:border-cyan-400 text-gray-200 w-32 focus:w-44 transition-all">
     <div class="absolute left-3 inset-y-0 flex items-center pointer-events-none">
         <i class="fa-solid fa-magnifying-glass text-xs text-gray-500"></i>
     </div>
@@ -189,7 +189,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent flex flex-col justify-end p-6 sm:p-8">
 
                     <div class="flex items-center gap-3 mb-2">
-                        <span id="hero-category" class="text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase bg-gray-800/90 text-gray-300 border-gray-600/40">Carregando</span>
+                        <div id="hero-category" class="flex flex-wrap gap-1.5"><span class="text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase bg-gray-800/90 text-gray-300 border-gray-600/40">Carregando</span></div>
                     </div>
 
                     <h1 id="hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight group-hover:text-cyan-300 transition animate-pulse">
@@ -489,7 +489,9 @@
         'Epic Games':  'bg-teal-900/80 text-teal-300 border-teal-500/40'
       };
       const catStyle = (c) => CAT_STYLES[c] || 'bg-gray-800/90 text-gray-300 border-gray-600/40';
-      const mainCat = (p) => (p.categories && p.categories[0]) || 'Notícias';
+      // Uma etiqueta por categoria (todas aparecem nos cards)
+      const badge = (c) => '<span class="border text-[10px] font-bold px-2.5 py-0.5 rounded uppercase ' + catStyle(c) + '">' + esc(c) + '</span>';
+      const badges = (p) => (p.categories && p.categories.length ? p.categories : ['Notícias']).map(badge).join('');
       const href = (p) => esc(p.url);
       const fmtDate = (t) => t ? new Date(t).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
       const fmtDateShort = (t) => t ? new Date(t).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
@@ -509,9 +511,7 @@
         title.classList.remove('animate-pulse');
         title.textContent = p.title;
         $('hero-summary').textContent = p.summary;
-        const heroCat = $('hero-category');
-        heroCat.className = 'text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase ' + catStyle(mainCat(p));
-        heroCat.textContent = mainCat(p);
+        $('hero-category').innerHTML = badges(p);
         $('hero-readtime').textContent = p.readMin + ' min de leitura';
         $('hero-author').textContent = p.author;
         $('hero-date').textContent = fmtDate(p.time);
@@ -538,7 +538,7 @@
           '<a href="' + href(p) + '" class="relative rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 h-[228px] group block">' +
             img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500') +
             '<div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent p-5 flex flex-col justify-end">' +
-              '<span class="text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase w-max mb-1 ' + catStyle(mainCat(p)) + '">' + esc(mainCat(p)) + '</span>' +
+              '<div class="flex flex-wrap gap-1 mb-1">' + badges(p) + '</div>' +
               '<h3 class="text-sm font-bold text-white group-hover:text-cyan-300 transition line-clamp-2">' + esc(p.title) + '</h3>' +
             '</div>' +
           '</a>').join('');
@@ -554,12 +554,11 @@
           '<a href="' + href(p) + '" class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group">' +
             '<div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">' +
               img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500') +
-              '<span class="absolute top-3 left-3 border text-[10px] font-bold px-2.5 py-0.5 rounded uppercase ' + catStyle(mainCat(p)) + '">' + esc(mainCat(p)) + '</span>' +
+              '<div class="absolute top-3 left-3 flex flex-wrap gap-1.5 ' + (p.rating != null ? 'max-w-[68%]' : 'max-w-[calc(100%-1.5rem)]') + '">' + badges(p) + '</div>' +
               (p.rating != null ? '<span class="absolute top-3 right-3 bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ' + esc(p.rating) + '</span>' : '') +
             '</div>' +
             '<div class="p-5 flex flex-col flex-grow">' +
               '<div class="flex items-center text-[11px] text-gray-400 gap-3 mb-2">' +
-                '<span class="truncate"><i class="fa-regular fa-folder text-cyan-400"></i> ' + esc((p.categories || []).join(' / ') || 'Notícias') + '</span>' +
                 '<span class="flex-shrink-0"><i class="fa-regular fa-clock text-cyan-400"></i> ' + p.readMin + ' min</span>' +
               '</div>' +
               '<h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-2 mb-2">' + esc(p.title) + '</h3>' +
@@ -641,7 +640,7 @@
           t.classList.remove('animate-pulse');
           t.textContent = title;
           $('hero-summary').textContent = summary;
-          $('hero-category').textContent = 'Aviso';
+          $('hero-category').innerHTML = badge('Aviso');
           $('hero-readtime-box').classList.add('hidden');
           $('hero-author').textContent = 'Conexão Gamer';
           $('hero-date').textContent = '';
