@@ -273,6 +273,76 @@ function categoryHtml(cat, list) {
                 `;
 }
 
+function profileHtml() {
+  return `
+                <div id="profile-root">
+                    <div class="border-b border-gray-800 pb-3 mb-6">
+                        <h1 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
+                            <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> Meu perfil
+                        </h1>
+                    </div>
+
+                    <p id="profile-loading" class="text-sm text-gray-500">Carregando…</p>
+
+                    <div id="profile-guest" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
+                        <i class="fa-regular fa-circle-user text-4xl text-cyan-400 mb-3"></i>
+                        <h2 class="text-lg font-black text-white">Entre para ver o seu perfil</h2>
+                        <p class="text-sm text-gray-400 mt-2 mb-5">Com uma conta você participa das discussões e comenta nas matérias.</p>
+                        <button type="button" onclick="toggleAuthModal()" class="bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Entrar / Cadastrar</button>
+                    </div>
+
+                    <div id="profile-user" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                        <div class="flex items-center gap-4 pb-6 border-b border-gray-800">
+                            <div id="profile-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400 flex-shrink-0"></div>
+                            <div class="min-w-0">
+                                <p id="profile-title" class="text-lg font-black text-white truncate"></p>
+                                <p id="profile-since" class="text-xs text-gray-500 mt-1"></p>
+                            </div>
+                        </div>
+
+                        <form id="profile-form" class="py-6 space-y-3 border-b border-gray-800" novalidate>
+                            <label for="profile-name" class="block text-xs font-bold text-gray-300">Nome de exibição</label>
+                            <p class="text-[11px] text-gray-500">É o nome que aparece nos seus comentários. Evite usar o seu e-mail.</p>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <input id="profile-name" type="text" maxlength="40" autocomplete="nickname" class="flex-1 bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                                <button id="profile-save" type="submit" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Salvar</button>
+                            </div>
+                            <p id="profile-msg" class="text-xs min-h-[1rem]" role="status" aria-live="polite"></p>
+                        </form>
+
+                        <dl class="py-6 space-y-4 text-xs border-b border-gray-800">
+                            <div>
+                                <dt class="text-gray-500">E-mail <span class="text-gray-600">(só você vê)</span></dt>
+                                <dd id="profile-email" class="text-gray-200 mt-1 break-all"></dd>
+                            </div>
+                            <div>
+                                <dt class="text-gray-500">Entrou com</dt>
+                                <dd id="profile-provider" class="text-gray-200 mt-1"></dd>
+                            </div>
+                        </dl>
+
+                        <div class="pt-6">
+                            <button type="button" onclick="logout()" class="inline-flex items-center gap-2 border border-gray-700 hover:border-red-400 hover:text-red-400 text-gray-300 text-xs font-bold px-5 py-2.5 rounded-xl transition">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair da conta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+}
+
+function buildProfilePage(template) {
+  const title = 'Meu perfil | ' + SITE_NAME;
+  return template
+    .replace('<!--CG:HEAD-->', headTags({
+      title, description: 'Gerencie o seu perfil no ' + SITE_NAME + '.', url: SITE_URL + '/perfil/', image: '', type: 'website'
+    }) + '\n    <meta name="robots" content="noindex, nofollow">')
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('<body data-page="home"', '<body data-page="profile"')
+    .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => profileHtml());
+}
+
 function buildCategoryPage(template, cat, list) {
   const url = SITE_URL + '/categoria/' + cat.slug + '/';
   const title = cat.name + ' - Notícias e Reviews | ' + SITE_NAME;
@@ -392,6 +462,10 @@ async function main() {
     fs.writeFileSync(path.join(dir, 'index.html'), buildPostPage(template, p));
   }
 
+  // Página de perfil do leitor (privada: fora do Google e do sitemap)
+  fs.mkdirSync(path.join(DIST, 'perfil'), { recursive: true });
+  fs.writeFileSync(path.join(DIST, 'perfil', 'index.html'), buildProfilePage(template));
+
   // Páginas de categoria (sempre geradas, mesmo vazias, para o menu nunca dar 404)
   const catUrls = [];
   for (const cat of CATEGORIES) {
@@ -411,7 +485,7 @@ async function main() {
     urls.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('\n') +
     '\n</urlset>\n');
   fs.writeFileSync(path.join(DIST, 'robots.txt'),
-    `User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
+    `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /perfil/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
   // Arquivos estáticos que precisam continuar acessíveis
   const hasAdmin = copyDir(path.join(ROOT, 'admin'), path.join(DIST, 'admin'));

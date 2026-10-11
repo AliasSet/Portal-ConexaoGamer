@@ -105,11 +105,23 @@
     </div>
 </div>
 
-                    <!-- Botão de Login do Leitor -->
-                    <button onclick="toggleAuthModal()" class="flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-indigo-600 hover:from-cyan-300 hover:to-indigo-500 text-black font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-[0_0_15px_rgba(0,242,254,0.3)]">
-                        <i class="fa-solid fa-user-circle text-sm text-black"></i>
-                        <span id="userStatusText" class="text-black">Entrar / Cadastrar</span>
-                    </button>
+                    <!-- Botão de Login do Leitor / Menu do usuário logado -->
+                    <div id="authArea" class="relative">
+                        <button id="authBtn" type="button" onclick="onAuthBtnClick()" aria-haspopup="menu" aria-expanded="false" class="flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-indigo-600 hover:from-cyan-300 hover:to-indigo-500 text-black font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-[0_0_15px_rgba(0,242,254,0.3)]">
+                            <i id="authIcon" class="fa-solid fa-user-circle text-sm text-black"></i>
+                            <img id="authAvatar" alt="" referrerpolicy="no-referrer" class="hidden w-5 h-5 rounded-full object-cover">
+                            <span id="userStatusText" class="text-black max-w-[120px] truncate">Entrar / Cadastrar</span>
+                            <i id="authCaret" class="hidden fa-solid fa-chevron-down text-[9px] text-black/70"></i>
+                        </button>
+                        <div id="userMenu" role="menu" class="hidden absolute right-0 top-full mt-2 w-56 z-50 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/60 p-1.5">
+                            <div class="px-3 py-2 border-b border-gray-800 mb-1">
+                                <p id="userMenuName" class="text-xs font-bold text-white truncate"></p>
+                                <p class="text-[10px] text-gray-500">Conectado</p>
+                            </div>
+                            <a href="/perfil/" role="menuitem" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-regular fa-user w-4 text-center"></i> Meu perfil</a>
+                            <button type="button" onclick="logout()" role="menuitem" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:bg-gray-800 hover:text-red-400 transition text-left"><i class="fa-solid fa-arrow-right-from-bracket w-4 text-center"></i> Sair</button>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -327,33 +339,66 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE INTERAÇÕES E LÓGICA DE LOGIN -->
-<!-- SCRIPT DE CONEXÃO DIRETA COM O SUPABASE -->
+    <!-- SCRIPT DE LOGIN (Supabase Auth) + MENU DO USUÁRIO + PÁGINA DE PERFIL -->
 <script>
-    // Cole aqui suas chaves obtidas no painel do Supabase (Project Settings > API Keys)
-    const SUPABASE_URL = 'https://emgcyonjopyitvaosgfi.supabase.co'; 
+    const SUPABASE_URL = 'https://emgcyonjopyitvaosgfi.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_dkrs4imRqGkht2vpB4zUDA_ggIGgjUf';
 
     // Inicialização do cliente Supabase
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Estado do usuário logado (usado pelo cabeçalho e pela página de perfil)
+    let cgSession = null;
+    let cgProfile = null;
+
+    const cgEl = (id) => document.getElementById(id);
+
     // Controle do Modal de Auth
     function toggleAuthModal() {
-        document.getElementById('authModal').classList.toggle('hidden');
+        cgEl('authModal').classList.toggle('hidden');
     }
 
-    // Login Social com a Conta Google (Via Supabase Auth)
+    // ---------- Menu do usuário ----------
+    function closeUserMenu() {
+        const m = cgEl('userMenu');
+        if (m) m.classList.add('hidden');
+        const b = cgEl('authBtn');
+        if (b) b.setAttribute('aria-expanded', 'false');
+    }
+
+    // Deslogado: abre o login. Logado: abre/fecha o menu (Meu perfil / Sair).
+    function onAuthBtnClick() {
+        if (!cgSession) { toggleAuthModal(); return; }
+        const m = cgEl('userMenu');
+        const open = m.classList.toggle('hidden') === false;
+        cgEl('authBtn').setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    document.addEventListener('click', (e) => {
+        const area = cgEl('authArea');
+        if (area && !area.contains(e.target)) closeUserMenu();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeUserMenu(); });
+
+    async function logout() {
+        closeUserMenu();
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) console.error('[Conexão Gamer] erro ao sair:', error);
+    }
+
+    // ---------- Login Social com a Conta Google (Via Supabase Auth) ----------
     async function loginGoogle() {
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin
+                // volta para a mesma página em que a pessoa estava
+                redirectTo: window.location.origin + window.location.pathname + window.location.search
             }
         });
         if (error) alert('Erro ao autenticar com o Google: ' + error.message);
     }
 
-    // Login / Cadastro com E-mail e Senha
+    // ---------- Login / Cadastro com E-mail e Senha ----------
     async function handleEmailAuth(e) {
         e.preventDefault();
         const inputs = e.target.querySelectorAll('input');
@@ -386,21 +431,144 @@
         }
     }
 
-    // Verificar Usuário Logado e Atualizar Interface
-    async function checkUserSession() {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        const statusText = document.getElementById('userStatusText');
+    // ---------- Sessão, nome e foto ----------
+    function cgName(user, profile) {
+        const m = (user && user.user_metadata) || {};
+        return (profile && profile.username) || m.display_name || m.full_name || m.name ||
+               ((user && user.email) ? user.email.split('@')[0] : 'Leitor');
+    }
+    function cgAvatar(user, profile) {
+        const m = (user && user.user_metadata) || {};
+        const url = (profile && profile.avatar_url) || m.avatar_url || m.picture || '';
+        return /^https?:\/\//i.test(url) ? url : '';
+    }
 
-        if (session && session.user) {
-            // Usuário logado: exibe e-mail ou nome
-            statusText.innerText = session.user.email.split('@')[0];
+    // Atualiza o botão do cabeçalho conforme a sessão
+    function refreshAuthUI() {
+        const text = cgEl('userStatusText'), icon = cgEl('authIcon'),
+              av = cgEl('authAvatar'), caret = cgEl('authCaret');
+        if (!text) return;
+        if (cgSession && cgSession.user) {
+            const name = cgName(cgSession.user, cgProfile);
+            text.textContent = name;
+            cgEl('userMenuName').textContent = name;
+            caret.classList.remove('hidden');
+            const url = cgAvatar(cgSession.user, cgProfile);
+            if (url) {
+                av.onerror = function () { av.classList.add('hidden'); icon.classList.remove('hidden'); };
+                av.src = url;
+                av.classList.remove('hidden');
+                icon.classList.add('hidden');
+            } else {
+                av.classList.add('hidden');
+                icon.classList.remove('hidden');
+            }
         } else {
-            statusText.innerText = 'Entrar / Cadastrar';
+            text.textContent = 'Entrar / Cadastrar';
+            caret.classList.add('hidden');
+            av.classList.add('hidden');
+            icon.classList.remove('hidden');
+            closeUserMenu();
         }
     }
 
+    async function applySession(session) {
+        cgSession = session || null;
+        cgProfile = null;
+        if (cgSession && cgSession.user) {
+            try {
+                const { data } = await supabaseClient.from('profiles')
+                    .select('username, avatar_url').eq('id', cgSession.user.id).maybeSingle();
+                cgProfile = data || null;
+            } catch (e) { /* sem perfil ainda: usa os dados da conta */ }
+        }
+        refreshAuthUI();
+        window.cgAuthState = { session: cgSession, profile: cgProfile };
+        window.dispatchEvent(new CustomEvent('cg:auth', { detail: window.cgAuthState }));
+    }
+
+    // Verificar Usuário Logado e Atualizar Interface
+    async function checkUserSession() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        await applySession(session);
+    }
+
+    // Reage a login/logout (inclusive o retorno do Google)
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'INITIAL_SESSION') return;
+        setTimeout(() => applySession(session), 0);
+    });
+
     // Executa verificação ao carregar a página
     document.addEventListener('DOMContentLoaded', checkUserSession);
+</script>
+
+<!-- PÁGINA /perfil/ (só age quando body[data-page="profile"]) -->
+<script>
+(function () {
+    if (document.body.getAttribute('data-page') !== 'profile') return;
+    const $ = (id) => document.getElementById(id);
+    const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function show(which) {
+        ['profile-loading', 'profile-guest', 'profile-user'].forEach((id) =>
+            $(id).classList.toggle('hidden', id !== which));
+    }
+    function msg(text, isError) {
+        const el = $('profile-msg');
+        el.textContent = text || '';
+        el.className = 'text-xs min-h-[1rem] ' + (isError ? 'text-red-400' : 'text-emerald-400');
+    }
+
+    function render(state) {
+        const session = state && state.session;
+        if (!session || !session.user) { show('profile-guest'); return; }
+        const user = session.user;
+        const name = cgName(user, state.profile);
+        const url = cgAvatar(user, state.profile);
+
+        $('profile-title').textContent = name;
+        $('profile-name').value = name;
+        $('profile-email').textContent = user.email || '-';
+        const provider = (user.app_metadata && user.app_metadata.provider) || 'email';
+        $('profile-provider').textContent = provider === 'google' ? 'Conta Google' : 'E-mail e senha';
+        $('profile-since').textContent = user.created_at
+            ? 'Membro desde ' + new Date(user.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+            : '';
+        $('profile-avatar').innerHTML =
+            '<span>' + esc(name.charAt(0).toUpperCase()) + '</span>' +
+            (url ? '<img src="' + esc(url) + '" alt="" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">' : '');
+        msg('');
+        show('profile-user');
+    }
+
+    window.addEventListener('cg:auth', (e) => render(e.detail));
+    if (window.cgAuthState) render(window.cgAuthState);
+
+    $('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!cgSession) return;
+        const name = $('profile-name').value.replace(/\s+/g, ' ').trim();
+        if (name.length < 2 || name.length > 40) { msg('Use entre 2 e 40 caracteres.', true); return; }
+        const btn = $('profile-save');
+        btn.disabled = true;
+        msg('Salvando…');
+        const { error } = await supabaseClient.from('profiles').upsert({
+            id: cgSession.user.id, username: name, updated_at: new Date().toISOString()
+        });
+        btn.disabled = false;
+        if (error) {
+            console.error('[Conexão Gamer] erro ao salvar o perfil:', error);
+            msg('Não foi possível salvar agora. Tente novamente em instantes.', true);
+            return;
+        }
+        cgProfile = Object.assign({}, cgProfile, { username: name });
+        $('profile-title').textContent = name;
+        refreshAuthUI();
+        msg('Nome atualizado!');
+    });
+})();
 </script>
     <style>
         /* Submenu do cabeçalho (abre ao passar o mouse ou ao navegar por teclado) */
