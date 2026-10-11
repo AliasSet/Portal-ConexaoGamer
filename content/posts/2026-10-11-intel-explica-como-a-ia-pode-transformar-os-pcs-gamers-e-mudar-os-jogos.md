@@ -1,19 +1,20 @@
 ---
 title: Intel explica como a IA pode transformar os PCs gamers e mudar os jogos
 category:
+  - Notícias
   - PC
 tags:
-  - Notícias
+  - Intel
+  - IA
+  - Inteligência Artificial
 image: https://sm.ign.com/t/ign_br/screenshot/default/carlos-buarque-2-1_rut8.960.jpg
 summary: O perfil do gamer está mudando, e a Intel acredita que a inteligência
   artificial terá um papel cada vez maior nos computadores. Carlos Buarque,
   diretor de Marketing da Intel Brasil, explica como as NPUs podem abrir caminho
   para jogos mais inteligentes e PCs capazes de ir além do entretenimento.
 author: Redação Conexão Gamer
-date: 10/10/2026T02:58
+date: 11/10/2026T02:58
 ---
-# Intel explica como a IA pode transformar os PCs gamers e mudar os jogos
-
 O jeito de jogar no PC está mudando. Hoje, quem investe em um computador gamer nem sempre quer uma máquina apenas para rodar jogos: também busca desempenho para estudar, trabalhar, editar vídeos e criar conteúdo. E, segundo a Intel, a inteligência artificial pode ser um dos próximos grandes passos dessa transformação.
 
 Em entrevista ao IGN Brasil, Carlos Buarque, diretor de Marketing da Intel Brasil, explicou como o perfil dos jogadores está evoluindo e por que tecnologias como as NPUs podem abrir novas possibilidades para os computadores e os games.
