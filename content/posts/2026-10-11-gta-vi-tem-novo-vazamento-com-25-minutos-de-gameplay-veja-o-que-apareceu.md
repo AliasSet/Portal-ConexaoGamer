@@ -1,11 +1,12 @@
 ---
 title: GTA VI tem novo vazamento com 25 minutos de gameplay; veja o que apareceu
 category:
-  - PC
-  - PlayStation
-  - Xbox
-tags:
   - Notícias
+  - Consoles
+tags:
+  - GTA VI
+  - Vazamentos
+  - Lançamento
 image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRneSB_M6vDKLUMNkEZosEMO74zJpki9-lbEQP8qNcaJz-clrFPt9MH-Io&s=10
 summary: Um novo vazamento atribuído a Cyberleek trouxe cerca de 25 minutos de
   suposta gameplay de GTA VI. O material inclui corridas, cenas de missões e
@@ -15,8 +16,6 @@ author: Redação Conexão Gamer
 date: 11/10/2026T02:55
 rating: ""
 ---
-# GTA VI tem novo vazamento com 25 minutos de gameplay; veja o que apareceu
-
 *GTA VI* voltou a ser assunto nas redes sociais após um novo vazamento atribuído a Cyberleek, conhecido por divulgar materiais não oficiais do aguardado jogo da Rockstar Games. Desta vez, o conteúdo divulgado teria cerca de 25 minutos de gameplay, com cenas de missões, corridas e exploração do mundo aberto.
 
 Segundo informações publicadas pelo site Adrenaline em 8 de outubro de 2026, o material teria circulado em um arquivo ZIP de aproximadamente 370 MB, chamado de “Extended Leek”. Até o momento, porém, é importante tratar as imagens como conteúdo vazado, sem confirmação oficial de autenticidade pela Rockstar.
