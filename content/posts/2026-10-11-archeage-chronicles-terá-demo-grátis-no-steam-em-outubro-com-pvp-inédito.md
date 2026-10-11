@@ -1,10 +1,11 @@
 ---
 title: ArcheAge Chronicles terá demo grátis no Steam em outubro com PvP inédito
 category:
+  - Notícias
   - PC
+  - Steam
 tags:
   - ArcheAge Chronicles
-  - Steam
 image: https://images.openai.com/static-rsc-4/tnDO5WUg9rRU65UhcY8QS74g-hn-G6w_RkZDdScKAdG1_UsXr4hndCsHxEFiVczq2y2kiXX9bYIhpOjdwfGFj_fTuE--kpF4g5JR4elOe7yBC_vXBPE-IgsGxe4OOZ92-SqgsPF_azg-Dica8sbHfPAEZk2Zi7LOyRm9uY6-JctR_0cWkfhX2wBrFsfAC5Wi?purpose=fullsize
 summary: ArcheAge Chronicles terá uma demo gratuita no Steam Next Fest, de 19 a
   26 de outubro. Os jogadores poderão explorar Diamond Shores, testar quatro
