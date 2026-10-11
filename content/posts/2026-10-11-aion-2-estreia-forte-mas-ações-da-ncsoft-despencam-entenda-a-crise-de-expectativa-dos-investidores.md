@@ -2,7 +2,7 @@
 title: "Aion 2 Estreia Forte, Mas Ações da NCSoft Despencam: Entenda a Crise de
   Expectativa dos Investidores"
 category: PC Games
-image: [https://www.gamerscore.com.br/aion-2-voa-alto-mmorpg-gratuito-domina-o-steam-com-mais-de-400-mil-jogadores/](https://www.gamerscore.com.br/wp-content/uploads/2025/10/AION-2.jpg)
+image: https://www.gamerscore.com.br/aion-2-voa-alto-mmorpg-gratuito-domina-o-steam-com-mais-de-400-mil-jogadores/](https://www.gamerscore.com.br/wp-content/uploads/2025/10/AION-2.jpg
 summary: Mesmo registrando quase 400 mil jogadores simultâneos na Steam no
   lançamento, Aion 2 enfrentou uma queda superior a 7% nas ações da NCSoft.
   Entenda por que o mercado financeiro cobra metas irrealistas dos MMOs no
