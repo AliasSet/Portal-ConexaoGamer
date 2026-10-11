@@ -12,8 +12,6 @@ summary: ArcheAge Chronicles terá uma demo gratuita no Steam Next Fest, de 19 a
 author: Redação Conexão Gamer
 date: 11/10/2026T03:16
 ---
-# ArcheAge Chronicles terá demo grátis no Steam em outubro com PvP inédito
-
 **Novo MMORPG poderá ser testado gratuitamente entre 19 e 26 de outubro, com quatro classes jogáveis, exploração de Diamond Shores e combates contra outros jogadores.**
 
 Quem está de olho em novos MMORPGs já pode marcar uma data no calendário. *ArcheAge Chronicles* vai ganhar uma demo gratuita durante o Steam Next Fest de outubro, permitindo que jogadores experimentem parte do novo RPG online da XLGAMES antes do lançamento.
