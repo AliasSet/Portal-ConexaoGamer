@@ -23,6 +23,28 @@ const SITE_NAME = 'Conexão Gamer';
 // Troque pelo domínio definitivo (ou defina a variável SITE_URL na Vercel)
 const SITE_URL = (process.env.SITE_URL || 'https://conexaogamer-seven.vercel.app').replace(/\/+$/, '');
 
+/**
+ * CATEGORIAS DO SITE
+ * - CATEGORY_ALIASES: nomes antigos usados em posts já publicados -> nome atual
+ * - CATEGORIES: páginas /categoria/<slug>/ . "match" = categorias do CMS que entram na página.
+ *   (A página "Consoles" reúne PlayStation + Xbox + Nintendo.)
+ */
+const CATEGORY_ALIASES = { 'PC Games': 'PC' };
+
+const CATEGORIES = [
+  { slug: 'pc', name: 'PC', match: ['PC'], desc: 'Lançamentos, guias, códigos e novidades dos jogos de PC.' },
+  { slug: 'consoles', name: 'Consoles', match: ['PlayStation', 'Xbox', 'Nintendo'], desc: 'Tudo sobre PlayStation, Xbox e Nintendo.' },
+  { slug: 'playstation', name: 'PlayStation', match: ['PlayStation'], desc: 'Notícias e lançamentos do universo PlayStation.' },
+  { slug: 'xbox', name: 'Xbox', match: ['Xbox'], desc: 'Notícias e lançamentos do universo Xbox.' },
+  { slug: 'nintendo', name: 'Nintendo', match: ['Nintendo'], desc: 'Notícias e lançamentos do universo Nintendo.' },
+  { slug: 'hardware', name: 'Hardware', match: ['Hardware'], desc: 'Placas de vídeo, processadores, periféricos e tecnologia para games.' },
+  { slug: 'reviews', name: 'Reviews', match: ['Reviews'], desc: 'Análises e notas dos jogos e produtos que testamos.' }
+];
+const catSlug = (name) => {
+  const c = CATEGORIES.find((x) => x.match.length === 1 && x.match[0] === name);
+  return c ? c.slug : null;
+};
+
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -90,7 +112,7 @@ function parsePost(fileName, text, mdParse) {
     title: String(meta.title || 'Sem título').replace(/\s+/g, ' ').trim(),
     summary: String(meta.summary || '').replace(/\s+/g, ' ').trim(),
     image: meta.image ? String(meta.image) : '',
-    categories: toList(meta.category),
+    categories: toList(meta.category).map((c) => CATEGORY_ALIASES[c] || c),
     tags: toList(meta.tags),
     rating: meta.rating != null && meta.rating !== '' && isFinite(rating) ? rating : null,
     author: meta.author ? String(meta.author) : 'Redação Conexão Gamer',
@@ -131,7 +153,7 @@ function loadPosts(mdParse) {
 
 function catStyle(c) {
   return ({
-    'PC Games': 'bg-cyan-900/80 text-cyan-300 border-cyan-500/40',
+    'PC': 'bg-cyan-900/80 text-cyan-300 border-cyan-500/40',
     'PlayStation': 'bg-indigo-900/80 text-indigo-300 border-indigo-500/40',
     'Xbox': 'bg-green-900/80 text-green-300 border-green-500/40',
     'Nintendo': 'bg-red-900/80 text-red-300 border-red-500/40',
@@ -141,8 +163,13 @@ function catStyle(c) {
 }
 
 function articleHtml(p) {
-  const cats = p.categories.map((c) =>
-    `<span class="text-[10px] border px-2 py-0.5 rounded font-bold uppercase ${catStyle(c)}">${esc(c)}</span>`).join(' ');
+  const cats = p.categories.map((c) => {
+    const cls = `text-[10px] border px-2 py-0.5 rounded font-bold uppercase ${catStyle(c)}`;
+    const slug = catSlug(c);
+    return slug
+      ? `<a href="/categoria/${slug}/" class="${cls} hover:brightness-125 transition">${esc(c)}</a>`
+      : `<span class="${cls}">${esc(c)}</span>`;
+  }).join(' ');
   const tags = p.tags.map((t) =>
     `<span class="text-[11px] text-gray-400 bg-gray-900 border border-gray-800 rounded-full px-3 py-1"># ${esc(t)}</span>`).join(' ');
 
@@ -164,6 +191,63 @@ function articleHtml(p) {
                     ${tags ? `<div class="flex flex-wrap gap-2 mt-8">${tags}</div>` : ''}
                 </article>
                 `;
+}
+
+const fmtDateShort = (ms) => new Date(ms).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Sao_Paulo' });
+
+function cardHtml(p) {
+  const main = p.categories[0] || 'Notícias';
+  return `
+                        <a href="${esc(p.url)}" class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group">
+                            <div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">
+                                ${okImg(p.image) ? `<img src="${esc(p.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
+                                <span class="absolute top-3 left-3 border text-[10px] font-bold px-2.5 py-0.5 rounded uppercase ${catStyle(main)}">${esc(main)}</span>
+                                ${p.rating != null ? `<span class="absolute top-3 right-3 bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ${esc(p.rating)}</span>` : ''}
+                            </div>
+                            <div class="p-5 flex flex-col flex-grow">
+                                <div class="flex items-center text-[11px] text-gray-400 gap-3 mb-2">
+                                    <span class="truncate"><i class="fa-regular fa-folder text-cyan-400"></i> ${esc(p.categories.join(' / ') || 'Notícias')}</span>
+                                    <span class="flex-shrink-0"><i class="fa-regular fa-clock text-cyan-400"></i> ${p.readMin} min</span>
+                                </div>
+                                <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-2 mb-2">${esc(p.title)}</h3>
+                                <p class="text-xs text-gray-400 line-clamp-3 mb-4 leading-relaxed">${esc(p.summary)}</p>
+                                <div class="mt-auto pt-3 border-t border-gray-800 flex items-center justify-between text-[11px] text-gray-400">
+                                    <span class="text-gray-300">${esc(p.author)}</span>
+                                    <span>${esc(fmtDateShort(p.time))}</span>
+                                </div>
+                            </div>
+                        </a>`;
+}
+
+function categoryHtml(cat, list) {
+  return `
+                <div class="space-y-8">
+                    <div class="border-b border-gray-800 pb-3">
+                        <h1 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
+                            <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> ${esc(cat.name)}
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-2">${esc(cat.desc)}</p>
+                    </div>
+                    ${list.length
+                      ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">${list.map(cardHtml).join('')}
+                    </div>`
+                      : `<p class="text-sm text-gray-500 py-6">Ainda não há matérias nesta categoria. Volte em breve!</p>`}
+                </div>
+                `;
+}
+
+function buildCategoryPage(template, cat, list) {
+  const url = SITE_URL + '/categoria/' + cat.slug + '/';
+  const title = cat.name + ' - Notícias e Reviews | ' + SITE_NAME;
+  const withImg = list.find((p) => absUrl(p.image));
+  return template
+    .replace('<!--CG:HEAD-->', headTags({
+      title, description: cat.desc, url, image: withImg ? absUrl(withImg.image) : '', type: 'website'
+    }))
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('<body data-page="home"', '<body data-page="category"')
+    .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => categoryHtml(cat, list));
 }
 
 function headTags({ title, description, url, image, type, jsonLd }) {
@@ -271,8 +355,19 @@ async function main() {
     fs.writeFileSync(path.join(dir, 'index.html'), buildPostPage(template, p));
   }
 
+  // Páginas de categoria (sempre geradas, mesmo vazias, para o menu nunca dar 404)
+  const catUrls = [];
+  for (const cat of CATEGORIES) {
+    const list = posts.filter((p) => p.categories.some((c) => cat.match.includes(c)));
+    const dir = path.join(DIST, 'categoria', cat.slug);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), buildCategoryPage(template, cat, list));
+    if (list.length) catUrls.push({ loc: SITE_URL + '/categoria/' + cat.slug + '/', lastmod: new Date(list[0].time).toISOString().slice(0, 10) });
+  }
+
   // sitemap.xml + robots.txt
   const urls = [{ loc: SITE_URL + '/', lastmod: posts[0] ? new Date(posts[0].time).toISOString().slice(0, 10) : null }]
+    .concat(catUrls)
     .concat(posts.map((p) => ({ loc: SITE_URL + p.url, lastmod: new Date(p.time).toISOString().slice(0, 10) })));
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'),
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
@@ -286,7 +381,7 @@ async function main() {
   copyDir(path.join(ROOT, 'uploads'), path.join(DIST, 'uploads'));
   if (!hasAdmin) console.warn('[build] AVISO: pasta admin/ não encontrada - o painel do CMS não será publicado.');
 
-  console.log(`[build] OK: ${posts.length} matéria(s), ${posts.length + 1} página(s) em ${Date.now() - t0} ms`);
+  console.log(`[build] OK: ${posts.length} matéria(s), ${CATEGORIES.length} categoria(s) em ${Date.now() - t0} ms`);
   posts.forEach((p) => console.log('  ' + p.url));
 }
 
