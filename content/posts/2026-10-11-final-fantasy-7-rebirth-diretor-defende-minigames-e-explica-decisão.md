@@ -1,11 +1,10 @@
 ---
 title: "Final Fantasy 7 Rebirth: diretor defende minigames e explica decisão"
 category:
-  - PC
-  - Xbox
-  - PlayStation
-tags:
   - Notícias
+  - PC
+  - Consoles
+tags: []
 image: https://images.openai.com/static-rsc-4/uP42lWBT7D9mxKT9aCvQhq5n4pkwdslaXZGfKzwhB_SWN_y3tBRcZUhVR4lGIa0kjQkVWDx9dCu6XhOzdCFL3i-wLfKRWw1O8czaSCIojx2giPYVqslDFiu2wR1AK_k0SQJA5CyF1QLtCgG_m6iKshQhCu08Ce3wPZPBfRWzhG3sFPuO3nUlQgBLU6BxTZ8T?purpose=fullsize
 summary: Naoki Hamaguchi, diretor de Final Fantasy VII Rebirth e Final Fantasy
   VII Revelation, defendeu a presença dos minigames na trilogia. Para ele, a
@@ -15,8 +14,6 @@ summary: Naoki Hamaguchi, diretor de Final Fantasy VII Rebirth e Final Fantasy
 author: Redação Conexão Gamer
 date: 10/10/2026T03:00
 ---
-# Final Fantasy 7 Rebirth: diretor defende minigames e explica decisão
-
 A quantidade de minigames em *Final Fantasy VII Rebirth* virou motivo de debate entre os jogadores, mas o diretor Naoki Hamaguchi acredita que a discussão está olhando para o lado errado. Para ele, o mais importante não é decidir se o jogo deveria ter mais ou menos atividades, mas garantir que elas sejam divertidas e façam sentido dentro da experiência.
 
 Em entrevista à revista Edge, Hamaguchi explicou que a presença de diversos minigames foi uma decisão consciente de direção. A proposta era preservar uma característica marcante do *Final Fantasy VII* original, lançado em 1997: a variedade de atividades que vão além da campanha principal.
