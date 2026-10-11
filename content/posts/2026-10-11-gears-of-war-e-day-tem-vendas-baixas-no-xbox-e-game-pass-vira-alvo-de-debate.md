@@ -2,8 +2,9 @@
 title: "Gears of War: E-Day tem vendas baixas no Xbox, e Game Pass vira alvo de
   debate"
 category:
-  - Xbox
+  - Notícias
   - PC
+  - Consoles
 tags:
   - Gears of War
 image: https://xboxwire.thesourcemediaassets.com/sites/2/2026/07/GoW_EDAY_Versus_Breechshot_Final_Logo-183ca26533a83dbebb7b-1600x900.jpg
