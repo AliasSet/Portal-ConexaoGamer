@@ -2,6 +2,8 @@
 title: Cyberpunk 2077 vai ganhar filme live-action produzido pela Paramount
 category:
   - PC
+  - PlayStation
+  - Xbox
 tags:
   - Notícias
 image: https://images.openai.com/static-rsc-4/eUYo_cAh8IO4rE6v9UL-sKL2Puj5RsbYPOOZVgImZP8_2tflMhy4iCXBenEf5uEZRFfQW56ObwOJVD4PLe1elz7irIqQkCYxOe6R9wSljlfi3wqNceVfGg9xzx12KHVMtkkn0MxUgqevVHxH8aD4VxK1hsDvvoe1TFUwLtjzAr4UJvFLRlaIMqMXD0an4Q1m?purpose=fullsize
