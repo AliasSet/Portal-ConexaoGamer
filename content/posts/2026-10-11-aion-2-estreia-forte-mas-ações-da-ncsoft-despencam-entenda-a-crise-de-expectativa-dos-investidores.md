@@ -11,8 +11,6 @@ summary: Mesmo registrando quase 400 mil jogadores simultâneos na Steam no
   Entenda por que o mercado financeiro cobra metas irrealistas dos MMOs no
   Ocidente.
 ---
-## Quando 400 Mil Jogadores Não São O Suficiente: O Paradoxo de Aion 2
-
 O lançamento global de Aion 2 expôs um dos sintomas mais graves da indústria de games atual: a distância gritante entre o sucesso real de público e a ganância desmedida do mercado financeiro.
 
 Apesar de ter alcançado o expressivo pico de 397.905 jogadores simultâneos apenas na Steam nos primeiros dias — marca que coloca o título do lado de gigantes como *Lost Ark* e *Throne and Liberty* —, as ações da publicadora sul-coreana NCSoft despencaram mais de 7%.
