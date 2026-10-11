@@ -33,13 +33,15 @@ const CATEGORY_ALIASES = { 'PC Games': 'PC' };
 
 const CATEGORIES = [
   { slug: 'noticias', name: 'Notícias', tag: 'Notícias', match: ['Notícias'], desc: 'As últimas notícias do mundo dos games e da tecnologia.' },
-  { slug: 'pc', name: 'PC', tag: 'PC', match: ['PC'], desc: 'Lançamentos, guias, códigos e novidades dos jogos de PC.' },
+  // "PC" reúne a tag PC + Steam + Epic Games
+  { slug: 'pc', name: 'PC', tag: 'PC', match: ['PC', 'Steam', 'Epic Games'], desc: 'Lançamentos, guias, códigos e novidades dos jogos de PC, da Steam e da Epic Games.' },
   // "Consoles" reúne a tag Consoles + as tags de cada console
   { slug: 'consoles', name: 'Consoles', tag: 'Consoles', match: ['Consoles', 'PlayStation', 'Xbox', 'Nintendo'], desc: 'Tudo sobre PlayStation, Xbox e Nintendo.' },
   { slug: 'playstation', name: 'PlayStation', tag: 'PlayStation', match: ['PlayStation'], desc: 'Notícias e lançamentos do universo PlayStation.' },
   { slug: 'xbox', name: 'Xbox', tag: 'Xbox', match: ['Xbox'], desc: 'Notícias e lançamentos do universo Xbox.' },
   { slug: 'nintendo', name: 'Nintendo', tag: 'Nintendo', match: ['Nintendo'], desc: 'Notícias e lançamentos do universo Nintendo.' },
   { slug: 'steam', name: 'Steam', tag: 'Steam', match: ['Steam'], desc: 'Novidades, promoções e lançamentos da Steam.' },
+  { slug: 'epic-games', name: 'Epic Games', tag: 'Epic Games', match: ['Epic Games'], desc: 'Jogos grátis, novidades e lançamentos da Epic Games Store.' },
   { slug: 'hardware', name: 'Hardware', tag: 'Hardware', match: ['Hardware'], desc: 'Placas de vídeo, processadores, periféricos e tecnologia para games.' },
   { slug: 'reviews', name: 'Reviews', tag: 'Reviews', match: ['Reviews'], desc: 'Análises e notas dos jogos e produtos que testamos.' }
 ];
@@ -165,7 +167,8 @@ function catStyle(c) {
     'Hardware': 'bg-purple-900/80 text-purple-300 border-purple-500/40',
     'Consoles': 'bg-fuchsia-900/80 text-fuchsia-300 border-fuchsia-500/40',
     'Notícias': 'bg-sky-900/80 text-sky-300 border-sky-500/40',
-    'Steam': 'bg-slate-700/80 text-slate-200 border-slate-400/40'
+    'Steam': 'bg-slate-700/80 text-slate-200 border-slate-400/40',
+    'Epic Games': 'bg-teal-900/80 text-teal-300 border-teal-500/40'
   })[c] || 'bg-gray-800/90 text-gray-300 border-gray-600/40';
 }
 
