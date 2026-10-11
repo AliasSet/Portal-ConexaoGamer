@@ -5,7 +5,7 @@ category:
 tags:
   - Starfield
   - Notícias
-image: https://images.openai.com/static-rsc-4/nPOdKERbHEM2pksKc0L8Pv1AHiRLhZoouKVogvfQLaAU81NWmXHKVKEOsIbaokijRGfOj2y880sALYb59xQlodHxcgXRidPFiVcQqAMyQrUToJScZGoL1ziZ-yl_hr2eo3L7uqhZW46FWDKMoKQe7keGmWqhySlxhLP35FxE6AuWsupP8MqCo6wWt_SUGr7v?purpose=fullsize
+image: https://image.api.playstation.com/vulcan/ap/rnd/202603/0401/154e007ddacddf6ef08034822dbee7f9613936398b8d7743.jpg
 summary: Um mod em desenvolvimento promete transformar os pousos de Starfield em
   uma experiência contínua, sem telas de carregamento. O projeto de Frederik
   Wessberg já ganhou um vídeo de demonstração e terá lançamento gratuito para
