@@ -1,5 +1,5 @@
 ---
-title: Vazador de GTA 6 ameaça divulgar jogo completo se criptomoeda atingir US$
+title: Leaker de GTA 6 ameaça divulgar jogo completo se criptomoeda atingir US$
   30 milhões
 category:
   - PC
