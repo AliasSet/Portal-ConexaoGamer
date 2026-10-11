@@ -226,6 +226,13 @@ function articleHtml(p) {
                     ${okImg(p.image) ? `<figure class="mt-6"><img src="${esc(p.image)}" alt="${esc(p.title)}" referrerpolicy="no-referrer" class="w-full max-h-[420px] object-cover rounded-2xl border border-gray-800" onerror="this.style.display='none'">${caption ? `<figcaption class="mt-2 text-xs text-gray-500 leading-relaxed">${caption}</figcaption>` : ''}</figure>` : ''}
                     <div class="article-body mt-6">${bodyHtml}</div>
                     ${tags ? `<div class="flex flex-wrap gap-2 mt-8">${tags}</div>` : ''}
+
+                    <section id="comments" class="mt-10 pt-8 border-t border-gray-800 scroll-mt-24">
+                        <h2 class="text-lg font-black text-white flex items-center gap-2"><i class="fa-regular fa-comments text-cyan-400"></i> Comentários <span id="comments-count" class="text-xs font-semibold text-gray-500"></span></h2>
+                        <div id="comment-form-area" class="mt-4"><p class="text-sm text-gray-500">Carregando…</p></div>
+                        <div id="comments-list" class="mt-6 space-y-5"><p class="text-sm text-gray-500">Carregando comentários…</p></div>
+                        <button id="comments-more" type="button" class="hidden mt-6 text-xs font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-5 py-2.5 rounded-xl transition">Carregar mais comentários</button>
+                    </section>
                 </article>
                 `;
 }
@@ -297,6 +304,12 @@ function profileHtml() {
                             <div class="min-w-0">
                                 <p id="profile-title" class="text-lg font-black text-white truncate"></p>
                                 <p id="profile-since" class="text-xs text-gray-500 mt-1"></p>
+                                <div class="mt-3 flex flex-wrap items-center gap-2">
+                                    <button id="profile-photo-btn" type="button" class="text-[11px] font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-camera mr-1"></i> Alterar foto</button>
+                                    <button id="profile-photo-remove" type="button" class="hidden text-[11px] font-bold text-gray-500 hover:text-red-400 px-2 py-1.5 transition">Remover foto</button>
+                                    <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+                                </div>
+                                <p id="profile-photo-msg" class="text-[11px] mt-2 min-h-[1rem]" role="status" aria-live="polite"></p>
                             </div>
                         </div>
 

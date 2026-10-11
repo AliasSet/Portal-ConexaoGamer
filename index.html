@@ -264,19 +264,7 @@
                         <i class="fa-regular fa-comments text-base"></i> Últimos Comentários
                     </h3>
                     
-                    <div class="space-y-4">
-                        <div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800/80 text-xs space-y-1">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80" class="w-5 h-5 rounded-full">
-                                    <span class="font-bold text-gray-200">Gabriel_Gamer</span>
-                                </div>
-                                <span class="text-[10px] text-gray-500">Há 15 min</span>
-                            </div>
-                            <p class="text-gray-400 line-clamp-2 italic">"A diferença de frames no teste da 5080 impressiona demais!"</p>
-                            <a href="#" class="text-[10px] text-cyan-400 hover:underline block font-semibold">Em: Análise RTX 5080</a>
-                        </div>
-                    </div>
+                    <div id="sidebar-recent-comments" class="space-y-3"><p class="text-xs text-gray-500">Carregando…</p></div>
                 </div>
 
                 <!-- WIDGET 3: MAIS LIDOS DA SEMANA -->
@@ -437,10 +425,15 @@
         return (profile && profile.username) || m.display_name || m.full_name || m.name ||
                ((user && user.email) ? user.email.split('@')[0] : 'Leitor');
     }
+    // Só aceita fotos da nossa pasta de avatares ou da conta Google
+    function cgSafeAvatar(url) {
+        if (!url) return '';
+        if (url.indexOf(SUPABASE_URL + '/storage/v1/object/public/avatars/') === 0) return url;
+        return /^https:\/\/[a-z0-9-]+\.googleusercontent\.com\//i.test(url) ? url : '';
+    }
     function cgAvatar(user, profile) {
         const m = (user && user.user_metadata) || {};
-        const url = (profile && profile.avatar_url) || m.avatar_url || m.picture || '';
-        return /^https?:\/\//i.test(url) ? url : '';
+        return cgSafeAvatar((profile && profile.avatar_url) || m.avatar_url || m.picture || '');
     }
 
     // Atualiza o botão do cabeçalho conforme a sessão
@@ -521,6 +514,14 @@
         el.className = 'text-xs min-h-[1rem] ' + (isError ? 'text-red-400' : 'text-emerald-400');
     }
 
+    function paintAvatar(name, url) {
+        $('profile-avatar').innerHTML =
+            '<span>' + esc(name.charAt(0).toUpperCase()) + '</span>' +
+            (url ? '<img src="' + esc(url) + '" alt="" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">' : '');
+        const own = cgProfile && cgProfile.avatar_url && cgProfile.avatar_url.indexOf(AVATAR_PREFIX) === 0;
+        $('profile-photo-remove').classList.toggle('hidden', !own);
+    }
+
     function render(state) {
         const session = state && state.session;
         if (!session || !session.user) { show('profile-guest'); return; }
@@ -536,12 +537,107 @@
         $('profile-since').textContent = user.created_at
             ? 'Membro desde ' + new Date(user.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
             : '';
-        $('profile-avatar').innerHTML =
-            '<span>' + esc(name.charAt(0).toUpperCase()) + '</span>' +
-            (url ? '<img src="' + esc(url) + '" alt="" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">' : '');
+        paintAvatar(name, url);
         msg('');
+        $('profile-photo-msg').textContent = '';
         show('profile-user');
     }
+
+    const AVATAR_PREFIX = SUPABASE_URL + '/storage/v1/object/public/avatars/';
+    const OUT_SIZE = 256;            // a foto é recortada em quadrado e reduzida para 256x256
+    const MAX_INPUT = 8 * 1024 * 1024;
+
+    function pmsg(text, isError) {
+        const el = $('profile-photo-msg');
+        el.textContent = text || '';
+        el.className = 'text-[11px] mt-2 min-h-[1rem] ' + (isError ? 'text-red-400' : 'text-emerald-400');
+    }
+
+    function cropToBlob(file) {
+        return new Promise((resolve, reject) => {
+            const objUrl = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => {
+                try {
+                    const side = Math.min(img.naturalWidth, img.naturalHeight);
+                    const sx = (img.naturalWidth - side) / 2, sy = (img.naturalHeight - side) / 2;
+                    const canvas = document.createElement('canvas');
+                    canvas.width = canvas.height = OUT_SIZE;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#111827';
+                    ctx.fillRect(0, 0, OUT_SIZE, OUT_SIZE);
+                    ctx.drawImage(img, sx, sy, side, side, 0, 0, OUT_SIZE, OUT_SIZE);
+                    canvas.toBlob((b) => b ? resolve(b) : reject(new Error('blob')), 'image/jpeg', 0.85);
+                } catch (e) { reject(e); }
+                finally { URL.revokeObjectURL(objUrl); }
+            };
+            img.onerror = () => { URL.revokeObjectURL(objUrl); reject(new Error('decode')); };
+            img.src = objUrl;
+        });
+    }
+
+    function removeOldFile(url) {
+        if (url && url.indexOf(AVATAR_PREFIX) === 0) {
+            supabaseClient.storage.from('avatars').remove([url.slice(AVATAR_PREFIX.length)]).catch(() => {});
+        }
+    }
+
+    async function saveAvatarUrl(url) {
+        return supabaseClient.from('profiles').upsert({
+            id: cgSession.user.id, avatar_url: url, updated_at: new Date().toISOString()
+        });
+    }
+
+    $('profile-photo-btn').addEventListener('click', () => $('profile-photo-input').click());
+
+    $('profile-photo-input').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        e.target.value = '';
+        if (!file || !cgSession) return;
+        if (!/^image\/(png|jpeg|webp)$/.test(file.type)) { pmsg('Use uma imagem PNG, JPG ou WebP.', true); return; }
+        if (file.size > MAX_INPUT) { pmsg('A imagem é grande demais (máximo 8 MB).', true); return; }
+
+        pmsg('Enviando foto…');
+        let blob;
+        try { blob = await cropToBlob(file); }
+        catch (err) { pmsg('Não foi possível ler essa imagem. Tente outra.', true); return; }
+
+        const path = cgSession.user.id + '/' + Date.now() + '.jpg';
+        const up = await supabaseClient.storage.from('avatars')
+            .upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
+        if (up.error) {
+            console.error('[Conexão Gamer] erro ao enviar a foto:', up.error);
+            pmsg('Não foi possível enviar a foto agora. Tente novamente.', true);
+            return;
+        }
+        const url = supabaseClient.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+        const previous = cgProfile && cgProfile.avatar_url;
+        const { error } = await saveAvatarUrl(url);
+        if (error) {
+            console.error('[Conexão Gamer] erro ao salvar a foto:', error);
+            removeOldFile(url);
+            pmsg('A foto foi enviada, mas não foi possível salvá-la no perfil.', true);
+            return;
+        }
+        cgProfile = Object.assign({}, cgProfile, { avatar_url: url });
+        removeOldFile(previous);
+        paintAvatar(cgName(cgSession.user, cgProfile), cgAvatar(cgSession.user, cgProfile));
+        refreshAuthUI();
+        pmsg('Foto atualizada!');
+    });
+
+    $('profile-photo-remove').addEventListener('click', async () => {
+        if (!cgSession) return;
+        const previous = cgProfile && cgProfile.avatar_url;
+        pmsg('Removendo…');
+        const { error } = await saveAvatarUrl(null);
+        if (error) { pmsg('Não foi possível remover agora.', true); return; }
+        cgProfile = Object.assign({}, cgProfile, { avatar_url: null });
+        removeOldFile(previous);
+        paintAvatar(cgName(cgSession.user, cgProfile), cgAvatar(cgSession.user, cgProfile));
+        refreshAuthUI();
+        pmsg('Foto personalizada removida.');
+    });
 
     window.addEventListener('cg:auth', (e) => render(e.detail));
     if (window.cgAuthState) render(window.cgAuthState);
@@ -630,6 +726,10 @@
       }
 
       const IS_POST_PAGE = document.body.getAttribute('data-page') !== 'home';
+
+      // Outros scripts (ex.: Últimos Comentários) esperam a lista de posts por aqui
+      let resolvePosts;
+      window.cgPostsReady = new Promise(function (r) { resolvePosts = r; });
 
       async function loadPosts() {
         const res = await fetch('/posts.json', { cache: 'no-cache' });
@@ -836,8 +936,11 @@
       async function init() {
         countView();
         try {
-          render(await loadPosts());
+          const posts = await loadPosts();
+          resolvePosts(posts);
+          render(posts);
         } catch (err) {
+          resolvePosts([]);
           console.error('[Conexão Gamer] Falha ao carregar /posts.json:', err);
           renderMessage('Não foi possível carregar as matérias', 'Tente recarregar a página em alguns instantes.');
         }
@@ -847,5 +950,217 @@
       else init();
     })();
     </script>
+
+<!-- COMENTÁRIOS (nas matérias) e ÚLTIMOS COMENTÁRIOS (barra lateral) -->
+<script>
+(function () {
+    const $ = (id) => document.getElementById(id);
+    const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function ago(iso) {
+        const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+        if (s < 60) return 'agora mesmo';
+        const m = Math.floor(s / 60);
+        if (m < 60) return 'há ' + m + ' min';
+        const h = Math.floor(m / 60);
+        if (h < 24) return 'há ' + h + ' h';
+        const d = Math.floor(h / 24);
+        if (d < 7) return 'há ' + d + (d === 1 ? ' dia' : ' dias');
+        return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function avatarHtml(name, url, sizeCls, textCls) {
+        const safe = cgSafeAvatar(url);
+        return '<span class="relative inline-flex ' + sizeCls + ' rounded-full overflow-hidden bg-gray-800 border border-gray-700 items-center justify-center ' + textCls + ' font-black text-cyan-400 flex-shrink-0">' +
+               '<span>' + esc((name || '?').charAt(0).toUpperCase()) + '</span>' +
+               (safe ? '<img src="' + esc(safe) + '" alt="" loading="lazy" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">' : '') +
+               '</span>';
+    }
+
+    /* ---------- Últimos Comentários (barra lateral, em todas as páginas) ---------- */
+    async function loadSidebar() {
+        const box = $('sidebar-recent-comments');
+        if (!box) return;
+        const posts = await (window.cgPostsReady || Promise.resolve([]));
+        const bySlug = new Map(posts.map((p) => [p.slug, p]));
+        try {
+            const { data, error } = await supabaseClient.rpc('recent_comments', { p_limit: 6 });
+            if (error) throw error;
+            const rows = (data || []).filter((r) => bySlug.has(r.post_slug)).slice(0, 3);
+            if (!rows.length) {
+                box.innerHTML = '<p class="text-xs text-gray-500">Ainda não há comentários. Seja o primeiro a comentar!</p>';
+                return;
+            }
+            box.innerHTML = rows.map((r) => {
+                const post = bySlug.get(r.post_slug);
+                return '<div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800/80 text-xs space-y-1">' +
+                    '<div class="flex items-center justify-between gap-2">' +
+                        '<div class="flex items-center gap-2 min-w-0">' + avatarHtml(r.display_name, r.avatar_url, 'w-5 h-5', 'text-[9px]') +
+                        '<span class="font-bold text-gray-200 truncate">' + esc(r.display_name) + '</span></div>' +
+                        '<span class="text-[10px] text-gray-500 flex-shrink-0">' + esc(ago(r.created_at)) + '</span>' +
+                    '</div>' +
+                    '<p class="text-gray-400 line-clamp-2 italic break-words">"' + esc(r.content) + '"</p>' +
+                    '<a href="' + esc(post.url) + '#comments" class="text-[10px] text-cyan-400 hover:underline block font-semibold truncate">Em: ' + esc(post.title) + '</a>' +
+                '</div>';
+            }).join('');
+        } catch (e) {
+            console.warn('[Conexão Gamer] últimos comentários indisponíveis:', e && e.message);
+            box.innerHTML = '<p class="text-xs text-gray-500">Comentários indisponíveis no momento.</p>';
+        }
+    }
+    loadSidebar();
+
+    /* ---------- Seção de comentários da matéria ---------- */
+    const section = $('comments');
+    if (!section) return;
+
+    const slug = document.body.getAttribute('data-slug');
+    const PAGE = 20;
+    let items = [], total = 0, loading = false, formUserId = '__none__';
+
+    const ERRORS = {
+        cg_rate_limit: 'Calma! Aguarde alguns segundos antes de comentar de novo.',
+        cg_rate_limit_hour: 'Você atingiu o limite de comentários por hora. Volte mais tarde.',
+        cg_duplicate: 'Você já enviou exatamente esse comentário.',
+        cg_links: 'Comentários com mais de 2 links não são permitidos.',
+        cg_empty: 'Escreva algo antes de enviar.',
+        cg_too_long: 'O comentário passou de 2000 caracteres.'
+    };
+    function errText(error) {
+        const m = (error && error.message) || '';
+        for (const k in ERRORS) if (m.indexOf(k) !== -1) return ERRORS[k];
+        if (error && error.code === '42501') return 'Entre na sua conta para comentar.';
+        return 'Não foi possível enviar agora. Tente novamente em instantes.';
+    }
+
+    function myId() { return cgSession && cgSession.user ? cgSession.user.id : null; }
+
+    function renderList() {
+        const box = $('comments-list');
+        const mine = myId();
+        $('comments-count').textContent = total ? '(' + total + ')' : '';
+        if (!items.length) {
+            box.innerHTML = '<p class="text-sm text-gray-500">Ainda não há comentários. Seja o primeiro!</p>';
+        } else {
+            box.innerHTML = items.map((c) => {
+                const isMine = mine && c.user_id === mine;
+                const action = isMine
+                    ? '<button type="button" data-act="delete" data-id="' + c.id + '" class="text-gray-500 hover:text-red-400 transition">Excluir</button>'
+                    : (mine ? '<button type="button" data-act="report" data-id="' + c.id + '" class="text-gray-500 hover:text-amber-400 transition">Denunciar</button>' : '');
+                return '<article class="flex gap-3">' +
+                    avatarHtml(c.display_name, c.avatar_url, 'w-9 h-9', 'text-sm') +
+                    '<div class="min-w-0 flex-1">' +
+                        '<div class="flex flex-wrap items-baseline gap-x-2">' +
+                            '<span class="text-sm font-bold text-white">' + esc(c.display_name) + '</span>' +
+                            '<span class="text-[11px] text-gray-500">' + esc(ago(c.created_at)) + '</span>' +
+                        '</div>' +
+                        '<p class="text-sm text-gray-300 mt-1 whitespace-pre-wrap break-words">' + esc(c.content) + '</p>' +
+                        (action ? '<div class="mt-1.5 text-[11px]">' + action + '</div>' : '') +
+                    '</div></article>';
+            }).join('');
+        }
+        $('comments-more').classList.toggle('hidden', items.length >= total);
+    }
+
+    async function load(reset) {
+        if (loading) return;
+        loading = true;
+        const { data, error } = await supabaseClient.rpc('list_comments', {
+            p_slug: slug, p_limit: PAGE, p_offset: reset ? 0 : items.length
+        });
+        loading = false;
+        if (error) {
+            console.error('[Conexão Gamer] erro ao carregar comentários:', error);
+            $('comments-list').innerHTML = '<p class="text-sm text-gray-500">Não foi possível carregar os comentários agora.</p>';
+            return;
+        }
+        const rows = data || [];
+        if (rows.length) total = Number(rows[0].total);
+        else if (reset) total = 0;
+        items = reset ? rows : items.concat(rows);
+        renderList();
+    }
+
+    function renderForm() {
+        const area = $('comment-form-area');
+        const uid = myId();
+        if (uid === formUserId) return;          // não apaga o que a pessoa está digitando
+        formUserId = uid;
+
+        if (!uid) {
+            area.innerHTML =
+                '<div class="bg-gray-900 border border-gray-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">' +
+                    '<p class="text-sm text-gray-400">Entre na sua conta para participar da discussão.</p>' +
+                    '<button type="button" onclick="toggleAuthModal()" class="bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs px-5 py-2.5 rounded-xl transition flex-shrink-0">Entrar para comentar</button>' +
+                '</div>';
+            return;
+        }
+        const name = cgName(cgSession.user, cgProfile);
+        area.innerHTML =
+            '<form id="comment-form" class="flex gap-3" novalidate>' +
+                avatarHtml(name, cgAvatar(cgSession.user, cgProfile), 'w-9 h-9', 'text-sm') +
+                '<div class="flex-1 min-w-0">' +
+                    '<textarea id="comment-text" rows="3" maxlength="2000" placeholder="Escreva um comentário respeitoso…" aria-label="Seu comentário" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 resize-y"></textarea>' +
+                    '<div class="flex items-center justify-between mt-2 gap-3">' +
+                        '<span id="comment-counter" class="text-[11px] text-gray-500">0/2000</span>' +
+                        '<button id="comment-send" type="submit" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-5 py-2.5 rounded-xl transition">Comentar</button>' +
+                    '</div>' +
+                    '<p id="comment-msg" class="text-xs mt-2 min-h-[1rem]" role="status" aria-live="polite"></p>' +
+                '</div>' +
+            '</form>';
+
+        const ta = $('comment-text');
+        const msg = (t, isError) => { const el = $('comment-msg'); el.textContent = t || ''; el.className = 'text-xs mt-2 min-h-[1rem] ' + (isError ? 'text-red-400' : 'text-emerald-400'); };
+        ta.addEventListener('input', () => { $('comment-counter').textContent = ta.value.length + '/2000'; });
+        $('comment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = ta.value.trim();
+            if (!text) { msg(ERRORS.cg_empty, true); return; }
+            const btn = $('comment-send');
+            btn.disabled = true; msg('Enviando…');
+            const { error } = await supabaseClient.from('comments').insert({ post_slug: slug, content: text });
+            btn.disabled = false;
+            if (error) { console.warn('[Conexão Gamer] comentário recusado:', error.message); msg(errText(error), true); return; }
+            ta.value = ''; $('comment-counter').textContent = '0/2000';
+            msg('Comentário publicado!');
+            await load(true);
+            loadSidebar();
+        });
+    }
+
+    // Excluir / Denunciar (confirmação em dois cliques, sem janelas pop-up)
+    $('comments-list').addEventListener('click', async (e) => {
+        const btn = e.target.closest('button[data-act]');
+        if (!btn) return;
+        const act = btn.getAttribute('data-act'), id = Number(btn.getAttribute('data-id'));
+        if (btn.getAttribute('data-armed') !== '1') {
+            const original = btn.textContent;
+            btn.setAttribute('data-armed', '1');
+            btn.textContent = act === 'delete' ? 'Confirmar exclusão?' : 'Confirmar denúncia?';
+            setTimeout(() => { if (btn.isConnected) { btn.removeAttribute('data-armed'); btn.textContent = original; } }, 4000);
+            return;
+        }
+        btn.disabled = true;
+        if (act === 'delete') {
+            const { error } = await supabaseClient.from('comments').delete().eq('id', id);
+            if (error) { btn.disabled = false; btn.textContent = 'Erro ao excluir'; return; }
+            await load(true);
+            loadSidebar();
+        } else {
+            const { error } = await supabaseClient.rpc('report_comment', { p_comment_id: id, p_reason: 'denuncia_de_leitor' });
+            btn.textContent = error ? 'Erro ao denunciar' : 'Denúncia enviada. Obrigado!';
+        }
+    });
+
+    $('comments-more').addEventListener('click', () => load(false));
+
+    // O formulário só aparece depois que sabemos se a pessoa está logada (evita piscar "Entre para comentar")
+    window.addEventListener('cg:auth', () => { renderForm(); renderList(); });
+    if (window.cgAuthState) renderForm();
+    else setTimeout(() => { if (formUserId === '__none__') renderForm(); }, 4000);
+    load(true);
+})();
+</script>
 </body>
 </html>
