@@ -173,13 +173,11 @@ function catStyle(c) {
  * Primeira linha do texto, logo abaixo da imagem de capa.
  * Se a primeira linha for CURTA e sem ponto final, ela não é um parágrafo comum:
  *  - começa com "Imagem:", "Foto:", "Fonte:", "Crédito:"...  -> legenda pequena sob a imagem
- *  - é igual ao título da matéria                            -> removida (já aparece no topo)
- *  - qualquer outra (ex.: a manchete da matéria)             -> vira TÍTULO (subtítulo em destaque)
+ *  - qualquer outra (ex.: a manchete repetida no texto)      -> ESCONDIDA (o título já aparece no topo)
  * O campo "Legenda / crédito da imagem" do CMS, se preenchido, sempre vira a legenda.
- * Em matérias novas, começar o texto com "## Título" tem o mesmo efeito.
+ * Para ter um título/intertítulo de verdade no início do texto, use "## Título" (isso não é escondido).
  */
 const CREDIT_RE = /^(imagem|imagens|foto|fotos|fonte|crédito|créditos|reprodução|divulgação|arte|ilustração|captura)\b/i;
-const norm = (t) => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 
 function splitCaption(p) {
   let html = p.html;
@@ -192,10 +190,8 @@ function splitCaption(p) {
       const rest = html.slice(m[0].length);
       if (CREDIT_RE.test(text)) {
         if (!caption && okImg(p.image)) { caption = m[1]; html = rest; }
-      } else if (norm(text) === norm(p.title)) {
-        html = rest;
       } else {
-        html = '<h2>' + m[1] + '</h2>\n' + rest;
+        html = rest;
       }
     }
   }
