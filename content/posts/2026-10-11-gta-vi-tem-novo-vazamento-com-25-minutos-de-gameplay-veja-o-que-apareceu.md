@@ -6,7 +6,7 @@ category:
   - Xbox
 tags:
   - Notícias
-image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgjgtN2eqrAHm8n0V7CG0vHbLaTIbBzYaRbDAc43jztX2MdzpHpA3isFcd&s=10
+image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRneSB_M6vDKLUMNkEZosEMO74zJpki9-lbEQP8qNcaJz-clrFPt9MH-Io&s=10
 summary: Um novo vazamento atribuído a Cyberleek trouxe cerca de 25 minutos de
   suposta gameplay de GTA VI. O material inclui corridas, cenas de missões e
   exploração, enquanto a Rockstar enfrenta mais uma exposição não autorizada de
