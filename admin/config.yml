@@ -1,0 +1,32 @@
+backend:
+  name: github
+  repo: AliasSet/Portal-ConexaoGamer
+  branch: main
+  base_url: https://conexaogamer-seven.vercel.app
+  auth_endpoint: /api/callback
+
+# Pasta "uploads" na raiz (e não "public/uploads"): evita que a Vercel passe a tratar
+# a pasta "public" como raiz do site quando você subir a primeira imagem pelo CMS.
+media_folder: "uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "posts"
+    label: "Notícias e Reviews"
+    folder: "content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Categorias", name: "category", widget: "select", multiple: true, options: ["PC Games", "PlayStation", "Xbox", "Nintendo", "Reviews", "Hardware"] }
+      - label: "Tags Adicionais"
+        name: "tags"
+        widget: "list"
+        required: false
+        hint: "Adicione tags livres (ex: GTA VI, RTX 5080, eSports)"
+      - { label: "Imagem de Capa", name: "image", widget: "image" }
+      - { label: "Resumo", name: "summary", widget: "text" }
+      - { label: "Autor", name: "author", widget: "string", default: "Redação Conexão Gamer", required: false }
+      - { label: "Data de Publicação", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: "HH:mm", required: false }
+      - { label: "Nota do Review (0-10)", name: "rating", widget: "number", value_type: "float", required: false }
+      - { label: "Conteúdo da Matéria", name: "body", widget: "markdown" }
