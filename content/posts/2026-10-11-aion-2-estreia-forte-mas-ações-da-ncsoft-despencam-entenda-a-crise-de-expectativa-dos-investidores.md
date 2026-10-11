@@ -1,7 +1,10 @@
 ---
-title: "Aion 2 Estreia Forte, Mas Ações da NCSoft Despencam: Entenda a Crise de
-  Expectativa dos Investidores"
-category: PC Games
+title: "Aion 2 estreia forte, mas ações da NCSoft despencam: Entenda a crise de
+  expectativa dos investidores"
+category:
+  - PC
+tags:
+  - Aion 2
 image: https://www.gamerscore.com.br/wp-content/uploads/2025/10/AION-2.jpg
 summary: Mesmo registrando quase 400 mil jogadores simultâneos na Steam no
   lançamento, Aion 2 enfrentou uma queda superior a 7% nas ações da NCSoft.
