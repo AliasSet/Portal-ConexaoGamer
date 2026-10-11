@@ -2,9 +2,11 @@
 title: Jogo com IA custa mais de US$ 1.000 por dia e devs fazem empréstimo para
   manter demo
 category:
+  - Notícias
   - PC
+  - Steam
 tags:
-  - Notícia
+  - IA
 image: https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3948460/1be962b719bd02192190adc7acf0418fa8dd373c/capsule_616x353.jpg?t=1791367602
 summary: A demo gratuita de Teach My Little Sister How to Drive ficou tão
   popular que seus desenvolvedores passaram a gastar mais de US$ 1.000 por dia
@@ -14,8 +16,6 @@ summary: A demo gratuita de Teach My Little Sister How to Drive ficou tão
 author: Redação Conexão Gamer
 date: 11/10/2026T02:51
 ---
-# Jogo com IA custa mais de US$ 1.000 por dia e devs fazem empréstimo para manter demo
-
 O sucesso de um jogo na Steam virou uma dor de cabeça financeira para seus criadores. A equipe responsável por *Teach My Little Sister How to Drive* revelou que está gastando mais de US$ 1.000 por dia para manter a demo gratuita funcionando. Com o aumento inesperado de jogadores, os desenvolvedores chegaram a recorrer a um empréstimo bancário para bancar os custos de inteligência artificial (IA).
 
 O game é desenvolvido pelo estúdio Easy Fox e chamou a atenção dos jogadores por sua proposta inusitada: ensinar uma irmã iniciante a dirigir usando apenas comandos de voz. O problema é que, por trás da experiência, existe uma tecnologia que cobra pelo uso e ficou muito mais cara com a popularidade do projeto.
