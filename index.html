@@ -76,12 +76,13 @@
                 </nav>
 
                 <!-- Busca & Botão de Login (Supabase Integrado) -->
-                <div class="flex items-center gap-4">
-                    <div class="relative hidden sm:block">
-                        <input type="text" placeholder="Pesquisa" 
-                            class="bg-gray-900 border border-gray-700 rounded-full px-4 py-1.5 pl-9 text-xs focus:outline-none focus:border-cyan-400 text-gray-200 w-48 focus:w-60 transition-all">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-gray-500"></i>
-                    </div>
+           <div class="relative hidden sm:flex items-center">
+    <input type="text" placeholder="Pesquisa..." 
+        class="bg-gray-900 border border-gray-700 rounded-full px-4 py-1.5 pl-9 text-xs focus:outline-none focus:border-cyan-400 text-gray-200 w-48 focus:w-60 transition-all">
+    <div class="absolute left-3 inset-y-0 flex items-center pointer-events-none">
+        <i class="fa-solid fa-magnifying-glass text-xs text-gray-500"></i>
+    </div>
+</div>
 
                     <!-- Botão de Login do Leitor -->
                     <button onclick="toggleAuthModal()" class="flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-indigo-600 hover:from-cyan-300 hover:to-indigo-500 text-black font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-[0_0_15px_rgba(0,242,254,0.3)]">
