@@ -13,7 +13,7 @@ summary: Um novo vazamento atribuído a Cyberleek trouxe cerca de 25 minutos de
   seu aguardado jogo.
 author: Redação Conexão Gamer
 date: 11/10/2026T02:55
-rating: -2
+rating: ""
 ---
 # GTA VI tem novo vazamento com 25 minutos de gameplay; veja o que apareceu
 
