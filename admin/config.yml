@@ -18,7 +18,7 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "Título", name: "title", widget: "string" }
-      - { label: "Categorias", name: "category", widget: "select", multiple: true, options: ["PC Games", "PlayStation", "Xbox", "Nintendo", "Reviews", "Hardware"] }
+      - { label: "Categorias", name: "category", widget: "select", multiple: true, options: ["PC", "PlayStation", "Xbox", "Nintendo", "Reviews", "Hardware"] }
       - label: "Tags Adicionais"
         name: "tags"
         widget: "list"
