@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%230b0f19'/><path d='M30 65 A 25 25 0 0 1 70 65 M38 53 A 15 15 0 0 1 62 53 M46 41 A 5 5 0 0 1 54 41' stroke='%2300f2fe' stroke-width='8' stroke-linecap='round' fill='none'/><circle cx='50' cy='75' r='5' fill='%2300f2fe'/></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conexão Gamer | Portal de Notícias, Reviews e Lançamentos</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Client Supabase JS (Pronto para conexão) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            cyan: '#00f2fe',
+                            purple: '#7928ca',
+                            magenta: '#f50057',
+                            darkBg: '#0b0f19',
+                            cardBg: '#111827',
+                            sidebarBg: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .bg-glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(14px); }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.2); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#0b0f19] text-gray-100 antialiased">
+
+    <!-- BARRA SUPERIOR E CABEÇALHO (Com Subtítulo Atualizado) -->
+    <header class="sticky top-0 z-40 bg-glass border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- LOGO E IDENTIDADE VISUAL EXCLUSIVA -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-fuchsia-600 p-[2px] shadow-[0_0_20px_rgba(0,242,254,0.35)] group-hover:scale-105 transition transform">
+                        <div class="w-full h-full bg-[#0b0f19] rounded-[14px] flex items-center justify-center relative overflow-hidden">
+                            <i class="fa-solid fa-wifi text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-lg group-hover:rotate-12 transition"></i>
+                            <span class="absolute -bottom-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-ping"></span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-black tracking-wider uppercase text-white leading-none">
+                            CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span>
+                        </span>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                            <span class="text-[9px] font-bold tracking-[0.15em] text-gray-400 uppercase">Notícias, Reviews e Lançamentos</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Navegação Principal -->
+                <nav class="hidden lg:flex items-center gap-2 text-sm font-semibold text-gray-300">
+                    <a href="#pc" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-desktop text-xs mr-1"></i> PC</a>
+                    <a href="#consoles" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-gamepad text-xs mr-1"></i> Consoles</a>
+                    <a href="#hardware" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-microchip text-xs mr-1"></i> Hardware</a>
+                    <a href="#reviews" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-star text-xs mr-1"></i> Reviews</a>
+                </nav>
+
+                <!-- Busca & Botão de Login (Supabase Integrado) -->
+           <div class="relative hidden sm:flex items-center">
+    <input type="text" placeholder="Pesquisa..." 
+        class="bg-gray-900 border border-gray-700 rounded-full px-4 py-1.5 pl-9 text-xs focus:outline-none focus:border-cyan-400 text-gray-200 w-48 focus:w-60 transition-all">
+    <div class="absolute left-3 inset-y-0 flex items-center pointer-events-none">
+        <i class="fa-solid fa-magnifying-glass text-xs text-gray-500"></i>
+    </div>
+</div>
+
+                    <!-- Botão de Login do Leitor -->
+                    <button onclick="toggleAuthModal()" class="flex items-center gap-2 bg-gradient-to-r from-cyan-400 to-indigo-600 hover:from-cyan-300 hover:to-indigo-500 text-black font-extrabold text-xs px-4 py-2 rounded-xl transition shadow-[0_0_15px_rgba(0,242,254,0.3)]">
+                        <i class="fa-solid fa-user-circle text-sm text-black"></i>
+                        <span id="userStatusText" class="text-black">Entrar / Cadastrar</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA TENDÊNCIAS EM ALTA + REDES SOCIAIS -->
+<div class="bg-gray-950 border-b border-gray-800/80 py-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 text-xs">
+        
+        <!-- LADO ESQUERDO: ASSUNTOS EM ALTA -->
+        <div class="flex items-center gap-4 overflow-hidden">
+            <span class="flex items-center gap-1.5 text-cyan-400 font-extrabold uppercase tracking-wider flex-shrink-0">
+                <i class="fa-solid fa-bolt text-xs animate-pulse"></i> Em Alta:
+            </span>
+            <div class="flex items-center gap-3 overflow-x-auto whitespace-nowrap scrollbar-none text-gray-400">
+                <a href="#" class="hover:text-cyan-400 transition font-medium"># GTA VI</a>
+                <span class="text-gray-700">•</span>
+                <a href="#" class="hover:text-cyan-400 transition font-medium"># RTX 5080</a>
+                <span class="text-gray-700">•</span>
+                <a href="#" class="hover:text-cyan-400 transition font-medium"># PS5 Pro</a>
+                <span class="text-gray-700">•</span>
+                <a href="#" class="hover:text-cyan-400 transition font-medium"># AION 2</a>
+                <span class="text-gray-700">•</span>
+                <a href="#" class="hover:text-cyan-400 transition font-medium"># WARDOGS</a>
+            </div>
+        </div>
+
+        <!-- LADO DIREITO: ÍCONES DAS REDES SOCIAIS (CORRIGIDO) -->
+        <div class="hidden md:flex items-center gap-3.5 border-l border-gray-800/80 pl-4 flex-shrink-0 text-gray-400">
+            <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">SIGA:</span>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="hover:text-red-500 transition text-sm flex items-center" title="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition text-sm flex items-center" title="Facebook">
+                <i class="fa-brands fa-facebook"></i>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="hover:text-pink-500 transition text-sm flex items-center" title="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 transition text-sm flex items-center" title="X (Twitter)">
+                <i class="fa-brands fa-twitter"></i>
+            </a>
+            <a href="https://reddit.com" target="_blank" rel="noopener noreferrer" class="hover:text-orange-500 transition text-sm flex items-center" title="Reddit">
+                <i class="fa-brands fa-reddit-alien"></i>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+        
+        <!-- SEÇÃO HERO EM BENTO GRID (preenchida dinamicamente com os posts do CMS) -->
+        <section id="hero-section" class="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Card Principal (matéria mais recente) -->
+            <div id="hero-card-container" class="lg:col-span-2 relative rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 shadow-2xl h-[420px] lg:h-[480px] group">
+                <img id="hero-image" src="" alt="" referrerpolicy="no-referrer" class="hidden w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent flex flex-col justify-end p-6 sm:p-8">
+
+                    <div class="flex items-center gap-3 mb-2">
+                        <span id="hero-category" class="bg-cyan-400 text-black text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider">Carregando</span>
+                        <span class="text-xs text-gray-300 font-medium"><i class="fa-regular fa-clock text-cyan-400"></i> <span id="hero-readtime">-- min de leitura</span></span>
+                    </div>
+
+                    <h1 id="hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight group-hover:text-cyan-300 transition animate-pulse">
+                        Carregando matérias…
+                    </h1>
+
+                    <p id="hero-summary" class="text-xs sm:text-sm text-gray-300 mt-2 line-clamp-2"></p>
+
+                    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 pt-3 border-t border-gray-800/80 text-xs text-gray-300">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full border border-cyan-400 bg-gray-900 flex items-center justify-center"><i class="fa-solid fa-user text-[10px] text-cyan-400"></i></span>
+                            <span id="hero-author" class="font-bold text-gray-100"></span>
+                        </div>
+                        <span><i class="fa-regular fa-calendar text-cyan-400 mr-1"></i> <span id="hero-date"></span></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 2 Cards Secundários (preenchidos via JS) -->
+            <div id="hero-side" class="flex flex-col gap-6"></div>
+
+        </section>
+
+        <!-- LAYOUT PRINCIPAL (2 Colunas de Conteúdo + Sidebar Direita) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- COLUNA PRINCIPAL -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                    <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
+                        <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> Principais Matérias
+                    </h2>
+                </div>
+
+                <div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+            </div>
+
+            <!-- SIDEBAR DIREITA COMPLETA -->
+            <aside class="space-y-8">
+                
+                <!-- WIDGET 1: ÚLTIMOS POSTS -->
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-cyan-400 flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
+                        <i class="fa-solid fa-clock-rotate-left text-base"></i> Últimos Posts
+                    </h3>
+                    
+                    <div id="sidebar-recent-posts" class="space-y-3.5"></div>
+                </div>
+
+                <!-- WIDGET 2: ÚLTIMOS COMENTÁRIOS DA COMUNIDADE -->
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-purple-400 flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
+                        <i class="fa-regular fa-comments text-base"></i> Últimos Comentários
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800/80 text-xs space-y-1">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80" class="w-5 h-5 rounded-full">
+                                    <span class="font-bold text-gray-200">Gabriel_Gamer</span>
+                                </div>
+                                <span class="text-[10px] text-gray-500">Há 15 min</span>
+                            </div>
+                            <p class="text-gray-400 line-clamp-2 italic">"A diferença de frames no teste da 5080 impressiona demais!"</p>
+                            <a href="#" class="text-[10px] text-cyan-400 hover:underline block font-semibold">Em: Análise RTX 5080</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WIDGET 3: MAIS LIDOS DA SEMANA -->
+                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-white flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
+                        <i class="fa-solid fa-fire text-orange-500"></i> Mais Lidos da Semana
+                    </h3>
+                    <div class="space-y-3 text-xs">
+                        <a href="#" class="flex items-center gap-3 group">
+                            <span class="text-lg font-black text-gray-700 group-hover:text-cyan-400 transition">01</span>
+                            <span class="font-semibold text-gray-300 group-hover:text-cyan-300 transition line-clamp-2">Guia Completo de Montagem de PC Gamer para 2026</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3 group">
+                            <span class="text-lg font-black text-gray-700 group-hover:text-cyan-400 transition">02</span>
+                            <span class="font-semibold text-gray-300 group-hover:text-cyan-300 transition line-clamp-2">GTA VI: Tudo o que Sabemos Sobre o Lançamento</span>
+                        </a>
+                    </div>
+                </div>
+
+            </aside>
+
+        </div>
+    </main>
+
+    <!-- RODAPÉ & COMUNIDADE (Newsletter + Discord) -->
+    <footer class="bg-gray-950 border-t border-gray-800 text-gray-400 text-xs py-10 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <span class="text-lg font-black text-white uppercase">CONEXÃO<span class="text-cyan-400">GAMER</span></span>
+                <p class="text-gray-400 mt-2">Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold uppercase mb-3">Comunidade</h4>
+                <p class="text-gray-400 mb-3">Junte-se ao nosso Discord e fique por dentro de todas as novidades do universo gamer.</p>
+                <a href="#" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-xl transition">
+                    <i class="fa-brands fa-discord"></i> Entrar no Discord
+                </a>
+            </div>
+            <div>
+                <h4 class="text-white font-bold uppercase mb-3">Navegação</h4>
+                <ul class="space-y-1.5">
+                    <li><a href="#" class="hover:text-cyan-400 transition">Política de Privacidade</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-900 mt-8 pt-6 text-center text-gray-600">
+            &copy; 2026 Conexão Gamer (conexaogamer.com.br). Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <!-- MODAL DE AUTENTICAÇÃO (LOGIN / SUPABASE) -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-gray-900 border border-gray-700 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-xl font-black text-white text-center mb-2">Acesse o Conexão Gamer</h3>
+            <p class="text-xs text-gray-400 text-center mb-6">Faça login para participar das discussões e comentar nos artigos.</p>
+            
+            <button onclick="loginGoogle()" class="w-full bg-white hover:bg-gray-100 text-black font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition mb-4">
+                <i class="fa-brands fa-google text-base"></i> Entrar com a Conta Google
+            </button>
+
+            <div class="text-center text-[10px] text-gray-500 uppercase tracking-widest my-4">ou com e-mail</div>
+
+            <form onsubmit="handleEmailAuth(event)" class="space-y-3">
+                <input type="email" placeholder="Seu e-mail..." required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                <input type="password" placeholder="Sua senha..." required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
+                <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs py-3 rounded-xl transition">Entrar / Cadastrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE INTERAÇÕES E LÓGICA DE LOGIN -->
+<!-- SCRIPT DE CONEXÃO DIRETA COM O SUPABASE -->
+<script>
+    // Cole aqui suas chaves obtidas no painel do Supabase (Project Settings > API Keys)
+    const SUPABASE_URL = 'https://emgcyonjopyitvaosgfi.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'sb_publishable_dkrs4imRqGkht2vpB4zUDA_ggIGgjUf';
+
+    // Inicialização do cliente Supabase
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Controle do Modal de Auth
+    function toggleAuthModal() {
+        document.getElementById('authModal').classList.toggle('hidden');
+    }
+
+    // Login Social com a Conta Google (Via Supabase Auth)
+    async function loginGoogle() {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin
+            }
+        });
+        if (error) alert('Erro ao autenticar com o Google: ' + error.message);
+    }
+
+    // Login / Cadastro com E-mail e Senha
+    async function handleEmailAuth(e) {
+        e.preventDefault();
+        const inputs = e.target.querySelectorAll('input');
+        const email = inputs[0].value;
+        const password = inputs[1].value;
+
+        // Tenta fazer login primeiro
+        const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (loginError) {
+            // Se falhar o login, tenta criar a conta (Sign Up)
+            const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+                email,
+                password
+            });
+
+            if (signUpError) {
+                alert('Erro na autenticação: ' + signUpError.message);
+            } else {
+                alert('Conta criada com sucesso! Verifique seu e-mail para confirmar.');
+                toggleAuthModal();
+            }
+        } else {
+            alert('Login efetuado com sucesso!');
+            toggleAuthModal();
+            checkUserSession();
+        }
+    }
+
+    // Verificar Usuário Logado e Atualizar Interface
+    async function checkUserSession() {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        const statusText = document.getElementById('userStatusText');
+
+        if (session && session.user) {
+            // Usuário logado: exibe e-mail ou nome
+            statusText.innerText = session.user.email.split('@')[0];
+        } else {
+            statusText.innerText = 'Entrar / Cadastrar';
+        }
+    }
+
+    // Executa verificação ao carregar a página
+    document.addEventListener('DOMContentLoaded', checkUserSession);
+</script>
+    <!-- LEITOR DE MATÉRIA (abre ao clicar em um card; URL compartilhável: /#post/nome-do-arquivo) -->
+    <div id="article-overlay" class="fixed inset-0 z-[60] hidden overflow-y-auto bg-[#0b0f19]" role="dialog" aria-modal="true" aria-label="Matéria">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 py-6">
+            <button id="article-close" type="button" class="inline-flex items-center gap-2 text-xs font-bold text-gray-300 hover:text-cyan-400 bg-gray-900 border border-gray-800 rounded-xl px-4 py-2 transition">
+                <i class="fa-solid fa-arrow-left"></i> Voltar
+            </button>
+            <article id="article-content" class="mt-6 pb-16"></article>
+        </div>
+    </div>
+
+    <style>
+        .article-body { color: #d1d5db; line-height: 1.8; font-size: 1rem; }
+        .article-body h2 { color: #fff; font-size: 1.5rem; font-weight: 800; margin: 2.25rem 0 .75rem; line-height: 1.3; }
+        .article-body h3 { color: #fff; font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 .5rem; }
+        .article-body p { margin: 1rem 0; }
+        .article-body a { color: #22d3ee; text-decoration: underline; }
+        .article-body strong { color: #fff; }
+        .article-body ul { list-style: disc; padding-left: 1.5rem; margin: 1rem 0; }
+        .article-body ol { list-style: decimal; padding-left: 1.5rem; margin: 1rem 0; }
+        .article-body li { margin: .35rem 0; }
+        .article-body blockquote { border-left: 4px solid #22d3ee; background: #111827; padding: .75rem 1rem; margin: 1.25rem 0; border-radius: 0 .5rem .5rem 0; color: #e5e7eb; }
+        .article-body code { background: #1f2937; color: #67e8f9; padding: .1rem .4rem; border-radius: .3rem; font-size: .9em; }
+        .article-body img { max-width: 100%; border-radius: .75rem; margin: 1rem 0; }
+        .article-body hr { border-color: #1f2937; margin: 2rem 0; }
+        .article-body table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+        .article-body th, .article-body td { border: 1px solid #1f2937; padding: .5rem .75rem; text-align: left; }
+        .article-body th { background: #111827; color: #fff; }
+    </style>
+
+    <!-- Bibliotecas do leitor (versões fixas): Markdown -> HTML e sanitização -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+
+    <!-- Parser YAML para processar o Frontmatter do Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+
+    <!-- ============================================================
+         LEITURA DOS POSTS DO CMS
+         Script independente: NÃO depende do Supabase nem de nada de login.
+         IDs usados no DOM: hero-card-container, hero-title, hero-summary,
+         hero-image, hero-category, hero-author, hero-side, posts-container,
+         sidebar-recent-posts
+         ============================================================ -->
+    <script>
+    (function () {
+      'use strict';
+
+      const REPO = 'AliasSet/Portal-ConexaoGamer';
+      const BRANCH = 'main';
+      const POSTS_PATH = 'content/posts';
+      const MAX_POSTS = 30;            // quantos posts mais recentes carregar
+      const CACHE_KEY = 'cg_posts_v2';
+      const CACHE_TTL = 60 * 1000;     // 1 min (evita estourar o limite da API do GitHub)
+
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+      let POSTS = [];
+      let postsReady;
+      const postsReadyPromise = new Promise((resolve) => { postsReady = resolve; });
+
+      /* ---------- Parsing ---------- */
+
+      function fileDate(name) {
+        const m = name.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        return m ? new Date(+m[1], +m[2] - 1, +m[3], 12).getTime() : 0;
+      }
+
+      function toList(v) {
+        if (Array.isArray(v)) return v.map(String).filter(Boolean);
+        if (v == null || v === '') return [];
+        return [String(v)];
+      }
+
+      function parsePost(fileName, text) {
+        const m = text.replace(/^\uFEFF/, '')
+          .match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n([\s\S]*))?$/);
+        if (!m) return null;
+
+        let meta;
+        try { meta = jsyaml.load(m[1]) || {}; }
+        catch (e) { console.warn('Frontmatter inválido em', fileName, e); return null; }
+
+        const body = (m[2] || '').trim();
+        let time = 0;
+        if (meta.date instanceof Date) time = meta.date.getTime();
+        else if (meta.date) time = Date.parse(meta.date) || 0;
+        if (!time) time = fileDate(fileName);
+
+        const rating = Number(meta.rating);
+        const words = body.split(/\s+/).filter(Boolean).length;
+
+        return {
+          slug: fileName.replace(/\.md$/i, ''),
+          title: String(meta.title || 'Sem título').replace(/\s+/g, ' ').trim(),
+          summary: String(meta.summary || '').replace(/\s+/g, ' ').trim(),
+          image: meta.image ? String(meta.image) : '',
+          categories: toList(meta.category),
+          tags: toList(meta.tags),
+          rating: meta.rating != null && meta.rating !== '' && isFinite(rating) ? rating : null,
+          author: meta.author ? String(meta.author) : 'Redação Conexão Gamer',
+          time: time,
+          readMin: Math.max(1, Math.round(words / 200)),
+          body: body
+        };
+      }
+
+      /* ---------- Carregamento (GitHub API + cache) ---------- */
+
+      function readCache() {
+        try {
+          const c = JSON.parse(sessionStorage.getItem(CACHE_KEY) || 'null');
+          if (c && Date.now() - c.t < CACHE_TTL && Array.isArray(c.posts)) return c.posts;
+        } catch (e) {}
+        return null;
+      }
+      function writeCache(posts) {
+        try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), posts: posts })); } catch (e) {}
+      }
+
+      async function loadPosts() {
+        const cached = readCache();
+        if (cached) return cached;
+
+        const url = 'https://api.github.com/repos/' + REPO + '/contents/' + POSTS_PATH + '?ref=' + BRANCH;
+        const res = await fetch(url);
+        if (!res.ok) {
+          const err = new Error('A API do GitHub respondeu ' + res.status);
+          err.status = res.status;
+          throw err;
+        }
+
+        const files = (await res.json())
+          .filter((f) => f.type === 'file' && /\.md$/i.test(f.name))
+          .sort((a, b) => b.name.localeCompare(a.name))
+          .slice(0, MAX_POSTS);
+
+        const posts = (await Promise.all(files.map(async (f) => {
+          try {
+            const r = await fetch(f.download_url);
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return parsePost(f.name, await r.text());
+          } catch (e) {
+            console.warn('Não foi possível ler', f.name, e);
+            return null;
+          }
+        }))).filter(Boolean);
+
+        posts.sort((a, b) => (b.time - a.time) || b.slug.localeCompare(a.slug));
+        writeCache(posts);
+        return posts;
+      }
+
+      /* ---------- Helpers de renderização ---------- */
+
+      const CAT_STYLES = {
+        'PC Games':    'bg-cyan-900/80 text-cyan-300 border-cyan-500/40',
+        'PlayStation': 'bg-indigo-900/80 text-indigo-300 border-indigo-500/40',
+        'Xbox':        'bg-green-900/80 text-green-300 border-green-500/40',
+        'Nintendo':    'bg-red-900/80 text-red-300 border-red-500/40',
+        'Reviews':     'bg-amber-900/80 text-amber-300 border-amber-500/40',
+        'Hardware':    'bg-purple-900/80 text-purple-300 border-purple-500/40'
+      };
+      const catStyle = (c) => CAT_STYLES[c] || 'bg-gray-800/90 text-gray-300 border-gray-600/40';
+      const mainCat = (p) => p.categories[0] || 'Notícias';
+      const href = (p) => '#post/' + encodeURIComponent(p.slug);
+      const fmtDate = (t) => t ? new Date(t).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
+      const fmtDateShort = (t) => t ? new Date(t).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
+      const okUrl = (u) => /^(https?:)?\/\//i.test(u) || (u && u.charAt(0) === '/');
+
+      function img(url, cls) {
+        if (!url || !okUrl(url)) return '';
+        return '<img src="' + esc(url) + '" alt="" loading="lazy" referrerpolicy="no-referrer" class="' + cls +
+               '" onerror="this.style.display=\'none\'">';
+      }
+
+      /* ---------- Renderização da home ---------- */
+
+      function renderHero(p) {
+        const card = $('hero-card-container');
+        const title = $('hero-title');
+        title.classList.remove('animate-pulse');
+        title.textContent = p.title;
+        $('hero-summary').textContent = p.summary;
+        $('hero-category').textContent = mainCat(p);
+        $('hero-readtime').textContent = p.readMin + ' min de leitura';
+        $('hero-author').textContent = p.author;
+        $('hero-date').textContent = fmtDate(p.time);
+
+        const im = $('hero-image');
+        if (p.image && okUrl(p.image)) {
+          im.onerror = function () { im.classList.add('hidden'); };
+          im.src = p.image;
+          im.classList.remove('hidden');
+        }
+        card.classList.add('cursor-pointer');
+        card.onclick = function () { location.hash = href(p); };
+      }
+
+      function renderSide(list) {
+        const box = $('hero-side');
+        const card = $('hero-card-container');
+        if (!list.length) {
+          box.classList.add('hidden');
+          card.classList.replace('lg:col-span-2', 'lg:col-span-3');
+          return;
+        }
+        box.innerHTML = list.map((p) =>
+          '<a href="' + href(p) + '" class="relative rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 h-[228px] group block">' +
+            img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500') +
+            '<div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent p-5 flex flex-col justify-end">' +
+              '<span class="text-[10px] border px-2 py-0.5 rounded font-bold uppercase w-max mb-1 ' + catStyle(mainCat(p)) + '">' + esc(mainCat(p)) + '</span>' +
+              '<h3 class="text-sm font-bold text-white group-hover:text-cyan-300 transition line-clamp-2">' + esc(p.title) + '</h3>' +
+            '</div>' +
+          '</a>').join('');
+      }
+
+      function renderGrid(list) {
+        const box = $('posts-container');
+        if (!list.length) {
+          box.innerHTML = '<p class="sm:col-span-2 text-sm text-gray-500 py-6">Mais matérias em breve.</p>';
+          return;
+        }
+        box.innerHTML = list.map((p) =>
+          '<a href="' + href(p) + '" class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group">' +
+            '<div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">' +
+              img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500') +
+              '<span class="absolute top-3 left-3 border text-[10px] font-bold px-2.5 py-0.5 rounded uppercase ' + catStyle(mainCat(p)) + '">' + esc(mainCat(p)) + '</span>' +
+              (p.rating != null ? '<span class="absolute top-3 right-3 bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ' + esc(p.rating) + '</span>' : '') +
+            '</div>' +
+            '<div class="p-5 flex flex-col flex-grow">' +
+              '<div class="flex items-center text-[11px] text-gray-400 gap-3 mb-2">' +
+                '<span class="truncate"><i class="fa-regular fa-folder text-cyan-400"></i> ' + esc(p.categories.join(' / ') || 'Notícias') + '</span>' +
+                '<span class="flex-shrink-0"><i class="fa-regular fa-clock text-cyan-400"></i> ' + p.readMin + ' min</span>' +
+              '</div>' +
+              '<h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-2 mb-2">' + esc(p.title) + '</h3>' +
+              '<p class="text-xs text-gray-400 line-clamp-3 mb-4 leading-relaxed">' + esc(p.summary) + '</p>' +
+              '<div class="mt-auto pt-3 border-t border-gray-800 flex items-center justify-between text-[11px] text-gray-400">' +
+                '<span class="text-gray-300">' + esc(p.author) + '</span>' +
+                '<span>' + esc(fmtDateShort(p.time)) + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</a>').join('');
+      }
+
+      function renderSidebar(list) {
+        const box = $('sidebar-recent-posts');
+        box.innerHTML = list.map((p) =>
+          '<a href="' + href(p) + '" class="flex gap-3 group items-center">' +
+            '<span class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800 block">' +
+              img(p.image, 'w-14 h-14 object-cover group-hover:scale-105 transition') +
+            '</span>' +
+            '<div class="flex flex-col min-w-0">' +
+              '<span class="text-[10px] text-cyan-400 font-semibold uppercase">' + esc(fmtDateShort(p.time)) + '</span>' +
+              '<h4 class="text-xs font-bold text-gray-200 group-hover:text-cyan-300 transition line-clamp-2">' + esc(p.title) + '</h4>' +
+            '</div>' +
+          '</a>').join('');
+      }
+
+      function renderMessage(title, summary) {
+        const t = $('hero-title');
+        t.classList.remove('animate-pulse');
+        t.textContent = title;
+        $('hero-summary').textContent = summary;
+        $('hero-category').textContent = 'Aviso';
+        $('hero-readtime').textContent = '';
+        $('hero-author').textContent = 'Conexão Gamer';
+        $('hero-date').textContent = '';
+        renderSide([]);
+        $('posts-container').innerHTML = '';
+        $('sidebar-recent-posts').innerHTML = '<p class="text-xs text-gray-500">Sem matérias no momento.</p>';
+      }
+
+      function render(posts) {
+        if (!posts.length) {
+          renderMessage('Nenhuma matéria publicada ainda', 'Assim que o primeiro post for publicado no painel, ele aparece aqui.');
+          return;
+        }
+        renderHero(posts[0]);
+        renderSide(posts.slice(1, 3));
+        renderGrid(posts.slice(3));
+        renderSidebar(posts.slice(0, 5));
+      }
+
+      /* ---------- Leitor de matéria ---------- */
+
+      let cameFromList = false;
+      let firstRoute = true;
+      let baseTitle = document.title;
+
+      function articleHtml(p) {
+        const html = (window.marked && window.DOMPurify)
+          ? DOMPurify.sanitize(marked.parse(p.body))
+          : '<pre style="white-space:pre-wrap">' + esc(p.body) + '</pre>';
+        const cats = p.categories.map((c) =>
+          '<span class="text-[10px] border px-2 py-0.5 rounded font-bold uppercase ' + catStyle(c) + '">' + esc(c) + '</span>').join(' ');
+        const tags = p.tags.map((t) =>
+          '<span class="text-[11px] text-gray-400 bg-gray-900 border border-gray-800 rounded-full px-3 py-1"># ' + esc(t) + '</span>').join(' ');
+        return (
+          '<div class="flex flex-wrap items-center gap-2 mb-3">' + cats +
+            (p.rating != null ? '<span class="bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ' + esc(p.rating) + '</span>' : '') +
+          '</div>' +
+          '<h1 class="text-3xl sm:text-4xl font-black text-white leading-tight">' + esc(p.title) + '</h1>' +
+          (p.summary ? '<p class="text-gray-400 mt-3">' + esc(p.summary) + '</p>' : '') +
+          '<div class="flex flex-wrap items-center gap-x-5 gap-y-1 mt-4 pb-4 border-b border-gray-800 text-xs text-gray-400">' +
+            '<span><i class="fa-solid fa-user text-cyan-400 mr-1"></i> ' + esc(p.author) + '</span>' +
+            '<span><i class="fa-regular fa-calendar text-cyan-400 mr-1"></i> ' + esc(fmtDate(p.time)) + '</span>' +
+            '<span><i class="fa-regular fa-clock text-cyan-400 mr-1"></i> ' + p.readMin + ' min de leitura</span>' +
+          '</div>' +
+          (p.image && okUrl(p.image) ? '<img src="' + esc(p.image) + '" alt="" referrerpolicy="no-referrer" class="w-full max-h-[420px] object-cover rounded-2xl border border-gray-800 mt-6" onerror="this.style.display=\'none\'">' : '') +
+          '<div class="article-body mt-6">' + html + '</div>' +
+          (tags ? '<div class="flex flex-wrap gap-2 mt-8">' + tags + '</div>' : '')
+        );
+      }
+
+      function showArticle(slug) {
+        const ov = $('article-overlay');
+        const box = $('article-content');
+        const p = POSTS.find((x) => x.slug === slug);
+        if (!p) {
+          box.innerHTML = '<h1 class="text-2xl font-black text-white">Matéria não encontrada</h1>' +
+                          '<p class="text-gray-400 mt-2">Ela pode ter sido removida ou ainda não foi publicada.</p>';
+        } else {
+          box.innerHTML = articleHtml(p);
+          box.querySelectorAll('.article-body a').forEach((a) => { a.target = '_blank'; a.rel = 'noopener noreferrer'; });
+          document.title = p.title + ' | Conexão Gamer';
+        }
+        ov.classList.remove('hidden');
+        ov.scrollTop = 0;
+        document.body.style.overflow = 'hidden';
+      }
+
+      function hideArticle() {
+        $('article-overlay').classList.add('hidden');
+        document.body.style.overflow = '';
+        document.title = baseTitle;
+      }
+
+      function closeArticle() {
+        if (cameFromList) { history.back(); }
+        else {
+          history.replaceState(null, '', location.pathname + location.search);
+          hideArticle();
+        }
+      }
+
+      async function route() {
+        await postsReadyPromise;
+        const h = location.hash;
+        if (h.indexOf('#post/') === 0) {
+          const wasHidden = $('article-overlay').classList.contains('hidden');
+          if (wasHidden && !firstRoute) cameFromList = true;
+          let slug = h.slice(6);
+          try { slug = decodeURIComponent(slug); } catch (e) {}
+          showArticle(slug);
+        } else {
+          cameFromList = false;
+          hideArticle();
+        }
+        firstRoute = false;
+      }
+
+      /* ---------- Inicialização ---------- */
+
+      async function init() {
+        $('article-close').addEventListener('click', closeArticle);
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !$('article-overlay').classList.contains('hidden')) closeArticle();
+        });
+        window.addEventListener('hashchange', route);
+
+        try {
+          POSTS = await loadPosts();
+          render(POSTS);
+        } catch (err) {
+          console.error('[Conexão Gamer] Falha ao carregar os posts:', err);
+          if (err.status === 404 || err.status === 401) {
+            console.error('Dica: o repositório precisa estar PÚBLICO para a API do GitHub responder sem token.');
+          } else if (err.status === 403) {
+            console.error('Dica: limite de requisições da API do GitHub atingido (60/h por IP). Tente mais tarde.');
+          }
+          renderMessage('Não foi possível carregar as matérias', 'Tente recarregar a página em alguns instantes.');
+        }
+        postsReady();
+        route();
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+    })();
+    </script>
+</body>
+</html>
