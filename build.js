@@ -32,16 +32,19 @@ const SITE_URL = (process.env.SITE_URL || 'https://conexaogamer-seven.vercel.app
 const CATEGORY_ALIASES = { 'PC Games': 'PC' };
 
 const CATEGORIES = [
-  { slug: 'pc', name: 'PC', match: ['PC'], desc: 'Lançamentos, guias, códigos e novidades dos jogos de PC.' },
-  { slug: 'consoles', name: 'Consoles', match: ['PlayStation', 'Xbox', 'Nintendo'], desc: 'Tudo sobre PlayStation, Xbox e Nintendo.' },
-  { slug: 'playstation', name: 'PlayStation', match: ['PlayStation'], desc: 'Notícias e lançamentos do universo PlayStation.' },
-  { slug: 'xbox', name: 'Xbox', match: ['Xbox'], desc: 'Notícias e lançamentos do universo Xbox.' },
-  { slug: 'nintendo', name: 'Nintendo', match: ['Nintendo'], desc: 'Notícias e lançamentos do universo Nintendo.' },
-  { slug: 'hardware', name: 'Hardware', match: ['Hardware'], desc: 'Placas de vídeo, processadores, periféricos e tecnologia para games.' },
-  { slug: 'reviews', name: 'Reviews', match: ['Reviews'], desc: 'Análises e notas dos jogos e produtos que testamos.' }
+  { slug: 'noticias', name: 'Notícias', tag: 'Notícias', match: ['Notícias'], desc: 'As últimas notícias do mundo dos games e da tecnologia.' },
+  { slug: 'pc', name: 'PC', tag: 'PC', match: ['PC'], desc: 'Lançamentos, guias, códigos e novidades dos jogos de PC.' },
+  // "Consoles" reúne a tag Consoles + as tags de cada console
+  { slug: 'consoles', name: 'Consoles', tag: 'Consoles', match: ['Consoles', 'PlayStation', 'Xbox', 'Nintendo'], desc: 'Tudo sobre PlayStation, Xbox e Nintendo.' },
+  { slug: 'playstation', name: 'PlayStation', tag: 'PlayStation', match: ['PlayStation'], desc: 'Notícias e lançamentos do universo PlayStation.' },
+  { slug: 'xbox', name: 'Xbox', tag: 'Xbox', match: ['Xbox'], desc: 'Notícias e lançamentos do universo Xbox.' },
+  { slug: 'nintendo', name: 'Nintendo', tag: 'Nintendo', match: ['Nintendo'], desc: 'Notícias e lançamentos do universo Nintendo.' },
+  { slug: 'steam', name: 'Steam', tag: 'Steam', match: ['Steam'], desc: 'Novidades, promoções e lançamentos da Steam.' },
+  { slug: 'hardware', name: 'Hardware', tag: 'Hardware', match: ['Hardware'], desc: 'Placas de vídeo, processadores, periféricos e tecnologia para games.' },
+  { slug: 'reviews', name: 'Reviews', tag: 'Reviews', match: ['Reviews'], desc: 'Análises e notas dos jogos e produtos que testamos.' }
 ];
 const catSlug = (name) => {
-  const c = CATEGORIES.find((x) => x.match.length === 1 && x.match[0] === name);
+  const c = CATEGORIES.find((x) => x.tag === name);
   return c ? c.slug : null;
 };
 
@@ -112,6 +115,7 @@ function parsePost(fileName, text, mdParse) {
     title: String(meta.title || 'Sem título').replace(/\s+/g, ' ').trim(),
     summary: String(meta.summary || '').replace(/\s+/g, ' ').trim(),
     image: meta.image ? String(meta.image) : '',
+    imageCaption: meta.image_caption ? String(meta.image_caption).replace(/\s+/g, ' ').trim() : '',
     categories: toList(meta.category).map((c) => CATEGORY_ALIASES[c] || c),
     tags: toList(meta.tags),
     rating: meta.rating != null && meta.rating !== '' && isFinite(rating) ? rating : null,
@@ -158,13 +162,40 @@ function catStyle(c) {
     'Xbox': 'bg-green-900/80 text-green-300 border-green-500/40',
     'Nintendo': 'bg-red-900/80 text-red-300 border-red-500/40',
     'Reviews': 'bg-amber-900/80 text-amber-300 border-amber-500/40',
-    'Hardware': 'bg-purple-900/80 text-purple-300 border-purple-500/40'
+    'Hardware': 'bg-purple-900/80 text-purple-300 border-purple-500/40',
+    'Consoles': 'bg-fuchsia-900/80 text-fuchsia-300 border-fuchsia-500/40',
+    'Notícias': 'bg-sky-900/80 text-sky-300 border-sky-500/40',
+    'Steam': 'bg-slate-700/80 text-slate-200 border-slate-400/40'
   })[c] || 'bg-gray-800/90 text-gray-300 border-gray-600/40';
 }
 
+/**
+ * Texto logo abaixo da imagem de capa:
+ *  1) se o post tem o campo "Legenda / crédito da imagem" no CMS, usa ele;
+ *  2) senão, se a PRIMEIRA linha do texto for curta e sem pontuação final
+ *     (ex.: "Imagem: Divulgação/Rockstar Games", "Fonte: Insider Gaming"),
+ *     ela vira legenda pequena embaixo da imagem em vez de uma "linha solta".
+ */
+function splitCaption(p) {
+  let html = p.html;
+  let caption = p.imageCaption ? esc(p.imageCaption) : '';
+  if (!caption && okImg(p.image)) {
+    const m = html.match(/^\s*<p>([\s\S]*?)<\/p>\s*/);
+    if (m) {
+      const text = m[1].replace(/<[^>]+>/g, '').trim();
+      if (text && text.length <= 110 && !/[.!?…:]["')»”]*$/.test(text)) {
+        caption = m[1];
+        html = html.slice(m[0].length);
+      }
+    }
+  }
+  return { html, caption };
+}
+
 function articleHtml(p) {
+  const { html: bodyHtml, caption } = splitCaption(p);
   const cats = p.categories.map((c) => {
-    const cls = `text-[10px] border px-2 py-0.5 rounded font-bold uppercase ${catStyle(c)}`;
+    const cls = `text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase ${catStyle(c)}`;
     const slug = catSlug(c);
     return slug
       ? `<a href="/categoria/${slug}/" class="${cls} hover:brightness-125 transition">${esc(c)}</a>`
@@ -174,10 +205,7 @@ function articleHtml(p) {
     `<span class="text-[11px] text-gray-400 bg-gray-900 border border-gray-800 rounded-full px-3 py-1"># ${esc(t)}</span>`).join(' ');
 
   return `
-                <a href="/" class="inline-flex items-center gap-2 text-xs font-bold text-gray-300 hover:text-cyan-400 bg-gray-900 border border-gray-800 rounded-xl px-4 py-2 transition">
-                    <i class="fa-solid fa-arrow-left"></i> Início
-                </a>
-                <article class="mt-6 pb-8">
+                <article class="pb-8">
                     <div class="flex flex-wrap items-center gap-2 mb-3">${cats}${p.rating != null ? `<span class="bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ${esc(p.rating)}</span>` : ''}</div>
                     <h1 class="text-3xl sm:text-4xl font-black text-white leading-tight">${esc(p.title)}</h1>
                     ${p.summary ? `<p class="text-gray-400 mt-3">${esc(p.summary)}</p>` : ''}
@@ -186,8 +214,8 @@ function articleHtml(p) {
                         <span><i class="fa-regular fa-calendar text-cyan-400 mr-1"></i> <time datetime="${new Date(p.time).toISOString()}">${esc(fmtDateLong(p.time))}</time></span>
                         <span><i class="fa-regular fa-clock text-cyan-400 mr-1"></i> ${p.readMin} min de leitura</span>
                     </div>
-                    ${okImg(p.image) ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" referrerpolicy="no-referrer" class="w-full max-h-[420px] object-cover rounded-2xl border border-gray-800 mt-6" onerror="this.style.display='none'">` : ''}
-                    <div class="article-body mt-6">${p.html}</div>
+                    ${okImg(p.image) ? `<figure class="mt-6"><img src="${esc(p.image)}" alt="${esc(p.title)}" referrerpolicy="no-referrer" class="w-full max-h-[420px] object-cover rounded-2xl border border-gray-800" onerror="this.style.display='none'">${caption ? `<figcaption class="mt-2 text-xs text-gray-500 leading-relaxed">${caption}</figcaption>` : ''}</figure>` : ''}
+                    <div class="article-body mt-6">${bodyHtml}</div>
                     ${tags ? `<div class="flex flex-wrap gap-2 mt-8">${tags}</div>` : ''}
                 </article>
                 `;

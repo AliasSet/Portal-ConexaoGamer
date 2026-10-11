@@ -71,7 +71,17 @@
                 <!-- Navegação Principal -->
                 <nav class="hidden lg:flex items-center gap-2 text-sm font-semibold text-gray-300">
                     <a href="/categoria/pc/" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-desktop text-xs mr-1"></i> PC</a>
-                    <a href="/categoria/consoles/" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-gamepad text-xs mr-1"></i> Consoles</a>
+                    <div class="nav-dd relative">
+                        <a href="/categoria/consoles/" class="inline-flex items-center px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-gamepad text-xs mr-1"></i> Consoles <i class="fa-solid fa-chevron-down text-[9px] ml-1.5 opacity-60"></i></a>
+                        <div class="nav-dd-menu">
+                            <div class="min-w-[190px] bg-gray-900 border border-gray-800 rounded-xl shadow-2xl shadow-black/60 p-1.5">
+                                <a href="/categoria/consoles/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-400 hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-solid fa-layer-group w-4 text-center"></i> Todos os consoles</a>
+                                <a href="/categoria/playstation/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-brands fa-playstation w-4 text-center"></i> PlayStation</a>
+                                <a href="/categoria/xbox/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-brands fa-xbox w-4 text-center"></i> Xbox</a>
+                                <a href="/categoria/nintendo/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-brands fa-nintendo-switch w-4 text-center"></i> Nintendo</a>
+                            </div>
+                        </div>
+                    </div>
                     <a href="/categoria/hardware/" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-microchip text-xs mr-1"></i> Hardware</a>
                     <a href="/categoria/reviews/" class="px-3 py-2 rounded-lg hover:text-cyan-400 hover:bg-gray-800/50 transition"><i class="fa-solid fa-star text-xs mr-1"></i> Reviews</a>
                 </nav>
@@ -101,6 +111,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-2 overflow-x-auto whitespace-nowrap py-2 text-xs font-semibold text-gray-300">
             <a href="/categoria/pc/" class="px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 hover:text-cyan-400 transition"><i class="fa-solid fa-desktop text-[10px] mr-1"></i> PC</a>
             <a href="/categoria/consoles/" class="px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 hover:text-cyan-400 transition"><i class="fa-solid fa-gamepad text-[10px] mr-1"></i> Consoles</a>
+            <a href="/categoria/playstation/" class="px-3 py-1.5 rounded-lg bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-cyan-400 transition"><i class="fa-brands fa-playstation text-[10px] mr-1"></i> PlayStation</a>
+            <a href="/categoria/xbox/" class="px-3 py-1.5 rounded-lg bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-cyan-400 transition"><i class="fa-brands fa-xbox text-[10px] mr-1"></i> Xbox</a>
+            <a href="/categoria/nintendo/" class="px-3 py-1.5 rounded-lg bg-gray-900/60 border border-gray-800 text-gray-400 hover:text-cyan-400 transition"><i class="fa-brands fa-nintendo-switch text-[10px] mr-1"></i> Nintendo</a>
             <a href="/categoria/hardware/" class="px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 hover:text-cyan-400 transition"><i class="fa-solid fa-microchip text-[10px] mr-1"></i> Hardware</a>
             <a href="/categoria/reviews/" class="px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-800 hover:text-cyan-400 transition"><i class="fa-solid fa-star text-[10px] mr-1"></i> Reviews</a>
         </div>
@@ -163,7 +176,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent flex flex-col justify-end p-6 sm:p-8">
 
                     <div class="flex items-center gap-3 mb-2">
-                        <span id="hero-category" class="bg-cyan-400 text-black text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider">Carregando</span>
+                        <span id="hero-category" class="text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase bg-gray-800/90 text-gray-300 border-gray-600/40">Carregando</span>
                     </div>
 
                     <h1 id="hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight group-hover:text-cyan-300 transition animate-pulse">
@@ -258,7 +271,7 @@
     <footer class="bg-gray-950 border-t border-gray-800 text-gray-400 text-xs py-10 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-                <span class="text-lg font-black text-white uppercase">CONEXÃO<span class="text-cyan-400">GAMER</span></span>
+                <span class="text-2xl font-black tracking-wider uppercase text-white leading-none">CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span></span>
                 <p class="text-gray-400 mt-2">Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.</p>
             </div>
             <div>
@@ -377,6 +390,13 @@
     document.addEventListener('DOMContentLoaded', checkUserSession);
 </script>
     <style>
+        /* Submenu do cabeçalho (abre ao passar o mouse ou ao navegar por teclado) */
+        .nav-dd { position: relative; }
+        .nav-dd-menu { display: none; position: absolute; top: 100%; left: 0; padding-top: .5rem; z-index: 50; }
+        .nav-dd:hover .nav-dd-menu, .nav-dd:focus-within .nav-dd-menu { display: block; }
+        .nav-dd:hover > a i.fa-chevron-down { transform: rotate(180deg); }
+        .nav-dd > a i.fa-chevron-down { transition: transform .2s; }
+
         .article-body { color: #d1d5db; line-height: 1.8; font-size: 1rem; }
         .article-body h2 { color: #fff; font-size: 1.5rem; font-weight: 800; margin: 2.25rem 0 .75rem; line-height: 1.3; }
         .article-body h3 { color: #fff; font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 .5rem; }
@@ -448,7 +468,10 @@
         'Xbox':        'bg-green-900/80 text-green-300 border-green-500/40',
         'Nintendo':    'bg-red-900/80 text-red-300 border-red-500/40',
         'Reviews':     'bg-amber-900/80 text-amber-300 border-amber-500/40',
-        'Hardware':    'bg-purple-900/80 text-purple-300 border-purple-500/40'
+        'Hardware':    'bg-purple-900/80 text-purple-300 border-purple-500/40',
+        'Consoles':    'bg-fuchsia-900/80 text-fuchsia-300 border-fuchsia-500/40',
+        'Notícias':    'bg-sky-900/80 text-sky-300 border-sky-500/40',
+        'Steam':       'bg-slate-700/80 text-slate-200 border-slate-400/40'
       };
       const catStyle = (c) => CAT_STYLES[c] || 'bg-gray-800/90 text-gray-300 border-gray-600/40';
       const mainCat = (p) => (p.categories && p.categories[0]) || 'Notícias';
@@ -471,7 +494,9 @@
         title.classList.remove('animate-pulse');
         title.textContent = p.title;
         $('hero-summary').textContent = p.summary;
-        $('hero-category').textContent = mainCat(p);
+        const heroCat = $('hero-category');
+        heroCat.className = 'text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase ' + catStyle(mainCat(p));
+        heroCat.textContent = mainCat(p);
         $('hero-readtime').textContent = p.readMin + ' min de leitura';
         $('hero-author').textContent = p.author;
         $('hero-date').textContent = fmtDate(p.time);
@@ -498,7 +523,7 @@
           '<a href="' + href(p) + '" class="relative rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 h-[228px] group block">' +
             img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500') +
             '<div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent p-5 flex flex-col justify-end">' +
-              '<span class="text-[10px] border px-2 py-0.5 rounded font-bold uppercase w-max mb-1 ' + catStyle(mainCat(p)) + '">' + esc(mainCat(p)) + '</span>' +
+              '<span class="text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase w-max mb-1 ' + catStyle(mainCat(p)) + '">' + esc(mainCat(p)) + '</span>' +
               '<h3 class="text-sm font-bold text-white group-hover:text-cyan-300 transition line-clamp-2">' + esc(p.title) + '</h3>' +
             '</div>' +
           '</a>').join('');
