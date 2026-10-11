@@ -473,53 +473,130 @@
     // Executa verificação ao carregar a página
     document.addEventListener('DOMContentLoaded', checkUserSession);
 </script>
-    <!-- Parser YAML para processar o Frontmatter do Markdown -->
+<!-- Parser YAML -->
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 
 <script>
-  async function carregarPostsCMS() {
-    try {
-      // 1. Consulta a API do GitHub para obter os ficheiros da pasta de posts
-      const res = await fetch('https://api.github.com/repos/AliasSet/Portal-ConexaoGamer/contents/content/posts');
-      if (!res.ok) return;
+    const GITHUB_USER = "AliasSet";
+    const GITHUB_REPO = "Portal-ConexaoGamer";
 
-      const files = await res.json();
-      const mdFiles = files.filter(f => f.name.endsWith('.md'));
-      if (mdFiles.length === 0) return;
+    async function carregarPortalCompleto() {
+        try {
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/content/posts`);
+            if (!res.ok) return;
 
-      // 2. Transfere o ficheiro .md mais recente
-      const postRes = await fetch(mdFiles[mdFiles.length - 1].download_url);
-      const text = await postRes.text();
+            const files = await res.json();
+            const mdFiles = files.filter(f => f.name.endsWith('.md'));
+            if (mdFiles.length === 0) return;
 
-      // 3. Extrai o bloco YAML do topo do ficheiro
-      const parts = text.split('---');
-      if (parts.length >= 3) {
-        const meta = jsyaml.load(parts[1]);
+            const posts = [];
 
-        // 4. Injeta os dados da matéria no Destaque Principal (Hero)
-        if (meta.title) {
-          const titleEl = document.querySelector('h1');
-          if (titleEl) titleEl.innerText = meta.title;
+            for (const file of mdFiles) {
+                const rawUrl = `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@main/content/posts/${file.name}`;
+                const postRes = await fetch(rawUrl);
+                if (postRes.ok) {
+                    const text = await postRes.text();
+                    const parts = text.split('---');
+                    if (parts.length >= 3) {
+                        const meta = jsyaml.load(parts[1]);
+                        const slug = file.name.replace('.md', '');
+                        posts.push({ ...meta, slug, filename: file.name });
+                    }
+                }
+            }
+
+            if (posts.length === 0) return;
+
+            // Ordena os posts dos mais recentes para os mais antigos
+            posts.reverse();
+
+            // --- 1. DESTAQUE PRINCIPAL (HERO) ---
+            const destaque = posts[0];
+            const elTitle = document.getElementById('hero-title');
+            const elSummary = document.getElementById('hero-summary');
+            const elImage = document.getElementById('hero-image');
+            const elCategory = document.getElementById('hero-category');
+            const elAuthor = document.getElementById('hero-author');
+
+            if (elTitle && destaque.title) elTitle.innerText = destaque.title;
+            if (elSummary && destaque.summary) elSummary.innerText = destaque.summary;
+            if (elImage && destaque.image) elImage.src = destaque.image;
+            if (elCategory && destaque.category) elCategory.innerText = destaque.category.toUpperCase();
+            if (elAuthor && destaque.author) elAuthor.innerText = destaque.author;
+
+            // Adiciona link clicável ao destaque principal
+            const heroCard = document.querySelector('section > div.lg\\:col-span-2');
+            if (heroCard) {
+                heroCard.style.cursor = 'pointer';
+                heroCard.onclick = () => {
+                    window.location.href = `/#/post/${destaque.slug}`;
+                };
+            }
+
+            // --- 2. GRADE DE MATÉRIAS PRINCIPAIS (TODOS OS POSTS SEGUINTES) ---
+            const containerGeral = document.getElementById('posts-container');
+            if (containerGeral) {
+                let htmlGeral = '';
+                // Pega a partir do 2º post (ou todos se houver apenas 1)
+                const postsGrade = posts.length > 1 ? posts.slice(1) : posts;
+
+                postsGrade.forEach(post => {
+                    htmlGeral += `
+                        <article onclick="window.location.href='/#/post/${post.slug}'" class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group cursor-pointer">
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="${post.image || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <span class="absolute top-3 left-3 bg-black/80 text-cyan-400 border border-cyan-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded uppercase">
+                                    ${post.category || 'Geral'}
+                                </span>
+                            </div>
+                            <div class="p-5 flex flex-col flex-grow">
+                                <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-2 mb-2">
+                                    ${post.title || 'Sem título'}
+                                </h3>
+                                <p class="text-xs text-gray-400 line-clamp-2 mb-4 leading-relaxed">
+                                    ${post.summary || ''}
+                                </p>
+                                <div class="mt-auto pt-3 border-t border-gray-800 flex items-center justify-between text-xs text-gray-400">
+                                    <span class="text-[11px] text-gray-300">${post.author || 'Equipe Conexão Gamer'}</span>
+                                    <span class="text-[11px]"><i class="fa-regular fa-clock text-cyan-400"></i> Leitura</span>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                });
+
+                if (htmlGeral !== '') containerGeral.innerHTML = htmlGeral;
+            }
+
+            // --- 3. SIDEBAR (ÚLTIMOS POSTS) ---
+            const sidebarContainer = document.getElementById('sidebar-recent-posts');
+            if (sidebarContainer) {
+                let htmlSidebar = '';
+                posts.slice(0, 4).forEach(post => {
+                    htmlSidebar += `
+                        <a href="/#/post/${post.slug}" class="flex gap-3 group items-center">
+                            <img src="${post.image || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=150&q=80'}" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 group-hover:scale-105 transition">
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-cyan-400 font-semibold uppercase">${post.category || 'Notícia'}</span>
+                                <h4 class="text-xs font-bold text-gray-200 group-hover:text-cyan-300 transition line-clamp-2">
+                                    ${post.title}
+                                </h4>
+                            </div>
+                        </a>
+                    `;
+                });
+                sidebarContainer.innerHTML = htmlSidebar;
+            }
+
+        } catch (e) {
+            console.log('Erro ao carregar matérias:', e);
         }
-        if (meta.summary) {
-          const summaryEl = document.querySelector('h1 + p');
-          if (summaryEl) summaryEl.innerText = meta.summary;
-        }
-        if (meta.image) {
-          const imgEl = document.querySelector('section img');
-          if (imgEl) imgEl.src = meta.image;
-        }
-        if (meta.category) {
-          const catEl = document.querySelector('section span.uppercase');
-          if (catEl) catEl.innerText = meta.category;
-        }
-      }
-    } catch (err) {
-      console.log('Nenhum post dinâmico carregado:', err);
     }
-  }
 
-  document.addEventListener('DOMContentLoaded', carregarPostsCMS);
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof checkUserSession === 'function') checkUserSession();
+        carregarPortalCompleto();
+    });
 </script>
 </body>
 </html>
