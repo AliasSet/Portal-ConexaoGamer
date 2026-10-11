@@ -16,7 +16,12 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "Título", name: "title", widget: "string" }
-      - { label: "Categoria", name: "category", widget: "select", options: ["PC Games", "PlayStation", "Xbox", "Nintendo", "Reviews", "Hardware"] }
+      - { label: "Categorias", name: "category", widget: "select", multiple: true, options: ["PC Games", "PlayStation", "Xbox", "Nintendo", "Reviews", "Hardware"] }
+      - label: "Tags Adicionais"
+        name: "tags"
+        widget: "list"
+        required: false
+        hint: "Adicione tags livres (ex: GTA VI, RTX 5080, eSports)"
       - { label: "Imagem de Capa", name: "image", widget: "image" }
       - { label: "Resumo", name: "summary", widget: "text" }
       - { label: "Nota do Review (0-10)", name: "rating", widget: "number", value_type: "float", required: false }
