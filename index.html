@@ -473,5 +473,53 @@
     // Executa verificação ao carregar a página
     document.addEventListener('DOMContentLoaded', checkUserSession);
 </script>
+    <!-- Parser YAML para processar o Frontmatter do Markdown -->
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+
+<script>
+  async function carregarPostsCMS() {
+    try {
+      // 1. Consulta a API do GitHub para obter os ficheiros da pasta de posts
+      const res = await fetch('https://api.github.com/repos/AliasSet/Portal-ConexaoGamer/contents/content/posts');
+      if (!res.ok) return;
+
+      const files = await res.json();
+      const mdFiles = files.filter(f => f.name.endsWith('.md'));
+      if (mdFiles.length === 0) return;
+
+      // 2. Transfere o ficheiro .md mais recente
+      const postRes = await fetch(mdFiles[mdFiles.length - 1].download_url);
+      const text = await postRes.text();
+
+      // 3. Extrai o bloco YAML do topo do ficheiro
+      const parts = text.split('---');
+      if (parts.length >= 3) {
+        const meta = jsyaml.load(parts[1]);
+
+        // 4. Injeta os dados da matéria no Destaque Principal (Hero)
+        if (meta.title) {
+          const titleEl = document.querySelector('h1');
+          if (titleEl) titleEl.innerText = meta.title;
+        }
+        if (meta.summary) {
+          const summaryEl = document.querySelector('h1 + p');
+          if (summaryEl) summaryEl.innerText = meta.summary;
+        }
+        if (meta.image) {
+          const imgEl = document.querySelector('section img');
+          if (imgEl) imgEl.src = meta.image;
+        }
+        if (meta.category) {
+          const catEl = document.querySelector('section span.uppercase');
+          if (catEl) catEl.innerText = meta.category;
+        }
+      }
+    } catch (err) {
+      console.log('Nenhum post dinâmico carregado:', err);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', carregarPostsCMS);
+</script>
 </body>
 </html>
