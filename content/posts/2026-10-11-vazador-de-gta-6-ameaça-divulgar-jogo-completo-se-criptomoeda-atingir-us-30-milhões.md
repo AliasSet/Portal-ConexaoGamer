@@ -15,8 +15,6 @@ summary: O perfil Cyberleek ameaça divulgar uma suposta versão completa de GTA
 author: Redação Conexão Gamer
 date: 11/10/2026T03:17
 ---
-# Vazador de GTA 6 ameaça divulgar jogo completo se criptomoeda atingir US$ 30 milhões
-
 **Perfil Cyberleek afirma ter uma versão completa de Grand Theft Auto VI e condiciona a divulgação à valorização de sua moeda digital. A autenticidade do suposto jogo completo ainda não foi comprovada.**
 
 A novela dos vazamentos de *GTA 6* ganhou mais um capítulo, e dessa vez a situação envolve dinheiro, criptomoedas e uma ameaça que pode colocar a Rockstar Games em uma das maiores crises de vazamento da história dos games.
