@@ -170,22 +170,32 @@ function catStyle(c) {
 }
 
 /**
- * Texto logo abaixo da imagem de capa:
- *  1) se o post tem o campo "Legenda / crédito da imagem" no CMS, usa ele;
- *  2) senão, se a PRIMEIRA linha do texto for curta e sem pontuação final
- *     (ex.: "Imagem: Divulgação/Rockstar Games", "Fonte: Insider Gaming"),
- *     ela vira legenda pequena embaixo da imagem em vez de uma "linha solta".
+ * Primeira linha do texto, logo abaixo da imagem de capa.
+ * Se a primeira linha for CURTA e sem ponto final, ela não é um parágrafo comum:
+ *  - começa com "Imagem:", "Foto:", "Fonte:", "Crédito:"...  -> legenda pequena sob a imagem
+ *  - é igual ao título da matéria                            -> removida (já aparece no topo)
+ *  - qualquer outra (ex.: a manchete da matéria)             -> vira TÍTULO (subtítulo em destaque)
+ * O campo "Legenda / crédito da imagem" do CMS, se preenchido, sempre vira a legenda.
+ * Em matérias novas, começar o texto com "## Título" tem o mesmo efeito.
  */
+const CREDIT_RE = /^(imagem|imagens|foto|fotos|fonte|crédito|créditos|reprodução|divulgação|arte|ilustração|captura)\b/i;
+const norm = (t) => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+
 function splitCaption(p) {
   let html = p.html;
   let caption = p.imageCaption ? esc(p.imageCaption) : '';
-  if (!caption && okImg(p.image)) {
-    const m = html.match(/^\s*<p>([\s\S]*?)<\/p>\s*/);
-    if (m) {
-      const text = m[1].replace(/<[^>]+>/g, '').trim();
-      if (text && text.length <= 110 && !/[.!?…:]["')»”]*$/.test(text)) {
-        caption = m[1];
-        html = html.slice(m[0].length);
+  const m = html.match(/^\s*<p>([\s\S]*?)<\/p>\s*/);
+  if (m) {
+    const text = m[1].replace(/<[^>]+>/g, '').trim();
+    const shortLine = text && text.length <= 160 && !/[.…:]["')»”]*$/.test(text);
+    if (shortLine) {
+      const rest = html.slice(m[0].length);
+      if (CREDIT_RE.test(text)) {
+        if (!caption && okImg(p.image)) { caption = m[1]; html = rest; }
+      } else if (norm(text) === norm(p.title)) {
+        html = rest;
+      } else {
+        html = '<h2>' + m[1] + '</h2>\n' + rest;
       }
     }
   }
