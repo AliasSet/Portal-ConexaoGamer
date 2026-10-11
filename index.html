@@ -164,7 +164,6 @@
 
                     <div class="flex items-center gap-3 mb-2">
                         <span id="hero-category" class="bg-cyan-400 text-black text-xs font-black px-3 py-1 rounded-md uppercase tracking-wider">Carregando</span>
-                        <span class="text-xs text-gray-300 font-medium"><i class="fa-regular fa-clock text-cyan-400"></i> <span id="hero-readtime">-- min de leitura</span></span>
                     </div>
 
                     <h1 id="hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight group-hover:text-cyan-300 transition animate-pulse">
@@ -179,6 +178,7 @@
                             <span id="hero-author" class="font-bold text-gray-100"></span>
                         </div>
                         <span><i class="fa-regular fa-calendar text-cyan-400 mr-1"></i> <span id="hero-date"></span></span>
+                        <span id="hero-readtime-box"><i class="fa-regular fa-clock text-cyan-400 mr-1"></i> <span id="hero-readtime">-- min de leitura</span></span>
                     </div>
 
                 </div>
@@ -552,7 +552,7 @@
           t.textContent = title;
           $('hero-summary').textContent = summary;
           $('hero-category').textContent = 'Aviso';
-          $('hero-readtime').textContent = '';
+          $('hero-readtime-box').classList.add('hidden');
           $('hero-author').textContent = 'Conexão Gamer';
           $('hero-date').textContent = '';
           renderSide([]);
