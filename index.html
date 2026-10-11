@@ -246,16 +246,7 @@
                     <h3 class="font-bold text-sm uppercase tracking-wider text-white flex items-center gap-2 border-b border-gray-800 pb-3 mb-4">
                         <i class="fa-solid fa-fire text-orange-500"></i> Mais Lidos da Semana
                     </h3>
-                    <div class="space-y-3 text-xs">
-                        <a href="#" class="flex items-center gap-3 group">
-                            <span class="text-lg font-black text-gray-700 group-hover:text-cyan-400 transition">01</span>
-                            <span class="font-semibold text-gray-300 group-hover:text-cyan-300 transition line-clamp-2">Guia Completo de Montagem de PC Gamer para 2026</span>
-                        </a>
-                        <a href="#" class="flex items-center gap-3 group">
-                            <span class="text-lg font-black text-gray-700 group-hover:text-cyan-400 transition">02</span>
-                            <span class="font-semibold text-gray-300 group-hover:text-cyan-300 transition line-clamp-2">GTA VI: Tudo o que Sabemos Sobre o Lançamento</span>
-                        </a>
-                    </div>
+                    <div id="sidebar-top-posts" class="space-y-3 text-xs"><p class="text-gray-500">Carregando…</p></div>
                 </div>
 
             </aside>
@@ -421,6 +412,21 @@
       const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+      // Supabase (REST direto, independente da biblioteca de login). A chave "publishable" é pública por design.
+      const SB_URL = 'https://emgcyonjopyitvaosgfi.supabase.co';
+      const SB_KEY = 'sb_publishable_dkrs4imRqGkht2vpB4zUDA_ggIGgjUf';
+
+      async function sbRpc(fn, args) {
+        const res = await fetch(SB_URL + '/rest/v1/rpc/' + fn, {
+          method: 'POST',
+          headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify(args || {})
+        });
+        if (!res.ok) throw new Error('Supabase ' + fn + ' respondeu ' + res.status);
+        const t = await res.text();
+        return t ? JSON.parse(t) : null;
+      }
+
       const IS_POST_PAGE = document.body.getAttribute('data-page') !== 'home';
 
       async function loadPosts() {
@@ -545,6 +551,50 @@
           '</a>').join('');
       }
 
+      /* ---------- Mais lidos + contagem de leituras ---------- */
+
+      // Conta 1 leitura por navegador, por matéria, por dia (só nas páginas de matéria)
+      function countView() {
+        const slug = document.body.getAttribute('data-slug');
+        if (!slug) return;
+        const key = 'cg_viewed_' + slug;
+        const today = new Date().toISOString().slice(0, 10);
+        try { if (localStorage.getItem(key) === today) return; } catch (e) {}
+        sbRpc('increment_view', { p_slug: slug })
+          .then(function () { try { localStorage.setItem(key, today); } catch (e) {} })
+          .catch(function (e) { console.warn('[Conexão Gamer] leitura não registrada:', e.message); });
+      }
+
+      async function renderTop(posts) {
+        const box = $('sidebar-top-posts');
+        if (!box) return;
+        const bySlug = new Map(posts.map((p) => [p.slug, p]));
+        let ranked = [];
+        try {
+          const rows = await sbRpc('top_posts', { p_days: 7, p_limit: 10 });
+          // só entram matérias que existem de verdade no site
+          ranked = (rows || []).map((r) => ({ post: bySlug.get(r.slug), views: Number(r.views) || 0 }))
+                               .filter((x) => x.post).slice(0, 5);
+        } catch (e) {
+          console.warn('[Conexão Gamer] ranking indisponível, usando as mais recentes:', e.message);
+        }
+        // Se ainda há poucas leituras (site novo), completa com as mais recentes
+        const used = new Set(ranked.map((x) => x.post.slug));
+        for (const p of posts) {
+          if (ranked.length >= 5) break;
+          if (!used.has(p.slug)) ranked.push({ post: p, views: 0 });
+        }
+        if (!ranked.length) { box.innerHTML = '<p class="text-gray-500">Sem matérias no momento.</p>'; return; }
+        box.innerHTML = ranked.map((x, i) =>
+          '<a href="' + href(x.post) + '" class="flex items-center gap-3 group">' +
+            '<span class="text-lg font-black text-gray-700 group-hover:text-cyan-400 transition w-7 flex-shrink-0">' + String(i + 1).padStart(2, '0') + '</span>' +
+            '<span class="min-w-0">' +
+              '<span class="block font-semibold text-gray-300 group-hover:text-cyan-300 transition line-clamp-2">' + esc(x.post.title) + '</span>' +
+              (x.views > 0 ? '<span class="block text-[10px] text-gray-500 mt-0.5">' + x.views.toLocaleString('pt-BR') + (x.views === 1 ? ' leitura' : ' leituras') + '</span>' : '') +
+            '</span>' +
+          '</a>').join('');
+      }
+
       function renderMessage(title, summary) {
         if (!IS_POST_PAGE) {
           const t = $('hero-title');
@@ -559,9 +609,12 @@
           $('posts-container').innerHTML = '';
         }
         renderSidebar([]);
+        const top = $('sidebar-top-posts');
+        if (top) top.innerHTML = '<p class="text-gray-500">Sem matérias no momento.</p>';
       }
 
       function render(posts) {
+        renderTop(posts);
         if (IS_POST_PAGE) { renderSidebar(posts.slice(0, 5)); return; }
         if (!posts.length) {
           renderMessage('Nenhuma matéria publicada ainda', 'Assim que o primeiro post for publicado no painel, ele aparece aqui.');
@@ -574,6 +627,7 @@
       }
 
       async function init() {
+        countView();
         try {
           render(await loadPosts());
         } catch (err) {

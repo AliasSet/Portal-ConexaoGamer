@@ -310,7 +310,7 @@ function buildPostPage(template, p) {
   let html = template
     .replace('<!--CG:HEAD-->', headTags({ title, description, url, image, type: 'article', jsonLd }))
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
-    .replace('<body data-page="home"', '<body data-page="post"')
+    .replace('<body data-page="home"', `<body data-slug="${esc(p.slug)}" data-page="post"`)
     .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
     .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => articleHtml(p));
   return html;
