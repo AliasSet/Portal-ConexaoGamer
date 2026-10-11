@@ -1,20 +1,19 @@
 ---
 title: Starfield vai ganhar mod com pousos em planetas sem telas de carregamento
 category:
+  - Notícias
   - PC
+  - Consoles
 tags:
   - Starfield
-  - Notícias
 image: https://image.api.playstation.com/vulcan/ap/rnd/202603/0401/154e007ddacddf6ef08034822dbee7f9613936398b8d7743.jpg
 summary: Um mod em desenvolvimento promete transformar os pousos de Starfield em
   uma experiência contínua, sem telas de carregamento. O projeto de Frederik
   Wessberg já ganhou um vídeo de demonstração e terá lançamento gratuito para
   PC.
 author: Redação Conexão Gamer
-date: 10/10/2026T03:08
+date: 11/10/2026T03:08
 ---
-# Starfield vai ganhar mod com pousos em planetas sem telas de carregamento
-
 **Um projeto criado por Frederik Wessberg promete deixar a exploração espacial muito mais imersiva, com pousos contínuos, nuvens em 3D e até aterrissagens na água.**
 
 Um dos recursos mais pedidos pelos fãs de *Starfield* pode finalmente ganhar uma solução feita pela comunidade. O modder Frederik Wessberg apresentou uma demonstração de **Seamless Landings**, um projeto que promete permitir pousos em planetas e luas sem as tradicionais telas de carregamento do RPG espacial da Bethesda.
