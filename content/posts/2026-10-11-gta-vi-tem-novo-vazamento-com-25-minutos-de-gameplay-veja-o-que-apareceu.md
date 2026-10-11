@@ -2,8 +2,8 @@
 title: GTA VI tem novo vazamento com 25 minutos de gameplay; veja o que apareceu
 category:
   - Notícias
-  - Consoles
   - PC
+  - Consoles
 tags:
   - GTA VI
   - Vazamentos
