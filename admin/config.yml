@@ -18,13 +18,14 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "Título", name: "title", widget: "string" }
-      - { label: "Categorias", name: "category", widget: "select", multiple: true, options: ["PC", "PlayStation", "Xbox", "Nintendo", "Reviews", "Hardware"] }
+      - { label: "Categorias", name: "category", widget: "select", multiple: true, options: ["Notícias", "PC", "Consoles", "PlayStation", "Xbox", "Nintendo", "Steam", "Hardware", "Reviews"] }
       - label: "Tags Adicionais"
         name: "tags"
         widget: "list"
         required: false
         hint: "Adicione tags livres (ex: GTA VI, RTX 5080, eSports)"
       - { label: "Imagem de Capa", name: "image", widget: "image" }
+      - { label: "Legenda / crédito da imagem", name: "image_caption", widget: "string", required: false, hint: "Aparece em letra pequena logo abaixo da imagem. Ex: Imagem: Divulgação/Rockstar Games" }
       - { label: "Resumo", name: "summary", widget: "text" }
       - { label: "Autor", name: "author", widget: "string", default: "Redação Conexão Gamer", required: false }
       - { label: "Data de Publicação", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: "HH:mm", required: false }
