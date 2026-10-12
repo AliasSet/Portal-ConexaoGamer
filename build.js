@@ -344,6 +344,66 @@ function profileHtml() {
                 `;
 }
 
+/* ---------- Páginas fixas: Privacidade e Termos ---------- */
+
+const LEGAL_PAGES = [
+  { slug: 'privacidade', file: 'privacidade.md', fallbackTitle: 'Política de Privacidade' },
+  { slug: 'termos', file: 'termos.md', fallbackTitle: 'Termos de Uso' }
+];
+
+// Quem responde pelo site e o e-mail de contato: editável no painel (Configurações do site)
+function loadContact() {
+  let c = { responsavel: '', email: '' };
+  try {
+    const j = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'settings', 'contato.json'), 'utf8'));
+    c.responsavel = String(j.responsavel || '').replace(/\s+/g, ' ').trim();
+    c.email = String(j.email || '').trim();
+  } catch (e) { /* arquivo ainda não existe */ }
+  if (c.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) c.email = '';
+  return c;
+}
+
+function fillTokens(md, c) {
+  const resp = c.responsavel || '**[responsável pelo site a ser informado]**';
+  const mail = c.email ? `[${c.email}](mailto:${c.email})` : '**[e-mail de contato a ser informado]**';
+  return md.replace(/\{\{RESPONSAVEL\}\}/g, resp).replace(/\{\{EMAIL_LINK\}\}/g, mail);
+}
+
+function loadLegalPage(def, mdParse, contact) {
+  const file = path.join(ROOT, 'content', 'pages', def.file);
+  if (!fs.existsSync(file)) { console.warn('[build] AVISO: página ausente: content/pages/' + def.file); return null; }
+  const text = fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, '');
+  const m = text.match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n([\s\S]*))?$/);
+  if (!m) { console.warn('[build] AVISO: sem frontmatter em ' + def.file); return null; }
+  const meta = yaml.load(m[1]) || {};
+  return {
+    slug: def.slug,
+    url: '/' + def.slug + '/',
+    title: String(meta.title || def.fallbackTitle),
+    description: String(meta.description || '').replace(/\s+/g, ' ').trim(),
+    updated: meta.updated ? String(meta.updated) : '',
+    html: mdParse(fillTokens((m[2] || '').trim(), contact))
+  };
+}
+
+function buildLegalPage(template, pg) {
+  const url = SITE_URL + pg.url;
+  const title = pg.title + ' | ' + SITE_NAME;
+  const main = `
+                <article class="pb-8">
+                    <h1 class="text-3xl sm:text-4xl font-black text-white leading-tight">${esc(pg.title)}</h1>
+                    ${pg.updated ? `<p class="text-xs text-gray-500 mt-2">Última atualização: ${esc(pg.updated)}</p>` : ''}
+                    <div class="article-body mt-6">${pg.html}</div>
+                </article>
+                `;
+  return template
+    .replace('<!--CG:HEAD-->', headTags({ title, description: pg.description || pg.title, url, image: '', type: 'website' }))
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('<body data-page="home"', '<body data-page="page"')
+    .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => main);
+}
+
 function buildProfilePage(template) {
   const title = 'Meu perfil | ' + SITE_NAME;
   return template
@@ -475,6 +535,18 @@ async function main() {
     fs.writeFileSync(path.join(dir, 'index.html'), buildPostPage(template, p));
   }
 
+  // Páginas fixas: Política de Privacidade e Termos de Uso
+  const contact = loadContact();
+  const legalPages = LEGAL_PAGES.map((d) => loadLegalPage(d, mdParse, contact)).filter(Boolean);
+  for (const pg of legalPages) {
+    fs.mkdirSync(path.join(DIST, pg.slug), { recursive: true });
+    fs.writeFileSync(path.join(DIST, pg.slug, 'index.html'), buildLegalPage(template, pg));
+  }
+  if (legalPages.length && (!contact.responsavel || !contact.email)) {
+    console.warn('[build] AVISO: preencha o responsável e o e-mail de contato (painel: Configurações do site > Contato). ' +
+                 'Enquanto isso, as páginas de Privacidade e Termos mostram um aviso no lugar.');
+  }
+
   // Página de perfil do leitor (privada: fora do Google e do sitemap)
   fs.mkdirSync(path.join(DIST, 'perfil'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'perfil', 'index.html'), buildProfilePage(template));
@@ -492,6 +564,7 @@ async function main() {
   // sitemap.xml + robots.txt
   const urls = [{ loc: SITE_URL + '/', lastmod: posts[0] ? new Date(posts[0].time).toISOString().slice(0, 10) : null }]
     .concat(catUrls)
+    .concat(legalPages.map((pg) => ({ loc: SITE_URL + pg.url, lastmod: null })))
     .concat(posts.map((p) => ({ loc: SITE_URL + p.url, lastmod: new Date(p.time).toISOString().slice(0, 10) })));
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'),
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
@@ -505,7 +578,7 @@ async function main() {
   copyDir(path.join(ROOT, 'uploads'), path.join(DIST, 'uploads'));
   if (!hasAdmin) console.warn('[build] AVISO: pasta admin/ não encontrada - o painel do CMS não será publicado.');
 
-  console.log(`[build] OK: ${posts.length} matéria(s), ${CATEGORIES.length} categoria(s) em ${Date.now() - t0} ms`);
+  console.log(`[build] OK: ${posts.length} matéria(s), ${CATEGORIES.length} categoria(s), ${legalPages.length} página(s) fixa(s) em ${Date.now() - t0} ms`);
   posts.forEach((p) => console.log('  ' + p.url));
 }
 
