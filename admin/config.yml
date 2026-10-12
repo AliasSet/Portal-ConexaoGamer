@@ -31,3 +31,33 @@ collections:
       - { label: "Data de Publicação", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: "HH:mm", required: false }
       - { label: "Nota do Review (0-10)", name: "rating", widget: "number", value_type: "float", required: false }
       - { label: "Conteúdo da Matéria", name: "body", widget: "markdown" }
+
+  - name: "paginas"
+    label: "Páginas (Privacidade e Termos)"
+    files:
+      - label: "Política de Privacidade"
+        name: "privacidade"
+        file: "content/pages/privacidade.md"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descrição curta (para o Google)", name: "description", widget: "string", required: false }
+          - { label: "Última atualização", name: "updated", widget: "string", hint: "Ex: 11 de outubro de 2026" }
+          - { label: "Texto", name: "body", widget: "markdown" }
+      - label: "Termos de Uso"
+        name: "termos"
+        file: "content/pages/termos.md"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descrição curta (para o Google)", name: "description", widget: "string", required: false }
+          - { label: "Última atualização", name: "updated", widget: "string", hint: "Ex: 11 de outubro de 2026" }
+          - { label: "Texto", name: "body", widget: "markdown" }
+
+  - name: "configuracoes"
+    label: "Configurações do site"
+    files:
+      - label: "Contato e responsável (aparece em Privacidade e Termos)"
+        name: "contato"
+        file: "content/settings/contato.json"
+        fields:
+          - { label: "Responsável pelo site (nome da pessoa ou da empresa)", name: "responsavel", widget: "string" }
+          - { label: "E-mail de contato", name: "email", widget: "string", hint: "Receberá pedidos de privacidade e avisos de direitos autorais" }
