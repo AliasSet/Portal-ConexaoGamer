@@ -266,12 +266,7 @@ function cardHtml(p) {
 function categoryHtml(cat, list) {
   return `
                 <div class="space-y-8">
-                    <div class="border-b border-gray-800 pb-3">
-                        <h1 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
-                            <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> ${esc(cat.name)}
-                        </h1>
-                        <p class="text-sm text-gray-400 mt-2">${esc(cat.desc)}</p>
-                    </div>
+                    <h1 class="sr-only">${esc(cat.name)}</h1>
                     ${list.length
                       ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">${list.map(cardHtml).join('')}
                     </div>`
@@ -293,9 +288,9 @@ function profileHtml() {
 
                     <div id="profile-guest" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
                         <i class="fa-regular fa-circle-user text-4xl text-cyan-400 mb-3"></i>
-                        <h2 class="text-lg font-black text-white">Entre para ver o seu perfil</h2>
-                        <p class="text-sm text-gray-400 mt-2 mb-5">Com uma conta você participa das discussões e comenta nas matérias.</p>
-                        <button type="button" onclick="toggleAuthModal()" class="bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Entrar / Cadastrar</button>
+                        <h2 class="text-lg font-black text-white">Faça login para ver o seu perfil</h2>
+                        <p class="text-sm text-gray-400 mt-2 mb-5">Com uma conta você comenta nas matérias e personaliza o seu perfil.</p>
+                        <button type="button" onclick="toggleAuthModal()" class="bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Entrar</button>
                     </div>
 
                     <div id="profile-user" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
