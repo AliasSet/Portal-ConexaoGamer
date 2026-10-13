@@ -1100,7 +1100,10 @@
 
     const slug = document.body.getAttribute('data-slug');
     const PAGE = 20;
-    let items = [], total = 0, loading = false, formUserId = '__none__';
+    let items = [], total = 0, allTotal = 0, loading = false, formUserId = '__none__', listUid = '__none__';
+    // Estado da tela: qual resposta/edição está aberta e o texto digitado (não se perde ao redesenhar a lista)
+    const ui = { replyTo: null, editId: null, draft: '', msg: '', err: false, busy: false, focus: false };
+    function resetUi() { ui.replyTo = null; ui.editId = null; ui.draft = ''; ui.msg = ''; ui.err = false; ui.busy = false; ui.focus = false; }
 
     const ERRORS = {
         cg_rate_limit: 'Calma! Aguarde alguns segundos antes de comentar de novo.',
@@ -1108,7 +1111,10 @@
         cg_duplicate: 'Você já enviou exatamente esse comentário.',
         cg_links: 'Comentários com mais de 2 links não são permitidos.',
         cg_empty: 'Escreva algo antes de enviar.',
-        cg_too_long: 'O comentário passou de 2000 caracteres.'
+        cg_too_long: 'O comentário passou de 2000 caracteres.',
+        cg_reply_depth: 'Não é possível responder a uma resposta. Responda ao comentário principal.',
+        cg_parent_missing: 'O comentário que você quer responder não existe mais.',
+        cg_not_allowed: 'Você não pode alterar esse comentário.'
     };
     function errText(error) {
         const m = (error && error.message) || '';
@@ -1119,38 +1125,97 @@
 
     function myId() { return cgSession && cgSession.user ? cgSession.user.id : null; }
 
-    function renderList() {
-        const box = $('comments-list');
+    const byDate = (a, b) => new Date(b.created_at) - new Date(a.created_at);
+    const topsOf = () => items.filter((c) => !c.parent_id).sort(byDate);
+    const repliesOf = (id) => items.filter((c) => c.parent_id === id).sort((a, b) => byDate(b, a));
+
+    function actionsHtml(c, isReply) {
         const mine = myId();
-        $('comments-count').textContent = total ? '(' + total + ')' : '';
-        if (!items.length) {
-            box.innerHTML = '<p class="text-sm text-gray-500">Ainda não há comentários. Seja o primeiro!</p>';
-        } else {
-            box.innerHTML = items.map((c) => {
-                const isMine = mine && c.user_id === mine;
-                const action = isMine
-                    ? '<button type="button" data-act="delete" data-id="' + c.id + '" class="text-gray-500 hover:text-red-400 transition">Excluir</button>'
-                    : (mine ? '<button type="button" data-act="report" data-id="' + c.id + '" class="text-gray-500 hover:text-amber-400 transition">Denunciar</button>' : '');
-                return '<article class="flex gap-3">' +
-                    avatarHtml(c.display_name, c.avatar_url, 'w-9 h-9', 'text-sm') +
-                    '<div class="min-w-0 flex-1">' +
-                        '<div class="flex flex-wrap items-baseline gap-x-2">' +
-                            '<span class="text-sm font-bold text-white">' + esc(c.display_name) + '</span>' +
-                            '<span class="text-[11px] text-gray-500">' + esc(ago(c.created_at)) + '</span>' +
-                        '</div>' +
-                        '<p class="text-sm text-gray-300 mt-1 whitespace-pre-wrap break-words">' + esc(c.content) + '</p>' +
-                        (action ? '<div class="mt-1.5 text-[11px]">' + action + '</div>' : '') +
-                    '</div></article>';
-            }).join('');
+        const btn = (act, label, hover) =>
+            '<button type="button" data-act="' + act + '" data-id="' + c.id + '" class="text-gray-500 ' + hover + ' transition">' + label + '</button>';
+        const parts = [];
+        if (!isReply) parts.push(btn('reply', 'Responder', 'hover:text-cyan-400'));
+        if (mine && c.user_id === mine) {
+            parts.push(btn('edit', 'Editar', 'hover:text-cyan-400'));
+            parts.push(btn('delete', 'Excluir', 'hover:text-red-400'));
+        } else if (mine) {
+            parts.push(btn('report', 'Denunciar', 'hover:text-amber-400'));
         }
-        $('comments-more').classList.toggle('hidden', items.length >= total);
+        return parts.length ? '<div class="mt-1.5 text-[11px] flex flex-wrap gap-x-4 gap-y-1">' + parts.join('') + '</div>' : '';
     }
 
-    async function load(reset) {
+    // Caixa de texto da resposta ou da edição
+    function boxHtml(kind, c) {
+        const isEdit = kind === 'edit';
+        return '<div class="mt-2" data-box="' + kind + '">' +
+            '<textarea rows="' + (isEdit ? 3 : 2) + '" maxlength="2000" aria-label="' + (isEdit ? 'Editar comentário' : 'Escrever resposta') + '"' +
+                (isEdit ? '' : ' placeholder="Escreva a sua resposta…"') +
+                ' class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400 resize-y">' + esc(ui.draft) + '</textarea>' +
+            '<div class="flex items-center gap-2 mt-2">' +
+                '<button type="button" data-act="' + (isEdit ? 'save-edit' : 'send-reply') + '" data-id="' + c.id + '" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-4 py-2 rounded-lg transition"' + (ui.busy ? ' disabled' : '') + '>' + (isEdit ? 'Salvar' : 'Responder') + '</button>' +
+                '<button type="button" data-act="cancel" class="text-xs font-bold text-gray-400 hover:text-white px-3 py-2 transition">Cancelar</button>' +
+            '</div>' +
+            '<p class="text-xs mt-2 min-h-[1rem] ' + (ui.err ? 'text-red-400' : 'text-emerald-400') + '" role="status" aria-live="polite">' + esc(ui.msg) + '</p>' +
+        '</div>';
+    }
+
+    function commentHtml(c, isReply) {
+        const reps = isReply ? [] : repliesOf(c.id);
+        const repliesBlock = reps.length
+            ? '<div class="mt-4 space-y-4 pl-4 border-l border-gray-800">' + reps.map((r) => commentHtml(r, true)).join('') + '</div>'
+            : '';
+
+        // comentário removido pelo autor, mas que ainda tem respostas
+        if (c.status === 'deleted') {
+            return '<article class="flex gap-3">' +
+                '<span class="inline-flex w-9 h-9 rounded-full bg-gray-800 border border-gray-700 flex-shrink-0"></span>' +
+                '<div class="min-w-0 flex-1">' +
+                    '<p class="text-sm text-gray-500 italic mt-2">Comentário removido</p>' +
+                    repliesBlock +
+                '</div></article>';
+        }
+
+        const editing = ui.editId === c.id;
+        const replying = ui.replyTo === c.id;
+        return '<article class="flex gap-3">' +
+            avatarHtml(c.display_name, c.avatar_url, isReply ? 'w-7 h-7' : 'w-9 h-9', isReply ? 'text-xs' : 'text-sm') +
+            '<div class="min-w-0 flex-1">' +
+                '<div class="flex flex-wrap items-baseline gap-x-2">' +
+                    '<span class="text-sm font-bold text-white">' + esc(c.display_name) + '</span>' +
+                    '<span class="text-[11px] text-gray-500">' + esc(ago(c.created_at)) + '</span>' +
+                    (c.edited_at ? '<span class="text-[11px] text-gray-600">· editado</span>' : '') +
+                '</div>' +
+                (editing
+                    ? boxHtml('edit', c)
+                    : '<p class="text-sm text-gray-300 mt-1 whitespace-pre-wrap break-words">' + esc(c.content) + '</p>' + (replying ? '' : actionsHtml(c, isReply))) +
+                (replying ? boxHtml('reply', c) : '') +
+                repliesBlock +
+            '</div></article>';
+    }
+
+    function renderList() {
+        const box = $('comments-list');
+        listUid = myId();
+        $('comments-count').textContent = allTotal ? '(' + allTotal + ')' : '';
+        const tops = topsOf();
+        if (!tops.length) {
+            box.innerHTML = '<p class="text-sm text-gray-500">Ainda não há comentários. Seja o primeiro!</p>';
+        } else {
+            box.innerHTML = tops.map((c) => commentHtml(c, false)).join('');
+        }
+        $('comments-more').classList.toggle('hidden', tops.length >= total);
+        if (ui.focus) {
+            ui.focus = false;
+            const ta = box.querySelector('[data-box] textarea');
+            if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+        }
+    }
+
+    async function load(reset, size) {
         if (loading) return;
         loading = true;
         const { data, error } = await supabaseClient.rpc('list_comments', {
-            p_slug: slug, p_limit: PAGE, p_offset: reset ? 0 : items.length
+            p_slug: slug, p_limit: size || PAGE, p_offset: reset ? 0 : topsOf().length
         });
         loading = false;
         if (error) {
@@ -1159,11 +1224,16 @@
             return;
         }
         const rows = data || [];
-        if (rows.length) total = Number(rows[0].total);
-        else if (reset) total = 0;
+        if (rows.length) {
+            total = Number(rows[0].total);
+            allTotal = Number(rows[0].all_total);
+            if (!isFinite(allTotal)) allTotal = total;
+        } else if (reset) { total = 0; allTotal = 0; }
         items = reset ? rows : items.concat(rows);
         renderList();
     }
+    // recarrega mantendo quantos comentários a pessoa já tinha aberto
+    const reload = () => load(true, Math.min(100, Math.max(PAGE, topsOf().length)));
 
     function renderForm() {
         const area = $('comment-form-area');
@@ -1207,16 +1277,54 @@
             if (error) { console.warn('[Conexão Gamer] comentário recusado:', error.message); msg(errText(error), true); return; }
             ta.value = ''; $('comment-counter').textContent = '0/2000';
             msg('Comentário publicado!');
-            await load(true);
+            await reload();
             loadSidebar();
         });
     }
 
-    // Excluir / Denunciar (confirmação em dois cliques, sem janelas pop-up)
+    // Envia a resposta ou salva a edição
+    async function submitBox(act, id) {
+        const text = ui.draft.trim();
+        if (!text) { ui.msg = ERRORS.cg_empty; ui.err = true; renderList(); return; }
+        ui.busy = true; ui.msg = 'Enviando…'; ui.err = false;
+        renderList();
+        let error = null;
+        if (act === 'send-reply') {
+            ({ error } = await supabaseClient.from('comments').insert({ post_slug: slug, content: text, parent_id: id }));
+        } else {
+            ({ error } = await supabaseClient.rpc('edit_comment', { p_comment_id: id, p_content: text }));
+        }
+        ui.busy = false;
+        if (error) {
+            console.warn('[Conexão Gamer] pedido recusado:', error.message);
+            ui.msg = errText(error); ui.err = true;
+            renderList();
+            return;
+        }
+        resetUi();
+        await reload();
+        loadSidebar();
+    }
+
+    // Cliques na lista: Responder, Editar, Excluir, Denunciar, Enviar, Salvar, Cancelar
     $('comments-list').addEventListener('click', async (e) => {
         const btn = e.target.closest('button[data-act]');
         if (!btn) return;
         const act = btn.getAttribute('data-act'), id = Number(btn.getAttribute('data-id'));
+
+        if (act === 'reply') {
+            if (!myId()) { toggleAuthModal(); return; }
+            resetUi(); ui.replyTo = id; ui.focus = true; renderList(); return;
+        }
+        if (act === 'edit') {
+            const c = items.find((x) => x.id === id);
+            if (!c) return;
+            resetUi(); ui.editId = id; ui.draft = c.content; ui.focus = true; renderList(); return;
+        }
+        if (act === 'cancel') { resetUi(); renderList(); return; }
+        if (act === 'send-reply' || act === 'save-edit') { if (!ui.busy) await submitBox(act, id); return; }
+
+        // Excluir / Denunciar (confirmação em dois cliques, sem janelas pop-up)
         if (btn.getAttribute('data-armed') !== '1') {
             const original = btn.textContent;
             btn.setAttribute('data-armed', '1');
@@ -1226,9 +1334,10 @@
         }
         btn.disabled = true;
         if (act === 'delete') {
-            const { error } = await supabaseClient.from('comments').delete().eq('id', id);
+            const { error } = await supabaseClient.rpc('delete_comment', { p_comment_id: id });
             if (error) { btn.disabled = false; btn.textContent = 'Erro ao excluir'; return; }
-            await load(true);
+            resetUi();
+            await reload();
             loadSidebar();
         } else {
             const { error } = await supabaseClient.rpc('report_comment', { p_comment_id: id, p_reason: 'denuncia_de_leitor' });
@@ -1236,10 +1345,19 @@
         }
     });
 
+    // guarda o que a pessoa digita nas caixas de resposta/edição
+    $('comments-list').addEventListener('input', (e) => {
+        if (e.target.matches('[data-box] textarea')) ui.draft = e.target.value;
+    });
+
     $('comments-more').addEventListener('click', () => load(false));
 
-    // O formulário só aparece depois que sabemos se a pessoa está logada (evita piscar "Entre para comentar")
-    window.addEventListener('cg:auth', () => { renderForm(); renderList(); });
+    // O formulário só aparece depois que sabemos se a pessoa está logada (evita piscar "Entre para comentar").
+    // A lista só é redesenhada quando a pessoa muda (entrou/saiu), para não apagar o que está sendo digitado.
+    window.addEventListener('cg:auth', () => {
+        renderForm();
+        if (myId() !== listUid) { resetUi(); renderList(); }
+    });
     if (window.cgAuthState) renderForm();
     else setTimeout(() => { if (formUserId === '__none__') renderForm(); }, 4000);
     load(true);
