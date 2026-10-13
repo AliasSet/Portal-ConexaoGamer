@@ -7,7 +7,6 @@ category:
 tags:
   - Intel
   - IA
-  - Inteligência Artificial
 image: https://sm.ign.com/t/ign_br/screenshot/default/carlos-buarque-2-1_rut8.960.jpg
 summary: O perfil do gamer está mudando, e a Intel acredita que a inteligência
   artificial terá um papel cada vez maior nos computadores. Carlos Buarque,
