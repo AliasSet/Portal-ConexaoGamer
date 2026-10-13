@@ -411,6 +411,34 @@ function buildProfilePage(template) {
     .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => profileHtml());
 }
 
+function searchHtml() {
+  return `
+                <div id="search-root" class="space-y-6">
+                    <form action="/busca/" method="get" role="search" class="flex gap-2">
+                        <input id="search-page-input" type="search" name="q" maxlength="80" autocomplete="off" placeholder="Buscar matérias, jogos, plataformas…" aria-label="O que você procura?"
+                            class="flex-1 min-w-0 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400">
+                        <button type="submit" class="flex-shrink-0 inline-flex items-center gap-2 bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs px-5 py-3 rounded-xl transition">
+                            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                        </button>
+                    </form>
+                    <p id="search-status" class="text-sm text-gray-400 min-h-[1.25rem]" role="status" aria-live="polite"></p>
+                    <div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+                </div>
+                `;
+}
+
+function buildSearchPage(template) {
+  const title = 'Buscar | ' + SITE_NAME;
+  return template
+    .replace('<!--CG:HEAD-->', headTags({
+      title, description: 'Busque matérias, reviews e notícias no ' + SITE_NAME + '.', url: SITE_URL + '/busca/', image: '', type: 'website'
+    }) + '\n    <meta name="robots" content="noindex, follow">')
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('<body data-page="home"', '<body data-page="search"')
+    .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => searchHtml());
+}
+
 function buildCategoryPage(template, cat, list) {
   const url = SITE_URL + '/categoria/' + cat.slug + '/';
   const title = cat.name + ' - Notícias e Reviews | ' + SITE_NAME;
@@ -545,6 +573,10 @@ async function main() {
   // Página de perfil do leitor (privada: fora do Google e do sitemap)
   fs.mkdirSync(path.join(DIST, 'perfil'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'perfil', 'index.html'), buildProfilePage(template));
+
+  // Página de busca (fica fora do Google e do sitemap)
+  fs.mkdirSync(path.join(DIST, 'busca'), { recursive: true });
+  fs.writeFileSync(path.join(DIST, 'busca', 'index.html'), buildSearchPage(template));
 
   // Páginas de categoria (sempre geradas, mesmo vazias, para o menu nunca dar 404)
   const catUrls = [];

@@ -97,13 +97,19 @@
                 </nav>
 
                 <!-- Busca & Botão de Login (Supabase Integrado) -->
-           <div class="relative hidden sm:flex lg:hidden xl:flex items-center">
-    <input type="text" placeholder="Buscar" aria-label="Buscar no site"
-        class="bg-gray-900 border border-gray-700 rounded-full px-3 py-1.5 pl-8 text-xs focus:outline-none focus:border-cyan-400 text-gray-200 w-32 focus:w-44 transition-all">
-    <div class="absolute left-3 inset-y-0 flex items-center pointer-events-none">
-        <i class="fa-solid fa-magnifying-glass text-xs text-gray-500"></i>
-    </div>
-</div>
+                <div class="flex items-center gap-3">
+                    <!-- Campo de busca (telas médias e grandes) -->
+                    <form action="/busca/" method="get" role="search" class="relative hidden sm:flex lg:hidden xl:flex items-center">
+                        <input type="search" name="q" placeholder="Buscar" aria-label="Buscar no site" autocomplete="off" maxlength="80"
+                            class="bg-gray-900 border border-gray-700 rounded-full px-3 py-1.5 pl-9 text-xs focus:outline-none focus:border-cyan-400 text-gray-200 w-32 focus:w-44 transition-all">
+                        <button type="submit" aria-label="Pesquisar" class="absolute left-0 inset-y-0 w-9 flex items-center justify-center text-gray-500 hover:text-cyan-400 transition">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </button>
+                    </form>
+                    <!-- Ícone de busca (celular e telas onde o campo não cabe): abre a página de busca -->
+                    <a href="/busca/" aria-label="Buscar no site" class="inline-flex sm:hidden lg:inline-flex xl:hidden items-center justify-center w-9 h-9 rounded-full bg-gray-900 border border-gray-700 text-gray-300 hover:text-cyan-400 hover:border-cyan-400 transition">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </a>
 
                     <!-- Botão de Login do Leitor / Menu do usuário logado -->
                     <div id="authArea" class="relative">
@@ -148,26 +154,16 @@
 <div class="bg-gray-950 border-b border-gray-800/80 py-2">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 text-xs">
         
-        <!-- LADO ESQUERDO: ASSUNTOS EM ALTA -->
-        <div class="flex items-center gap-4 overflow-hidden">
+        <!-- LADO ESQUERDO: ASSUNTOS EM ALTA (gerados sozinhos a partir das tags das matérias recentes) -->
+        <div id="trending-box" class="hidden items-center gap-4 overflow-hidden">
             <span class="flex items-center gap-1.5 text-cyan-400 font-extrabold uppercase tracking-wider flex-shrink-0">
                 <i class="fa-solid fa-bolt text-xs animate-pulse"></i> Em Alta:
             </span>
-            <div class="flex items-center gap-3 overflow-x-auto whitespace-nowrap scrollbar-none text-gray-400">
-                <a href="#" class="hover:text-cyan-400 transition font-medium"># GTA VI</a>
-                <span class="text-gray-700">•</span>
-                <a href="#" class="hover:text-cyan-400 transition font-medium"># RTX 5080</a>
-                <span class="text-gray-700">•</span>
-                <a href="#" class="hover:text-cyan-400 transition font-medium"># PS5 Pro</a>
-                <span class="text-gray-700">•</span>
-                <a href="#" class="hover:text-cyan-400 transition font-medium"># AION 2</a>
-                <span class="text-gray-700">•</span>
-                <a href="#" class="hover:text-cyan-400 transition font-medium"># WARDOGS</a>
-            </div>
+            <div id="trending-tags" class="flex items-center gap-3 overflow-x-auto whitespace-nowrap text-gray-400"></div>
         </div>
 
         <!-- LADO DIREITO: ÍCONES DAS REDES SOCIAIS (CORRIGIDO) -->
-        <div class="hidden md:flex items-center gap-3.5 border-l border-gray-800/80 pl-4 flex-shrink-0 text-gray-400">
+        <div class="hidden md:flex items-center gap-3.5 border-l border-gray-800/80 pl-4 flex-shrink-0 text-gray-400 ml-auto">
             <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">SIGA:</span>
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="hover:text-red-500 transition text-sm flex items-center" title="YouTube">
                 <i class="fa-brands fa-youtube"></i>
@@ -728,7 +724,8 @@
         return t ? JSON.parse(t) : null;
       }
 
-      const IS_POST_PAGE = document.body.getAttribute('data-page') !== 'home';
+      const PAGE_TYPE = document.body.getAttribute('data-page');
+      const IS_POST_PAGE = PAGE_TYPE !== 'home';
 
       // Outros scripts (ex.: Últimos Comentários) esperam a lista de posts por aqui
       let resolvePosts;
@@ -861,6 +858,83 @@
           '</a>').join('');
       }
 
+
+      /* ---------- Busca e "Em Alta" ---------- */
+
+      // Sem acentos e em minúsculas, para "pokemon" achar "Pokémon"
+      const norm = (s) => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+      // Procura no título, tags, categorias, resumo e autor. Todas as palavras digitadas precisam aparecer.
+      function searchPosts(posts, q) {
+        const terms = norm(q).split(/\s+/).filter(Boolean);
+        if (!terms.length) return [];
+        const found = [];
+        for (const p of posts) {
+          const title = norm(p.title), tags = norm((p.tags || []).join(' ')),
+                cats = norm((p.categories || []).join(' ')), sum = norm(p.summary), who = norm(p.author);
+          let score = 0, ok = true;
+          for (const t of terms) {
+            let s = 0;
+            if (title.includes(t)) s += 10;
+            if (tags.includes(t)) s += 6;
+            if (cats.includes(t)) s += 4;
+            if (sum.includes(t)) s += 3;
+            if (who.includes(t)) s += 1;
+            if (!s) { ok = false; break; }
+            score += s;
+          }
+          if (ok) found.push({ p: p, score: score });
+        }
+        found.sort((a, b) => (b.score - a.score) || ((b.p.time || 0) - (a.p.time || 0)));
+        return found.map((x) => x.p);
+      }
+
+      // Página /busca/: lê ?q= e mostra os cards encontrados
+      function runSearch(posts) {
+        const q = (new URLSearchParams(location.search).get('q') || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+        const input = $('search-page-input'), status = $('search-status'), box = $('posts-container');
+        if (input) input.value = q;
+        if (!status || !box) return;
+        if (!q) {
+          status.textContent = 'Digite o que você procura: um jogo, uma plataforma, um assunto…';
+          box.innerHTML = '';
+          return;
+        }
+        const list = searchPosts(posts, q);
+        document.title = 'Busca: ' + q + ' | Conexão Gamer';
+        if (!list.length) {
+          status.textContent = 'Nenhuma matéria encontrada para “' + q + '”. Tente outras palavras.';
+          box.innerHTML = '';
+          return;
+        }
+        status.textContent = list.length + (list.length === 1 ? ' resultado' : ' resultados') + ' para “' + q + '”';
+        renderGrid(list);
+      }
+
+      // Barra "Em Alta": as tags mais usadas nas matérias mais recentes (se não houver tags, a barra some)
+      function renderTrending(posts) {
+        const box = $('trending-box'), list = $('trending-tags');
+        if (!box || !list) return;
+        const counts = new Map();
+        posts.slice(0, 20).forEach((p, idx) => {
+          (p.tags || []).forEach((t) => {
+            const label = String(t).replace(/\s+/g, ' ').trim();
+            if (!label) return;
+            const k = norm(label);
+            const c = counts.get(k) || { label: label, n: 0, first: idx };
+            c.n++;
+            counts.set(k, c);
+          });
+        });
+        const top = Array.from(counts.values()).sort((a, b) => (b.n - a.n) || (a.first - b.first)).slice(0, 6);
+        if (!top.length) { box.classList.add('hidden'); box.classList.remove('flex'); return; }
+        list.innerHTML = top.map((t) =>
+          '<a href="/busca/?q=' + encodeURIComponent(t.label) + '" class="hover:text-cyan-400 transition font-medium"># ' + esc(t.label) + '</a>'
+        ).join('<span class="text-gray-700">•</span>');
+        box.classList.remove('hidden');
+        box.classList.add('flex');
+      }
+
       /* ---------- Mais lidos + contagem de leituras ---------- */
 
       // Conta 1 leitura por navegador, por matéria, por dia (só nas páginas de matéria)
@@ -924,7 +998,12 @@
 
       function render(posts) {
         renderTop(posts);
-        if (IS_POST_PAGE) { renderSidebar(posts.slice(0, 5)); return; }
+        renderTrending(posts);
+        if (IS_POST_PAGE) {
+          renderSidebar(posts.slice(0, 5));
+          if (PAGE_TYPE === 'search') runSearch(posts);
+          return;
+        }
         if (!posts.length) {
           renderMessage('Nenhuma matéria publicada ainda', 'Assim que o primeiro post for publicado no painel, ele aparece aqui.');
           return;
@@ -944,6 +1023,8 @@
         } catch (err) {
           resolvePosts([]);
           console.error('[Conexão Gamer] Falha ao carregar /posts.json:', err);
+          const st = $('search-status');
+          if (st) st.textContent = 'Não foi possível carregar a busca agora. Tente recarregar a página.';
           renderMessage('Não foi possível carregar as matérias', 'Tente recarregar a página em alguns instantes.');
         }
       }
