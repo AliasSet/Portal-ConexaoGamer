@@ -304,25 +304,84 @@
     </footer>
 
     <!-- MODAL DE AUTENTICAÇÃO (LOGIN / SUPABASE) -->
-    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="bg-gray-900 border border-gray-700 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
-            <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <h3 class="text-xl font-black text-white text-center mb-2">Bem-vindo ao Conexão Gamer</h3>
-            <p class="text-xs text-gray-400 text-center mb-6">Entre para comentar e trocar ideia com a galera sobre as matérias.</p>
-            
-            <button onclick="loginGoogle()" class="w-full bg-white hover:bg-gray-100 text-black font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition mb-4">
-                <i class="fa-brands fa-google text-base"></i> Continuar com o Google
-            </button>
+    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="if (event.target === this) closeAuthModal()">
+        <div class="bg-gray-900 border border-gray-700 w-full max-w-md rounded-2xl p-6 shadow-2xl relative max-h-[95vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+            <button type="button" onclick="closeAuthModal()" aria-label="Fechar" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 id="authTitle" class="text-xl font-black text-white text-center mb-2">Bem-vindo de volta</h3>
+            <p id="authSub" class="text-xs text-gray-400 text-center mb-5"></p>
 
-            <div class="text-center text-[10px] text-gray-500 uppercase tracking-widest my-4">ou use seu e-mail</div>
+            <!-- Abas: Entrar / Criar conta -->
+            <div id="authTabs" role="tablist" class="grid grid-cols-2 gap-1 bg-gray-950 border border-gray-800 rounded-xl p-1 mb-4">
+                <button type="button" id="authTab-login" role="tab" onclick="setAuthView('login')" class="text-xs font-extrabold py-2 rounded-lg transition">Entrar</button>
+                <button type="button" id="authTab-signup" role="tab" onclick="setAuthView('signup')" class="text-xs font-extrabold py-2 rounded-lg transition">Criar conta</button>
+            </div>
 
-            <form onsubmit="handleEmailAuth(event)" class="space-y-3">
-                <input type="email" placeholder="Seu e-mail" required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
-                <input type="password" placeholder="Sua senha" required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400">
-                <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs py-3 rounded-xl transition">Continuar com e-mail</button>
+            <!-- Google -->
+            <div id="authSocial">
+                <button type="button" onclick="loginGoogle()" class="w-full bg-white hover:bg-gray-100 text-black font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition">
+                    <i class="fa-brands fa-google text-base"></i> Continuar com o Google
+                </button>
+                <div class="text-center text-[10px] text-gray-500 uppercase tracking-widest my-4">ou use seu e-mail</div>
+            </div>
+
+            <p id="authMsg" role="alert" class="hidden text-xs rounded-lg px-3 py-2 mb-3 leading-relaxed"></p>
+
+            <!-- Entrar -->
+            <form id="authView-login" onsubmit="authLogin(event)" class="space-y-3">
+                <input id="authLoginEmail" name="email" type="email" autocomplete="email" placeholder="Seu e-mail" required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400">
+                <div class="relative">
+                    <input id="authLoginPass" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" required  class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400 pr-20">
+                    <button type="button" onclick="cgTogglePw(this)" aria-label="Mostrar senha" class="absolute right-1 inset-y-0 px-3 text-[11px] font-bold text-gray-400 hover:text-cyan-400 transition">Mostrar</button>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                    <button type="button" id="authResendBtn" onclick="authResend()" class="hidden text-[11px] font-bold text-cyan-400 hover:text-cyan-300 transition">Reenviar e-mail de confirmação</button>
+                    <button type="button" onclick="setAuthView('forgot')" class="ml-auto text-[11px] text-gray-400 hover:text-cyan-400 underline transition">Esqueci minha senha</button>
+                </div>
+                <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs py-3 rounded-xl transition">Entrar</button>
             </form>
 
-            <p class="text-[10px] text-gray-500 text-center mt-4 leading-relaxed">Ao continuar, você concorda com os <a href="/termos/" class="underline hover:text-cyan-400">Termos de Uso</a> e com a <a href="/privacidade/" class="underline hover:text-cyan-400">Política de Privacidade</a>.</p>
+            <!-- Criar conta -->
+            <form id="authView-signup" onsubmit="authSignup(event)" class="hidden space-y-3">
+                <input id="authSignupName" name="nickname" type="text" autocomplete="nickname" maxlength="30" placeholder="Como quer ser chamado?" required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400">
+                <input id="authSignupEmail" name="email" type="email" autocomplete="email" placeholder="Seu e-mail" required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400">
+                <div class="relative">
+                    <input id="authSignupPass" name="new-password" type="password" autocomplete="new-password" placeholder="Crie uma senha" required minlength="8" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400 pr-20">
+                    <button type="button" onclick="cgTogglePw(this)" aria-label="Mostrar senha" class="absolute right-1 inset-y-0 px-3 text-[11px] font-bold text-gray-400 hover:text-cyan-400 transition">Mostrar</button>
+                </div>
+                <p class="text-[11px] text-gray-500 -mt-1">Mínimo de 8 caracteres. Enviaremos um link para confirmar o seu e-mail.</p>
+                <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs py-3 rounded-xl transition">Criar conta</button>
+            </form>
+
+            <!-- Esqueci a senha -->
+            <form id="authView-forgot" onsubmit="authForgot(event)" class="hidden space-y-3">
+                <input id="authForgotEmail" name="email" type="email" autocomplete="email" placeholder="E-mail da sua conta" required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400">
+                <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs py-3 rounded-xl transition">Enviar link para nova senha</button>
+                <button type="button" onclick="setAuthView('login')" class="w-full text-[11px] text-gray-400 hover:text-cyan-400 transition">Voltar para entrar</button>
+            </form>
+
+            <!-- Nova senha (depois de clicar no link do e-mail) -->
+            <form id="authView-reset" onsubmit="authReset(event)" class="hidden space-y-3">
+                <div class="relative">
+                    <input id="authResetPass" name="new-password" type="password" autocomplete="new-password" placeholder="Nova senha" required minlength="8" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400 pr-20">
+                    <button type="button" onclick="cgTogglePw(this)" aria-label="Mostrar senha" class="absolute right-1 inset-y-0 px-3 text-[11px] font-bold text-gray-400 hover:text-cyan-400 transition">Mostrar</button>
+                </div>
+                <div class="relative">
+                    <input id="authResetPass2" name="new-password" type="password" autocomplete="new-password" placeholder="Repita a nova senha" required minlength="8" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400 pr-20">
+                    <button type="button" onclick="cgTogglePw(this)" aria-label="Mostrar senha" class="absolute right-1 inset-y-0 px-3 text-[11px] font-bold text-gray-400 hover:text-cyan-400 transition">Mostrar</button>
+                </div>
+                <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs py-3 rounded-xl transition">Salvar nova senha</button>
+            </form>
+
+            <!-- "Confira o seu e-mail" -->
+            <div id="authView-sent" class="hidden text-center space-y-4">
+                <div class="mx-auto w-14 h-14 rounded-full bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center"><i class="fa-solid fa-envelope text-cyan-400 text-xl"></i></div>
+                <p id="authSentText" class="text-sm text-gray-300 leading-relaxed"></p>
+                <p class="text-[11px] text-gray-500">Não chegou? Olhe também a pasta de spam ou lixo eletrônico.</p>
+                <button type="button" id="authSentResend" onclick="authResend()" class="hidden w-full text-xs font-bold text-cyan-400 hover:text-cyan-300 transition">Reenviar e-mail</button>
+                <button type="button" onclick="setAuthView('login')" class="w-full text-[11px] text-gray-400 hover:text-cyan-400 transition">Voltar para entrar</button>
+            </div>
+
+            <p class="text-[10px] text-gray-500 text-center mt-5 leading-relaxed">Ao continuar, você concorda com os <a href="/termos/" class="underline hover:text-cyan-400">Termos de Uso</a> e com a <a href="/privacidade/" class="underline hover:text-cyan-400">Política de Privacidade</a>.</p>
         </div>
     </div>
 
@@ -330,6 +389,11 @@
 <script>
     const SUPABASE_URL = 'https://emgcyonjopyitvaosgfi.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_dkrs4imRqGkht2vpB4zUDA_ggIGgjUf';
+
+    // Guarda o trecho "#..." do endereço antes de o Supabase limpá-lo:
+    // é por ele que chegam os retornos dos links enviados por e-mail (confirmar conta, nova senha).
+    const CG_HASH = window.location.hash || '';
+    let CG_CONFIRMED = /(^|[#&])type=signup\b/.test(CG_HASH);
 
     // Inicialização do cliente Supabase
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -340,10 +404,119 @@
 
     const cgEl = (id) => document.getElementById(id);
 
-    // Controle do Modal de Auth
-    function toggleAuthModal() {
-        cgEl('authModal').classList.toggle('hidden');
+    // ---------- Aviso rápido (toast) ----------
+    function cgToast(text) {
+        let t = cgEl('cgToast');
+        if (!t) {
+            t = document.createElement('div');
+            t.id = 'cgToast';
+            t.setAttribute('role', 'status');
+            t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] max-w-[90vw] bg-gray-900 border border-cyan-400/40 text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-2xl transition-opacity duration-300 opacity-0';
+            document.body.appendChild(t);
+        }
+        t.textContent = text;
+        requestAnimationFrame(() => { t.style.opacity = '1'; });
+        clearTimeout(t._h);
+        t._h = setTimeout(() => { t.style.opacity = '0'; }, 4500);
     }
+
+    // ---------- Janela de login: telas Entrar / Criar conta / Esqueci a senha / Nova senha ----------
+    const AUTH_VIEWS = ['login', 'signup', 'forgot', 'reset', 'sent'];
+    const AUTH_TEXT = {
+        login:  ['Bem-vindo de volta', 'Entre para comentar e trocar ideia com a galera sobre as matérias.'],
+        signup: ['Crie a sua conta', 'É grátis e leva menos de um minuto. Você só precisa de um e-mail.'],
+        forgot: ['Esqueceu a senha?', 'Digite o e-mail da sua conta e enviaremos um link para criar uma nova senha.'],
+        reset:  ['Crie uma nova senha', 'Escolha uma senha com pelo menos 8 caracteres.'],
+        sent:   ['Confira o seu e-mail', '']
+    };
+    let cgAuthView = 'login', cgPendingEmail = '', cgSentKind = '', cgResendAt = 0;
+
+    function authMsg(text, kind) {
+        const m = cgEl('authMsg');
+        if (!m) return;
+        if (!text) { m.classList.add('hidden'); m.textContent = ''; return; }
+        m.textContent = text;
+        m.className = 'text-xs rounded-lg px-3 py-2 mb-3 leading-relaxed border ' +
+            (kind === 'ok' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                           : 'bg-red-500/10 border-red-500/30 text-red-300');
+    }
+
+    function setAuthView(view, msg, kind) {
+        cgAuthView = view;
+        AUTH_VIEWS.forEach((v) => cgEl('authView-' + v).classList.toggle('hidden', v !== view));
+        const tabbed = view === 'login' || view === 'signup';
+        cgEl('authSocial').classList.toggle('hidden', !tabbed);
+        cgEl('authTabs').classList.toggle('hidden', !tabbed);
+        ['login', 'signup'].forEach((v) => {
+            const t = cgEl('authTab-' + v), on = v === view;
+            t.setAttribute('aria-selected', on ? 'true' : 'false');
+            t.className = 'text-xs font-extrabold py-2 rounded-lg transition ' +
+                (on ? 'bg-cyan-400 text-black' : 'text-gray-400 hover:text-white');
+        });
+        cgEl('authTitle').textContent = AUTH_TEXT[view][0];
+        cgEl('authSub').textContent = AUTH_TEXT[view][1];
+        cgEl('authSub').classList.toggle('hidden', !AUTH_TEXT[view][1]);
+        cgEl('authResendBtn').classList.add('hidden');
+        authMsg(msg || '', kind || 'error');
+        // aproveita o e-mail já digitado entre as telas
+        if (cgPendingEmail) ['authLoginEmail', 'authSignupEmail', 'authForgotEmail'].forEach((id) => { if (!cgEl(id).value) cgEl(id).value = cgPendingEmail; });
+        const first = cgEl('authView-' + view).querySelector('input');
+        if (first) setTimeout(() => first.focus(), 30);
+    }
+
+    function openAuthModal(view, msg, kind) {
+        cgEl('authModal').classList.remove('hidden');
+        setAuthView(view || 'login', msg, kind);
+    }
+    function closeAuthModal() {
+        cgEl('authModal').classList.add('hidden');
+        document.querySelectorAll('#authModal input[type=password]').forEach((i) => { i.value = ''; i.type = 'password'; });
+    }
+    // Mantido para os botões que já chamam toggleAuthModal()
+    function toggleAuthModal() {
+        if (cgEl('authModal').classList.contains('hidden')) openAuthModal('login');
+        else closeAuthModal();
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !cgEl('authModal').classList.contains('hidden')) closeAuthModal();
+    });
+
+    function cgTogglePw(btn) {
+        const input = btn.parentNode.querySelector('input');
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.textContent = show ? 'Ocultar' : 'Mostrar';
+        btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+    }
+
+    // Traduz os erros do Supabase para mensagens claras em português
+    function authErr(error) {
+        const code = String((error && error.code) || '').toLowerCase();
+        const msg = String((error && error.message) || '').toLowerCase();
+        const has = (...k) => k.some((x) => code.indexOf(x) !== -1 || msg.indexOf(x) !== -1);
+        if (has('invalid_credentials', 'invalid login credentials')) return 'E-mail ou senha incorretos. Confira e tente de novo.';
+        if (has('email_not_confirmed', 'email not confirmed')) return 'Você ainda não confirmou o seu e-mail. Procure a nossa mensagem na caixa de entrada (e no spam).';
+        if (has('user_already_exists', 'already registered')) return 'Já existe uma conta com esse e-mail. Entre, ou use “Esqueci minha senha”.';
+        if (has('same_password', 'different from the old')) return 'A nova senha precisa ser diferente da anterior.';
+        if (has('weak_password', 'at least', 'password should')) return 'Senha fraca demais. Use pelo menos 8 caracteres, misturando letras e números.';
+        if (has('rate_limit', 'rate limit', 'too many', '429')) return 'Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente de novo.';
+        if (has('validation_failed', 'invalid format', 'unable to validate email')) return 'Esse e-mail não parece válido. Confira se digitou certo.';
+        if (has('signup_disabled', 'signups not allowed')) return 'Novos cadastros por e-mail estão desativados no momento.';
+        if (has('error sending', 'smtp')) return 'Não foi possível enviar o e-mail agora. Tente de novo em instantes.';
+        if (has('failed to fetch', 'network')) return 'Sem conexão com o servidor. Verifique a internet e tente de novo.';
+        if (has('session', 'jwt', 'not authenticated')) return 'O link expirou. Peça um novo em “Esqueci minha senha”.';
+        return 'Algo deu errado. Tente de novo em instantes.';
+    }
+
+    // Desabilita o botão enquanto espera a resposta
+    async function authBusy(form, label, fn) {
+        const btn = form.querySelector('button[type=submit]');
+        const original = btn.textContent;
+        btn.disabled = true; btn.textContent = label;
+        try { await fn(); } finally { btn.disabled = false; btn.textContent = original; }
+    }
+
+    const authBackTo = () => window.location.origin + window.location.pathname + window.location.search;
 
     // ---------- Menu do usuário ----------
     function closeUserMenu() {
@@ -375,47 +548,108 @@
 
     // ---------- Login Social com a Conta Google (Via Supabase Auth) ----------
     async function loginGoogle() {
-        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
-            options: {
-                // volta para a mesma página em que a pessoa estava
-                redirectTo: window.location.origin + window.location.pathname + window.location.search
-            }
+            options: { redirectTo: authBackTo() }   // volta para a mesma página em que a pessoa estava
         });
-        if (error) alert('Erro ao autenticar com o Google: ' + error.message);
+        if (error) authMsg(authErr(error), 'error');
     }
 
-    // ---------- Login / Cadastro com E-mail e Senha ----------
-    async function handleEmailAuth(e) {
+    // ---------- Entrar com e-mail e senha ----------
+    function authLogin(e) {
         e.preventDefault();
-        const inputs = e.target.querySelectorAll('input');
-        const email = inputs[0].value;
-        const password = inputs[1].value;
-
-        // Tenta fazer login primeiro
-        const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-        });
-
-        if (loginError) {
-            // Se falhar o login, tenta criar a conta (Sign Up)
-            const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
-                email,
-                password
-            });
-
-            if (signUpError) {
-                alert('Erro na autenticação: ' + signUpError.message);
-            } else {
-                alert('Conta criada com sucesso! Verifique seu e-mail para confirmar.');
-                toggleAuthModal();
+        const email = cgEl('authLoginEmail').value.trim(), password = cgEl('authLoginPass').value;
+        cgPendingEmail = email;
+        authMsg('');
+        cgEl('authResendBtn').classList.add('hidden');
+        return authBusy(e.target, 'Entrando…', async () => {
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                authMsg(authErr(error), 'error');
+                const c = String(error.code || '') + ' ' + String(error.message || '');
+                if (/email_not_confirmed|email not confirmed/i.test(c)) cgEl('authResendBtn').classList.remove('hidden');
+                return;
             }
-        } else {
-            alert('Login efetuado com sucesso!');
-            toggleAuthModal();
-            checkUserSession();
-        }
+            closeAuthModal();
+            cgToast('Pronto! Você entrou na sua conta.');
+        });
+    }
+
+    // ---------- Criar conta ----------
+    function authSignup(e) {
+        e.preventDefault();
+        const name = cgEl('authSignupName').value.replace(/\s+/g, ' ').trim().slice(0, 30);
+        const email = cgEl('authSignupEmail').value.trim(), password = cgEl('authSignupPass').value;
+        cgPendingEmail = email;
+        authMsg('');
+        if (name.length < 2) { authMsg('Diga como quer ser chamado (pelo menos 2 letras).', 'error'); return; }
+        if (password.length < 8) { authMsg('A senha precisa ter pelo menos 8 caracteres.', 'error'); return; }
+        return authBusy(e.target, 'Criando conta…', async () => {
+            const { data, error } = await supabaseClient.auth.signUp({
+                email, password,
+                options: { emailRedirectTo: authBackTo(), data: { display_name: name, full_name: name } }
+            });
+            if (error) { authMsg(authErr(error), 'error'); return; }
+            // e-mail que já tem conta: o Supabase devolve um usuário "vazio" (sem identidades)
+            if (data && data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+                authMsg('Já existe uma conta com esse e-mail. Se você costuma entrar com o Google, use o botão “Continuar com o Google”; senão, entre ou use “Esqueci minha senha”.', 'error');
+                return;
+            }
+            if (data && data.session) { closeAuthModal(); cgToast('Conta criada! Bem-vindo(a) ao Conexão Gamer.'); return; }
+            showSent('signup', email);
+        });
+    }
+
+    // "Confira o seu e-mail"
+    function showSent(kind, email) {
+        cgSentKind = kind;
+        cgPendingEmail = email;
+        setAuthView('sent');
+        cgEl('authSentText').textContent = kind === 'signup'
+            ? 'Enviamos um link de confirmação para ' + email + '. Clique nele para ativar a sua conta e já entrar no site.'
+            : 'Se existir uma conta com o e-mail ' + email + ', enviamos um link para você criar uma nova senha. Ele vale por pouco tempo.';
+        cgEl('authSentResend').classList.toggle('hidden', kind !== 'signup');
+    }
+
+    // ---------- Esqueci minha senha ----------
+    function authForgot(e) {
+        e.preventDefault();
+        const email = cgEl('authForgotEmail').value.trim();
+        cgPendingEmail = email;
+        authMsg('');
+        return authBusy(e.target, 'Enviando…', async () => {
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/' });
+            if (error) { authMsg(authErr(error), 'error'); return; }
+            showSent('forgot', email);
+        });
+    }
+
+    // ---------- Nova senha (aberta pelo link do e-mail) ----------
+    function authReset(e) {
+        e.preventDefault();
+        const p1 = cgEl('authResetPass').value, p2 = cgEl('authResetPass2').value;
+        authMsg('');
+        if (p1.length < 8) { authMsg('A senha precisa ter pelo menos 8 caracteres.', 'error'); return; }
+        if (p1 !== p2) { authMsg('As duas senhas não são iguais.', 'error'); return; }
+        return authBusy(e.target, 'Salvando…', async () => {
+            const { error } = await supabaseClient.auth.updateUser({ password: p1 });
+            if (error) { authMsg(authErr(error), 'error'); return; }
+            closeAuthModal();
+            cgToast('Senha alterada! Você já está logado.');
+        });
+    }
+
+    // ---------- Reenviar o e-mail de confirmação (espera 60 s entre pedidos) ----------
+    async function authResend() {
+        if (!cgPendingEmail) return;
+        const wait = Math.ceil((cgResendAt + 60000 - Date.now()) / 1000);
+        if (wait > 0) { authMsg('Aguarde ' + wait + ' segundos para pedir de novo.', 'error'); return; }
+        cgResendAt = Date.now();
+        const { error } = await supabaseClient.auth.resend({
+            type: 'signup', email: cgPendingEmail, options: { emailRedirectTo: authBackTo() }
+        });
+        if (error) { cgResendAt = 0; authMsg(authErr(error), 'error'); return; }
+        authMsg('Pronto! Enviamos o e-mail de novo para ' + cgPendingEmail + '.', 'ok');
     }
 
     // ---------- Sessão, nome e foto ----------
@@ -475,6 +709,7 @@
             } catch (e) { /* sem perfil ainda: usa os dados da conta */ }
         }
         refreshAuthUI();
+        if (CG_CONFIRMED && cgSession) { CG_CONFIRMED = false; cgToast('E-mail confirmado! Você já está logado.'); }
         window.cgAuthState = { session: cgSession, profile: cgProfile };
         window.dispatchEvent(new CustomEvent('cg:auth', { detail: window.cgAuthState }));
     }
@@ -487,8 +722,39 @@
 
     // Reage a login/logout (inclusive o retorno do Google)
     supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+            // a pessoa clicou no link "nova senha" do e-mail
+            setTimeout(() => openAuthModal('reset'), 0);
+        }
         if (event === 'INITIAL_SESSION') return;
         setTimeout(() => applySession(session), 0);
+    });
+
+    // Link do e-mail vencido ou já usado: avisa em vez de deixar a pessoa sem entender
+    document.addEventListener('DOMContentLoaded', () => {
+        const p = new URLSearchParams(CG_HASH.replace(/^#/, ''));
+        if (p.get('error') || p.get('error_code')) {
+            openAuthModal('login', 'Esse link venceu ou já foi usado. Entre com seu e-mail e senha; se precisar, use “Esqueci minha senha” para receber um novo.', 'error');
+        }
+        // tira o "#access_token=..." do endereço depois que o Supabase leu
+        if (/access_token|error_code|type=/.test(CG_HASH)) {
+            setTimeout(() => { try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) {} }, 800);
+        }
+    });
+
+    // Links dos e-mails que apontam para o nosso próprio endereço: /?token_hash=...&type=signup|recovery|email_change
+    // (o token só é usado aqui, pelo navegador da pessoa; programas de segurança de e-mail não o gastam)
+    document.addEventListener('DOMContentLoaded', () => {
+        const q = new URLSearchParams(window.location.search);
+        const tokenHash = q.get('token_hash'), type = q.get('type');
+        if (!tokenHash || ['signup', 'recovery', 'email_change', 'email'].indexOf(type) === -1) return;
+        try { history.replaceState(null, '', window.location.pathname); } catch (e) {}
+        if (type !== 'recovery') CG_CONFIRMED = true;
+        supabaseClient.auth.verifyOtp({ token_hash: tokenHash, type: type }).then(({ error }) => {
+            if (!error) return;   // recovery abre a tela "Nova senha" pelo evento PASSWORD_RECOVERY; os outros mostram o aviso
+            CG_CONFIRMED = false;
+            openAuthModal('login', 'Esse link venceu ou já foi usado. Entre com seu e-mail e senha; se precisar, use “Esqueci minha senha” para receber um novo.', 'error');
+        });
     });
 
     // Executa verificação ao carregar a página
