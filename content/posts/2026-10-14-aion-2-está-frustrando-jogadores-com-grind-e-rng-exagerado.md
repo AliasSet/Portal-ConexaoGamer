@@ -12,8 +12,6 @@ summary: Jogadores de AION 2 estão reclamando da progressão no endgame, marcad
 author: Redação Conexão Gamer
 date: 13/10/2026T21:45
 ---
-# AION 2 está frustrando jogadores com grind pesado e equipamentos que dependem da sorte
-
 **MMORPG da NCSoft tem recebido críticas pela dificuldade de conseguir equipamentos melhores, pelas falhas no crafting e pela falta de alternativas para avançar no endgame.**
 
 Passar horas enfrentando chefes, repetir a mesma masmorra dezenas de vezes e terminar a sessão sem conseguir um equipamento melhor. Essa é a experiência que está deixando parte da comunidade de *AION 2* frustrada com o endgame do MMORPG da NCSoft.
