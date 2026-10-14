@@ -11,6 +11,19 @@ media_folder: "uploads"
 public_folder: "/uploads"
 
 collections:
+  - name: "autores"
+    label: "Autores"
+    label_singular: "Autor"
+    folder: "content/authors"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "name"
+    summary: "{{name}}"
+    fields:
+      - { label: "Nome (como aparece nas matérias)", name: "name", widget: "string" }
+      - { label: "Foto", name: "photo", widget: "image", required: false, hint: "Foto quadrada, de preferência com o rosto centralizado (ex: 400x400)." }
+      - { label: "Mini-bio", name: "bio", widget: "text", required: false, hint: "Uma ou duas frases. Aparece em 'Sobre o autor' no fim da matéria. Sem bio, a caixa não aparece." }
+
   - name: "posts"
     label: "Notícias e Reviews"
     folder: "content/posts"
@@ -27,7 +40,7 @@ collections:
       - { label: "Imagem de Capa", name: "image", widget: "image" }
       - { label: "Legenda / crédito da imagem", name: "image_caption", widget: "string", required: false, hint: "Aparece em letra pequena logo abaixo da imagem. Ex: Imagem: Divulgação/Rockstar Games" }
       - { label: "Resumo", name: "summary", widget: "text" }
-      - { label: "Autor", name: "author", widget: "string", default: "Redação Conexão Gamer", required: false }
+      - { label: "Autor", name: "author", widget: "relation", collection: "autores", search_fields: ["name"], value_field: "name", display_fields: ["name"], required: false, hint: "Escolha o autor na lista. Se deixar em branco, aparece Redação Conexão Gamer. Para cadastrar um autor novo, use 'Autores' no menu." }
       - { label: "Data de Publicação", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: "HH:mm", required: false }
       - { label: "Nota do Review (0-10)", name: "rating", widget: "number", value_type: "float", required: false }
       - { label: "Conteúdo da Matéria", name: "body", widget: "markdown" }
