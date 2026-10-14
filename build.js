@@ -19,6 +19,7 @@ const yaml = require('js-yaml');
 const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
 const POSTS_DIR = path.join(ROOT, 'content', 'posts');
+const AUTHORS_DIR = path.join(ROOT, 'content', 'authors');
 const SITE_NAME = 'Conexão Gamer';
 // Troque pelo domínio definitivo (ou defina a variável SITE_URL na Vercel)
 const SITE_URL = (process.env.SITE_URL || 'https://conexaogamer-seven.vercel.app').replace(/\/+$/, '');
@@ -93,6 +94,51 @@ function copyDir(src, dest) {
 function fmtDateLong(ms) {
   return new Date(ms).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'America/Sao_Paulo' });
 }
+
+/* ---------- Autores (painel: Autores) ---------- */
+
+const normName = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+// Lê content/authors/*.md. A matéria guarda só o NOME do autor; aqui buscamos foto e bio pelo nome.
+function loadAuthors() {
+  const map = new Map();
+  if (!fs.existsSync(AUTHORS_DIR)) return map;
+  for (const f of fs.readdirSync(AUTHORS_DIR).filter((n) => /\.md$/i.test(n))) {
+    try {
+      const text = fs.readFileSync(path.join(AUTHORS_DIR, f), 'utf8').replace(/^\uFEFF/, '');
+      const m = text.match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n([\s\S]*))?$/);
+      if (!m) throw new Error('sem frontmatter');
+      const meta = yaml.load(m[1]) || {};
+      const name = String(meta.name || '').replace(/\s+/g, ' ').trim();
+      if (!name) throw new Error('autor sem nome');
+      const photo = meta.photo ? String(meta.photo).trim() : '';
+      map.set(normName(name), {
+        name,
+        photo: okImg(photo) ? photo : '',
+        bio: String(meta.bio || '').replace(/\s+/g, ' ').trim().slice(0, 400)
+      });
+    } catch (e) {
+      console.warn('[build] AVISO: autor ignorado (' + f + '): ' + e.message);
+    }
+  }
+  return map;
+}
+
+// Junta ao post a foto e a bio do autor (se o nome bater com um autor cadastrado)
+function attachAuthors(posts, authors) {
+  for (const p of posts) {
+    const a = authors.get(normName(p.author));
+    p.authorPhoto = a ? a.photo : '';
+    p.authorBio = a ? a.bio : '';
+    p.authorKnown = !!a;
+    if (a) p.author = a.name;   // usa a grafia cadastrada
+  }
+}
+
+// Foto redonda do autor (se a imagem falhar, some e sobra o ícone/nome)
+const authorImg = (p, size) => p.authorPhoto
+  ? `<img src="${esc(p.authorPhoto)}" alt="" loading="lazy" referrerpolicy="no-referrer" class="${size} rounded-full object-cover border border-gray-700 flex-shrink-0" onerror="this.remove()">`
+  : '';
 
 /* ---------- Leitura dos posts ---------- */
 
@@ -219,13 +265,21 @@ function articleHtml(p) {
                     <h1 class="text-3xl sm:text-4xl font-black text-white leading-tight">${esc(p.title)}</h1>
                     ${p.summary ? `<p class="text-gray-400 mt-3">${esc(p.summary)}</p>` : ''}
                     <div class="flex flex-wrap items-center gap-x-5 gap-y-1 mt-4 pb-4 border-b border-gray-800 text-xs text-gray-400">
-                        <span><i class="fa-solid fa-user text-cyan-400 mr-1"></i> ${esc(p.author)}</span>
+                        <span class="inline-flex items-center gap-1.5">${p.authorPhoto ? authorImg(p, 'w-6 h-6') : '<i class="fa-solid fa-user text-cyan-400"></i>'} ${esc(p.author)}</span>
                         <span><i class="fa-regular fa-calendar text-cyan-400 mr-1"></i> <time datetime="${new Date(p.time).toISOString()}">${esc(fmtDateLong(p.time))}</time></span>
                         <span><i class="fa-regular fa-clock text-cyan-400 mr-1"></i> ${p.readMin} min de leitura</span>
                     </div>
                     ${okImg(p.image) ? `<figure class="mt-6"><img src="${esc(p.image)}" alt="${esc(p.title)}" referrerpolicy="no-referrer" class="w-full max-h-[420px] object-cover rounded-2xl border border-gray-800" onerror="this.style.display='none'">${caption ? `<figcaption class="mt-2 text-xs text-gray-500 leading-relaxed">${caption}</figcaption>` : ''}</figure>` : ''}
                     <div class="article-body mt-6">${bodyHtml}</div>
                     ${tags ? `<div class="flex flex-wrap gap-2 mt-8">${tags}</div>` : ''}
+                    ${p.authorBio ? `<aside class="mt-8 flex gap-4 bg-gray-900 border border-gray-800 rounded-2xl p-5" aria-label="Sobre o autor">
+                        ${p.authorPhoto ? authorImg(p, 'w-14 h-14') : '<span class="w-14 h-14 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-user text-cyan-400"></i></span>'}
+                        <div class="min-w-0">
+                            <p class="text-[10px] uppercase tracking-widest text-cyan-400 font-extrabold">Sobre o autor</p>
+                            <p class="text-sm font-bold text-white mt-0.5">${esc(p.author)}</p>
+                            <p class="text-xs text-gray-400 mt-1 leading-relaxed">${esc(p.authorBio)}</p>
+                        </div>
+                    </aside>` : ''}
 
                     <section id="comments" class="mt-10 pt-8 border-t border-gray-800 scroll-mt-24">
                         <h2 class="text-lg font-black text-white flex items-center gap-2"><i class="fa-regular fa-comments text-cyan-400"></i> Comentários <span id="comments-count" class="text-xs font-semibold text-gray-500"></span></h2>
@@ -256,8 +310,8 @@ function cardHtml(p) {
                                 <h3 class="text-base font-bold text-white group-hover:text-cyan-300 transition line-clamp-2 mb-2">${esc(p.title)}</h3>
                                 <p class="text-xs text-gray-400 line-clamp-3 mb-4 leading-relaxed">${esc(p.summary)}</p>
                                 <div class="mt-auto pt-3 border-t border-gray-800 flex items-center justify-between text-[11px] text-gray-400">
-                                    <span class="text-gray-300">${esc(p.author)}</span>
-                                    <span>${esc(fmtDateShort(p.time))}</span>
+                                    <span class="text-gray-300 flex items-center gap-1.5 min-w-0">${authorImg(p, 'w-5 h-5')}<span class="truncate">${esc(p.author)}</span></span>
+                                    <span class="flex-shrink-0">${esc(fmtDateShort(p.time))}</span>
                                 </div>
                             </div>
                         </a>`;
@@ -505,7 +559,9 @@ function buildPostPage(template, p) {
     ...(image ? { image: [image] } : {}),
     datePublished: new Date(p.time).toISOString(),
     dateModified: new Date(p.time).toISOString(),
-    author: { '@type': 'Organization', name: p.author },
+    author: (p.authorPhoto || p.authorBio)
+      ? { '@type': 'Person', name: p.author, ...(absUrl(p.authorPhoto) ? { image: absUrl(p.authorPhoto) } : {}) }
+      : { '@type': 'Organization', name: p.author },
     publisher: { '@type': 'Organization', name: SITE_NAME },
     mainEntityOfPage: url
   };
@@ -539,11 +595,12 @@ async function main() {
   fs.mkdirSync(DIST, { recursive: true });
 
   const posts = loadPosts(mdParse);
+  attachAuthors(posts, loadAuthors());
 
   // posts.json (sem o corpo do texto: leve para a home)
   const light = posts.map((p) => ({
     slug: p.slug, url: p.url, title: p.title, summary: p.summary, image: p.image,
-    categories: p.categories, tags: p.tags, rating: p.rating, author: p.author,
+    categories: p.categories, tags: p.tags, rating: p.rating, author: p.author, authorPhoto: p.authorPhoto || '',
     time: p.time, readMin: p.readMin
   }));
   fs.writeFileSync(path.join(DIST, 'posts.json'), JSON.stringify(light));
