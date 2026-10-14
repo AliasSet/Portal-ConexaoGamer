@@ -15,7 +15,7 @@ author: Redação Conexão Gamer
 date: 12/10/2026T20:23
 rating: ""
 ---
-Novo jogo de tiro tático gratuito da NetEase combina jogabilidade de tiro idêntica ao Call of Duty com habilidades de heróis, dividindo opiniões entre acusações de plágio e empolgação pela volta da nostalgia de 2019.
+Novo jogo de tiro tático gratuito da NetEase combina jogabilidade de tiro idêntica ao Call of Duty com habilidades de heróis, dividindo opiniões entre acusações de plágio e empolgação pela volta da nostalgia de 2020.
 
 A gigante chinesa NetEase Games revelou oficialmente seu mais novo projeto: ECC: Redline, descrito pela empresa como um jogo de tiro tático de esportes radicais. No entanto, bastaram poucas horas após a divulgação do primeiro trailer para que a comunidade de FPS apontasse o óbvio: o título é uma reprodução quase cirúrgica das mecânicas, interface e movimentação de Call of Duty: Warzone.
 
