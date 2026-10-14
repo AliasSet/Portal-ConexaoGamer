@@ -542,7 +542,8 @@
 
     async function logout() {
         closeUserMenu();
-        const { error } = await supabaseClient.auth.signOut();
+        // 'local': sai só deste aparelho (o padrão, 'global', deslogaria também o celular, o computador etc.)
+        const { error } = await supabaseClient.auth.signOut({ scope: 'local' });
         if (error) console.error('[Conexão Gamer] erro ao sair:', error);
     }
 
