@@ -13,8 +13,6 @@ summary: GTA 6 pode ganhar uma versão para PC entre janeiro e março de 2027,
 author: Redação Conexão Gamer
 date: 13/10/2026T20:07
 ---
-# GTA 6 no PC pode chegar já no início de 2027, aponta relatório
-
 Os jogadores de PC podem ter uma surpresa positiva com o lançamento de *Grand Theft Auto VI*. Um relatório publicado pelo GamesBeat aponta que a Rockstar Games planeja lançar a versão para computadores no primeiro trimestre de 2027, reduzindo consideravelmente a espera em relação à estreia nos consoles.
 
 De acordo com a publicação, a informação foi obtida com quatro fontes da indústria familiarizadas com os planos do estúdio. Todas pediram anonimato, e a Rockstar não respondeu ao pedido de comentário antes da publicação da reportagem.
