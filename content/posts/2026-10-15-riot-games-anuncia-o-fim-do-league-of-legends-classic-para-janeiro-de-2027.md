@@ -12,7 +12,7 @@ summary: Menos de seis meses após o lançamento, a Riot Games confirmou o
   2027. O estúdio citou a queda drástica na base de jogadores e revelou um plano
   de reembolso em RP para os conteúdos cosméticos adquiridos.
 author: Redação Conexão Gamer
-date: 06/10/2026T21:12
+date: 07/10/2026T21:12
 ---
 A empolgação com a nostalgia parece ter durado pouco para os lados da Riot Games. A desenvolvedora confirmou oficialmente que o modo League of Legends Classic encerrará sua jornada atual no dia 6 de janeiro de 2027, ao término da 3ª Temporada.
 
