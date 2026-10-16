@@ -610,11 +610,15 @@ function profileHtml() {
                 `;
 }
 
-/* ---------- Páginas fixas: Privacidade e Termos ---------- */
+/* ---------- Páginas fixas: Privacidade, Termos, Sobre, Contato e Política Editorial ---------- */
 
 const LEGAL_PAGES = [
   { slug: 'privacidade', file: 'privacidade.md', fallbackTitle: 'Política de Privacidade' },
-  { slug: 'termos', file: 'termos.md', fallbackTitle: 'Termos de Uso' }
+  { slug: 'termos', file: 'termos.md', fallbackTitle: 'Termos de Uso' },
+  // Páginas de confiança (editáveis no painel: Páginas do site)
+  { slug: 'sobre', file: 'sobre.md', fallbackTitle: 'Sobre nós' },
+  { slug: 'contato', file: 'contato.md', fallbackTitle: 'Contato' },
+  { slug: 'politica-editorial', file: 'politica-editorial.md', fallbackTitle: 'Política Editorial' }
 ];
 
 // Quem responde pelo site e o e-mail de contato: editável no painel (Configurações do site)
@@ -962,7 +966,7 @@ async function main() {
     fs.writeFileSync(path.join(dir, 'index.html'), buildPostPage(template, p, posts));
   }
 
-  // Páginas fixas: Política de Privacidade e Termos de Uso
+  // Páginas fixas: Privacidade, Termos, Sobre, Contato e Política Editorial
   const contact = loadContact();
   const legalPages = LEGAL_PAGES.map((d) => loadLegalPage(d, mdParse, contact)).filter(Boolean);
   for (const pg of legalPages) {
@@ -971,7 +975,7 @@ async function main() {
   }
   if (legalPages.length && (!contact.responsavel || !contact.email)) {
     console.warn('[build] AVISO: preencha o responsável e o e-mail de contato (painel: Configurações do site > Contato). ' +
-                 'Enquanto isso, as páginas de Privacidade e Termos mostram um aviso no lugar.');
+                 'Enquanto isso, as páginas que usam esses dados (Privacidade, Termos, Sobre e Contato) mostram um aviso no lugar.');
   }
 
   // Página de perfil do leitor (privada: fora do Google e do sitemap)
