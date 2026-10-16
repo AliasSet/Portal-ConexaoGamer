@@ -9,7 +9,7 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Exo+2:wght@800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Client Supabase JS (Pronto para conexão) -->
@@ -37,6 +37,7 @@
     </script>
     <style>
         body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .cg-logo { font-family: 'Exo 2', 'Inter', sans-serif; }   /* fonte só do logo CONEXÃOGAMER (cabeçalho e rodapé) */
         .bg-glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(14px); }
         .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.2); }
@@ -58,7 +59,7 @@
                         </div>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-2xl font-black tracking-wider uppercase text-white leading-none [font-kerning:none]">
+                        <span class="text-2xl font-black tracking-wider uppercase text-white leading-none cg-logo">
                             CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span>
                         </span>
                         <div class="flex items-center gap-1.5 mt-1">
@@ -263,7 +264,7 @@
     <footer class="bg-gray-950 border-t border-gray-800 text-gray-400 text-xs py-10 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div class="col-span-2">
-                <span class="text-2xl font-black tracking-wider uppercase text-white leading-none [font-kerning:none]">CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span></span>
+                <span class="text-2xl font-black tracking-wider uppercase text-white leading-none cg-logo">CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span></span>
                 <p class="text-gray-400 mt-2 max-w-md">Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.</p>
             </div>
             <nav aria-label="Categorias">
