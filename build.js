@@ -554,6 +554,15 @@ function profileHtml() {
                             </form>
                         </div>
 
+                        <div id="profile-notify" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                            <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-bell text-cyan-400"></i> Avisos por e-mail</h2>
+                            <label class="mt-4 flex items-start gap-3 bg-gray-950 border border-gray-800 rounded-xl p-4 cursor-pointer">
+                                <input type="checkbox" id="notify-replies" class="mt-0.5 accent-cyan-400" disabled>
+                                <span class="text-xs text-gray-300 leading-relaxed"><strong class="text-white">Avisar por e-mail quando alguém responder ao meu comentário.</strong> Enviamos para o e-mail da sua conta, no máximo 5 por hora, e todo aviso traz um link para parar de receber.</span>
+                            </label>
+                            <p id="notify-msg" class="text-xs min-h-[1rem] mt-3" role="status" aria-live="polite"></p>
+                        </div>
+
                         <div id="profile-library" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-bookmark text-cyan-400"></i> Minha área</h2>
                             <div id="lib-tabs" role="tablist" class="grid grid-cols-3 gap-1 bg-gray-950 border border-gray-800 rounded-xl p-1 mt-4">
@@ -717,6 +726,44 @@ function buildPublicProfilePage(template) {
     .replace('<body data-page="home"', '<body data-page="public-profile"')
     .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
     .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => publicProfileHtml());
+}
+
+function noticesHtml() {
+  return `
+                <div id="notice-root" class="max-w-xl">
+                    <div id="notice-ask" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
+                        <i class="fa-regular fa-bell-slash text-4xl text-cyan-400 mb-3"></i>
+                        <h1 class="text-lg font-black text-white">Parar de receber avisos de resposta?</h1>
+                        <p class="text-sm text-gray-400 mt-2 mb-5">Você deixará de receber e-mail quando alguém responder aos seus comentários. Dá para voltar a receber quando quiser, em Meu perfil.</p>
+                        <button id="notice-confirm" type="button" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Sim, parar de receber</button>
+                        <a href="/" class="block mt-4 text-xs font-bold text-gray-500 hover:text-cyan-400 transition">Não, voltar ao site</a>
+                    </div>
+                    <div id="notice-done" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
+                        <i class="fa-solid fa-circle-check text-4xl text-emerald-400 mb-3"></i>
+                        <h1 class="text-lg font-black text-white">Pronto! Você não receberá mais esses avisos.</h1>
+                        <p class="text-sm text-gray-400 mt-2">Mudou de ideia? Entre em Meu perfil e ligue "Avisos por e-mail".</p>
+                        <a href="/perfil/" class="inline-block mt-5 text-xs font-bold text-cyan-400 hover:underline">Ir para Meu perfil</a>
+                    </div>
+                    <div id="notice-error" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
+                        <i class="fa-regular fa-circle-xmark text-4xl text-gray-600 mb-3"></i>
+                        <h1 class="text-lg font-black text-white">Link inválido ou já usado</h1>
+                        <p id="notice-error-text" class="text-sm text-gray-400 mt-2">Para gerenciar os avisos, entre em Meu perfil.</p>
+                        <a href="/perfil/" class="inline-block mt-5 text-xs font-bold text-cyan-400 hover:underline">Ir para Meu perfil</a>
+                    </div>
+                </div>
+                `;
+}
+
+function buildNoticesPage(template) {
+  const title = 'Avisos por e-mail | ' + SITE_NAME;
+  return template
+    .replace('<!--CG:HEAD-->', headTags({
+      title, description: 'Gerencie os avisos por e-mail do ' + SITE_NAME + '.', url: SITE_URL + '/avisos/', image: '', type: 'website', noAnalytics: true
+    }) + '\n    <meta name="robots" content="noindex, nofollow">')
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('<body data-page="home"', '<body data-page="notices"')
+    .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => noticesHtml());
 }
 
 function moderationHtml() {
@@ -930,6 +977,8 @@ async function main() {
   // Página de perfil do leitor (privada: fora do Google e do sitemap)
   fs.mkdirSync(path.join(DIST, 'moderacao'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'moderacao', 'index.html'), buildModerationPage(template));
+  fs.mkdirSync(path.join(DIST, 'avisos'), { recursive: true });
+  fs.writeFileSync(path.join(DIST, 'avisos', 'index.html'), buildNoticesPage(template));
   fs.mkdirSync(path.join(DIST, 'u'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'u', 'index.html'), buildPublicProfilePage(template));
   fs.mkdirSync(path.join(DIST, 'perfil'), { recursive: true });

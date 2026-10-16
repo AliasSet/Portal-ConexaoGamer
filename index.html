@@ -876,6 +876,7 @@
         show('profile-user');
         libInit(user.id);
         aboutInit(user.id);
+        notifyInit(user.id);
     }
 
     const AVATAR_PREFIX = SUPABASE_URL + '/storage/v1/object/public/avatars/';
@@ -1240,6 +1241,33 @@
         aboutMsg(isPublic ? 'Salvo! Seu perfil está público.' : 'Salvo! Seu perfil continua privado.');
     });
 
+    // ---------- Avisos por e-mail (respostas aos meus comentários) ----------
+    let notifyUid = null;
+    function notifyMsg(text, isError) {
+        const el = $('notify-msg');
+        el.textContent = text || '';
+        el.className = 'text-xs min-h-[1rem] mt-3 ' + (isError ? 'text-red-400' : 'text-emerald-400');
+    }
+    async function notifyInit(uid) {
+        if (notifyUid === uid) return;
+        notifyUid = uid;
+        const box = $('notify-replies');
+        box.disabled = true; box.checked = true; notifyMsg('');
+        const { data, error } = await supabaseClient.from('notification_prefs').select('email_replies').eq('user_id', uid).maybeSingle();
+        if (notifyUid !== uid) return;
+        if (error) { notifyMsg('Não foi possível carregar esta opção agora. Recarregue a página.', true); return; }
+        box.checked = data ? data.email_replies !== false : true;   // sem linha = ligado
+        box.disabled = false;
+    }
+    $('notify-replies').addEventListener('change', async (e) => {
+        const box = e.target, want = box.checked;
+        box.disabled = true; notifyMsg('Salvando…');
+        const { error } = await supabaseClient.rpc('set_my_email_replies', { p_enabled: want });
+        box.disabled = false;
+        if (error) { box.checked = !want; notifyMsg('Não foi possível salvar agora. Tente novamente.', true); return; }
+        notifyMsg(want ? 'Pronto! Você vai receber os avisos de resposta.' : 'Pronto! Você não receberá mais avisos por e-mail.');
+    });
+
     window.addEventListener('cg:auth', (e) => render(e.detail));
     if (window.cgAuthState) render(window.cgAuthState);
 
@@ -1464,6 +1492,28 @@
     if (window.cgAuthState) checkMod();
 
     load();
+})();
+</script>
+
+<!-- PÁGINA /avisos/ (descadastrar pelo link do e-mail; só age quando body[data-page="notices"]) -->
+<script>
+(function () {
+    if (document.body.getAttribute('data-page') !== 'notices') return;
+    const $ = (id) => document.getElementById(id);
+    const token = (new URLSearchParams(location.search).get('t') || '').toLowerCase();
+    const OK = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(token);
+    function only(id) { ['notice-ask', 'notice-done', 'notice-error'].forEach((x) => $(x).classList.toggle('hidden', x !== id)); }
+    if (!OK) { only('notice-error'); return; }
+    only('notice-ask');
+    // O botão só age no clique (assim programas de segurança de e-mail que "abrem" o link não descadastram sozinhos)
+    $('notice-confirm').addEventListener('click', async () => {
+        const btn = $('notice-confirm'); btn.disabled = true;
+        const { data, error } = await supabaseClient.rpc('unsubscribe_email_replies', { p_token: token });
+        btn.disabled = false;
+        if (error) { $('notice-error-text').textContent = 'Não foi possível concluir agora. Tente novamente em instantes ou desligue em Meu perfil.'; only('notice-error'); return; }
+        if (data !== true) { only('notice-error'); return; }
+        only('notice-done');
+    });
 })();
 </script>
 
