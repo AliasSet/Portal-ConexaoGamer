@@ -125,6 +125,7 @@
                                 <p class="text-[10px] text-gray-500">Conectado</p>
                             </div>
                             <a href="/perfil/" role="menuitem" class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-regular fa-user w-4 text-center"></i> Meu perfil</a>
+                            <a id="userMenuMod" href="/moderacao/" role="menuitem" class="hidden items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:bg-gray-800 hover:text-cyan-400 transition"><i class="fa-solid fa-shield-halved w-4 text-center text-[11px]"></i> Moderação</a>
                             <button type="button" onclick="logout()" role="menuitem" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-300 hover:bg-gray-800 hover:text-red-400 transition text-left"><i class="fa-solid fa-arrow-right-from-bracket w-4 text-center"></i> Sair</button>
                         </div>
                     </div>
@@ -670,6 +671,14 @@
         return cgSafeAvatar((profile && profile.avatar_url) || m.avatar_url || m.picture || '');
     }
 
+    // Link "Moderação" no menu: só aparece para quem é moderador (a permissão de verdade está no banco)
+    function cgShowModLink(on) {
+        const a = cgEl('userMenuMod');
+        if (!a) return;
+        a.classList.toggle('hidden', !on);
+        a.classList.toggle('flex', !!on);
+    }
+
     // Atualiza o botão do cabeçalho conforme a sessão
     function refreshAuthUI() {
         const text = cgEl('userStatusText'), icon = cgEl('authIcon'),
@@ -692,6 +701,7 @@
             }
         } else {
             text.textContent = 'Entrar';
+            cgShowModLink(false);
             caret.classList.add('hidden');
             av.classList.add('hidden');
             icon.classList.remove('hidden');
@@ -710,6 +720,12 @@
             } catch (e) { /* sem perfil ainda: usa os dados da conta */ }
         }
         refreshAuthUI();
+        if (cgSession && cgSession.user) {
+            const uid = cgSession.user.id;
+            supabaseClient.rpc('is_moderator').then(({ data }) => {
+                if (cgSession && cgSession.user && cgSession.user.id === uid) cgShowModLink(data === true);
+            }, () => {});
+        }
         if (CG_CONFIRMED && cgSession) { CG_CONFIRMED = false; cgToast('E-mail confirmado! Você já está logado.'); }
         window.cgAuthState = { session: cgSession, profile: cgProfile };
         window.dispatchEvent(new CustomEvent('cg:auth', { detail: window.cgAuthState }));
@@ -930,6 +946,211 @@
         refreshAuthUI();
         msg('Nome atualizado!');
     });
+
+    // ---------- Excluir minha conta ----------
+    const delOpen = $('profile-delete-open'), delBox = $('profile-delete-box'), delInput = $('profile-delete-input'),
+          delGo = $('profile-delete-go'), delCancel = $('profile-delete-cancel'), delMsg = $('profile-delete-msg');
+    function dmsg(text, isError) {
+        delMsg.textContent = text || '';
+        delMsg.className = 'text-xs min-h-[1rem] ' + (isError ? 'text-red-400' : 'text-gray-300');
+    }
+    delOpen.addEventListener('click', () => {
+        const open = delBox.classList.toggle('hidden') === false;
+        delInput.value = ''; delGo.disabled = true; dmsg('');
+        if (open) delInput.focus();
+    });
+    delCancel.addEventListener('click', () => { delBox.classList.add('hidden'); delInput.value = ''; dmsg(''); });
+    delInput.addEventListener('input', () => { delGo.disabled = delInput.value.trim().toUpperCase() !== 'EXCLUIR'; });
+    delGo.addEventListener('click', async () => {
+        if (!cgSession || !cgSession.user || delInput.value.trim().toUpperCase() !== 'EXCLUIR') return;
+        const uid = cgSession.user.id;
+        delGo.disabled = true; delCancel.disabled = true; dmsg('Excluindo a sua conta…');
+        // 1) apaga a foto enviada (se houver); 2) apaga a conta e os comentários no banco
+        try {
+            const { data: files } = await supabaseClient.storage.from('avatars').list(uid);
+            if (files && files.length) await supabaseClient.storage.from('avatars').remove(files.map((f) => uid + '/' + f.name));
+        } catch (e) { /* sem foto própria: segue */ }
+        const { error } = await supabaseClient.rpc('delete_my_account');
+        if (error) {
+            console.warn('[Conexão Gamer] erro ao excluir a conta:', error.message);
+            dmsg('Não foi possível excluir agora. Tente de novo em instantes ou fale com a gente pelo e-mail de contato.', true);
+            delGo.disabled = false; delCancel.disabled = false;
+            return;
+        }
+        try { await supabaseClient.auth.signOut({ scope: 'local' }); } catch (e) {}
+        cgToast('Sua conta foi excluída. Obrigado por ter feito parte!');
+        setTimeout(() => { window.location.href = '/'; }, 1800);
+    });
+})();
+</script>
+
+<!-- PÁGINA /moderacao/ (só age quando body[data-page="moderation"]) -->
+<script>
+(function () {
+    if (document.body.getAttribute('data-page') !== 'moderation') return;
+    const $ = (id) => document.getElementById(id);
+    const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const PAGE = 30;
+    let tab = 'reported', items = [], total = 0, reportedTotal = null, loading = false, lastUid = '__none__';
+
+    function show(which) {
+        ['mod-loading', 'mod-denied', 'mod-panel'].forEach((id) => $(id).classList.toggle('hidden', id !== which));
+    }
+    function paintTabs() {
+        ['reported', 'recent', 'hidden'].forEach((t) => {
+            const el = $('mod-tab-' + t), on = t === tab;
+            el.setAttribute('aria-selected', on ? 'true' : 'false');
+            el.className = 'text-xs font-extrabold py-2 px-4 rounded-lg transition ' + (on ? 'bg-cyan-400 text-black' : 'text-gray-400 hover:text-white');
+        });
+        $('mod-tab-reported').textContent = 'Denunciados' + (reportedTotal ? ' (' + reportedTotal + ')' : '');
+    }
+    const fmt = (iso) => new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    function btn(act, c, label, cls) {
+        return '<button type="button" data-act="' + act + '" data-id="' + c.id + '" data-uid="' + esc(c.user_id || '') + '" data-label="' + esc(label) + '" class="text-[11px] font-bold px-3 py-1.5 rounded-lg border transition ' + cls + '">' + esc(label) + '</button>';
+    }
+    function itemHtml(c) {
+        const badges = [];
+        if (c.parent_id) badges.push('<span class="px-2 py-0.5 rounded bg-gray-800 text-gray-300">resposta</span>');
+        if (c.status === 'hidden') badges.push('<span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300">escondido</span>');
+        if (Number(c.report_count) > 0) badges.push('<span class="px-2 py-0.5 rounded bg-red-500/15 text-red-300">' + Number(c.report_count) + (Number(c.report_count) === 1 ? ' denúncia' : ' denúncias') + '</span>');
+        if (c.banned) badges.push('<span class="px-2 py-0.5 rounded bg-red-500/15 text-red-300">autor bloqueado</span>');
+        const acts = [];
+        acts.push(c.status === 'hidden'
+            ? btn('show', c, 'Mostrar de novo', 'border-gray-700 text-gray-300 hover:border-cyan-400 hover:text-cyan-400')
+            : btn('hide', c, 'Esconder', 'border-gray-700 text-gray-300 hover:border-amber-400 hover:text-amber-300'));
+        if (Number(c.report_count) > 0) acts.push(btn('dismiss', c, 'Dispensar denúncias', 'border-gray-700 text-gray-300 hover:border-emerald-400 hover:text-emerald-300'));
+        acts.push(btn('delete', c, 'Apagar', 'border-gray-700 text-gray-300 hover:border-red-400 hover:text-red-400'));
+        if (c.user_id) acts.push(c.banned
+            ? btn('unban', c, 'Desbloquear autor', 'border-gray-700 text-gray-300 hover:border-emerald-400 hover:text-emerald-300')
+            : btn('ban', c, 'Bloquear autor', 'border-gray-700 text-gray-300 hover:border-red-400 hover:text-red-400'));
+        return '<article class="bg-gray-900 border border-gray-800 rounded-xl p-4" data-cid="' + c.id + '">' +
+            '<div class="flex flex-wrap items-center gap-2 text-[11px] text-gray-400">' +
+                '<span class="text-sm font-bold text-white">' + esc(c.display_name) + '</span>' +
+                '<span>' + esc(fmt(c.created_at)) + (c.edited_at ? ' · editado' : '') + '</span>' + badges.join('') +
+                '<a href="/noticias/' + esc(c.post_slug) + '/#comments" target="_blank" rel="noopener" class="ml-auto text-cyan-400 hover:underline">ver na matéria <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i></a>' +
+            '</div>' +
+            '<p class="mt-2 text-sm text-gray-200 whitespace-pre-wrap break-words">' + esc(c.content) + '</p>' +
+            '<div class="mt-3 flex flex-wrap gap-2">' + acts.join('') + '</div>' +
+            '<p class="mod-msg text-[11px] mt-2 min-h-[1rem] text-red-400" role="status"></p>' +
+        '</article>';
+    }
+
+    function renderList() {
+        paintTabs();
+        const list = $('mod-list');
+        list.innerHTML = items.map(itemHtml).join('');
+        const empty = { reported: 'Nenhum comentário com denúncia em aberto. 🎉', recent: 'Ainda não há comentários.', hidden: 'Nenhum comentário escondido.' };
+        $('mod-status').textContent = items.length ? '' : empty[tab];
+        $('mod-more').classList.toggle('hidden', items.length >= total);
+    }
+
+    async function load(reset) {
+        if (loading) return;
+        loading = true;
+        $('mod-status').textContent = reset ? 'Carregando…' : '';
+        const { data, error } = await supabaseClient.rpc('mod_list_comments', {
+            p_filter: tab, p_limit: PAGE, p_offset: reset ? 0 : items.length
+        });
+        loading = false;
+        if (error) { $('mod-status').textContent = 'Não foi possível carregar agora. Tente recarregar a página.'; return; }
+        const rows = data || [];
+        total = rows.length ? Number(rows[0].total) : (reset ? 0 : total);
+        if (tab === 'reported' && reset) reportedTotal = total;
+        items = reset ? rows : items.concat(rows);
+        renderList();
+    }
+
+    function removeItem(id) {
+        const i = items.findIndex((x) => x.id === id);
+        if (i === -1) return;
+        if (Number(items[i].report_count) > 0 && reportedTotal != null) reportedTotal = Math.max(0, reportedTotal - 1);
+        items.splice(i, 1);
+        total = Math.max(0, total - 1);
+    }
+
+    $('mod-tabs').addEventListener('click', (e) => {
+        const t = e.target.closest('button[data-tab]');
+        if (!t || t.getAttribute('data-tab') === tab) return;
+        tab = t.getAttribute('data-tab');
+        items = []; total = 0;
+        load(true);
+    });
+    $('mod-more').addEventListener('click', () => load(false));
+
+    $('mod-list').addEventListener('click', async (e) => {
+        const b = e.target.closest('button[data-act]');
+        if (!b) return;
+        const act = b.getAttribute('data-act'), id = Number(b.getAttribute('data-id')), uid = b.getAttribute('data-uid');
+
+        // apagar e bloquear pedem um segundo clique
+        if ((act === 'delete' || act === 'ban') && b.getAttribute('data-armed') !== '1') {
+            const original = b.textContent;
+            b.setAttribute('data-armed', '1');
+            b.textContent = act === 'delete' ? 'Confirmar: apagar?' : 'Confirmar: bloquear?';
+            setTimeout(() => { if (b.isConnected) { b.removeAttribute('data-armed'); b.textContent = original; } }, 4000);
+            return;
+        }
+        const card = b.closest('article'), msgEl = card.querySelector('.mod-msg');
+        msgEl.textContent = '';
+        b.disabled = true;
+        let error = null;
+        if (act === 'hide' || act === 'show') ({ error } = await supabaseClient.rpc('mod_set_status', { p_comment_id: id, p_status: act === 'hide' ? 'hidden' : 'visible' }));
+        else if (act === 'delete') ({ error } = await supabaseClient.rpc('mod_delete_comment', { p_comment_id: id }));
+        else if (act === 'dismiss') ({ error } = await supabaseClient.rpc('mod_dismiss_reports', { p_comment_id: id }));
+        else if (act === 'ban') ({ error } = await supabaseClient.rpc('mod_ban_user', { p_user_id: uid, p_reason: 'bloqueado pela moderação' }));
+        else if (act === 'unban') ({ error } = await supabaseClient.rpc('mod_unban_user', { p_user_id: uid }));
+        if (error) {
+            console.warn('[Conexão Gamer] moderação:', error.message);
+            b.disabled = false;
+            b.removeAttribute('data-armed');
+            b.textContent = b.getAttribute('data-label');
+            msgEl.textContent = 'Não deu certo. Tente de novo.';
+            return;
+        }
+
+        const it = items.find((x) => x.id === id);
+        if (act === 'hide' || act === 'show') {
+            if (it) it.status = act === 'hide' ? 'hidden' : 'visible';
+            if (act === 'show' && tab === 'hidden') removeItem(id);
+        } else if (act === 'delete') {
+            removeItem(id);
+        } else if (act === 'dismiss') {
+            if (tab === 'reported') removeItem(id);
+            else if (it) { it.report_count = 0; if (reportedTotal != null) reportedTotal = Math.max(0, reportedTotal - 1); }
+        } else if (act === 'ban' || act === 'unban') {
+            items.forEach((x) => { if (x.user_id === uid) x.banned = act === 'ban'; });
+        }
+        renderList();
+    });
+
+    async function init(state) {
+        const session = state && state.session;
+        const uid = session && session.user ? session.user.id : null;
+        if (uid === lastUid) return;
+        lastUid = uid;
+        if (!uid) {
+            $('mod-denied-text').textContent = 'Entre com a sua conta de moderador para continuar.';
+            $('mod-login').classList.remove('hidden');
+            show('mod-denied');
+            return;
+        }
+        show('mod-loading');
+        const { data } = await supabaseClient.rpc('is_moderator');
+        if (data !== true) {
+            $('mod-denied-text').textContent = 'Esta área é restrita à moderação do site.';
+            $('mod-login').classList.add('hidden');
+            show('mod-denied');
+            return;
+        }
+        tab = 'reported'; items = []; total = 0; reportedTotal = null;
+        show('mod-panel');
+        paintTabs();
+        load(true);
+    }
+    if (window.cgAuthState) init(window.cgAuthState);
+    window.addEventListener('cg:auth', (e) => init(e.detail));
 })();
 </script>
     <style>
@@ -1395,7 +1616,8 @@
         cg_too_long: 'O comentário passou de 2000 caracteres.',
         cg_reply_depth: 'Não é possível responder a uma resposta. Responda ao comentário principal.',
         cg_parent_missing: 'O comentário que você quer responder não existe mais.',
-        cg_not_allowed: 'Você não pode alterar esse comentário.'
+        cg_not_allowed: 'Você não pode alterar esse comentário.',
+        cg_banned: 'A sua conta está impedida de comentar. Se acha que foi engano, fale com a gente pelo e-mail de contato.'
     };
     function errText(error) {
         const m = (error && error.message) || '';

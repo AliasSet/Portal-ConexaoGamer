@@ -388,6 +388,23 @@ function profileHtml() {
                                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair da conta
                             </button>
                         </div>
+
+                        <div class="mt-8 pt-6 border-t border-gray-800">
+                            <h2 class="text-sm font-black text-white">Excluir minha conta</h2>
+                            <p class="text-xs text-gray-400 mt-2 leading-relaxed">Apaga a sua conta, o seu nome e a sua foto. Os seus comentários também são apagados; se algum tiver respostas de outras pessoas, ele passa a aparecer como “Comentário removido”. Esta ação não pode ser desfeita.</p>
+                            <button id="profile-delete-open" type="button" class="mt-3 inline-flex items-center gap-2 border border-red-500/40 hover:bg-red-500/10 text-red-400 text-xs font-bold px-4 py-2.5 rounded-xl transition">
+                                <i class="fa-regular fa-trash-can"></i> Excluir minha conta
+                            </button>
+                            <div id="profile-delete-box" class="hidden mt-4 bg-red-500/5 border border-red-500/30 rounded-xl p-4 space-y-3">
+                                <label for="profile-delete-input" class="block text-xs text-gray-300">Para confirmar, digite <strong class="text-white">EXCLUIR</strong>:</label>
+                                <input id="profile-delete-input" type="text" autocomplete="off" autocapitalize="characters" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white focus:outline-none focus:border-red-400">
+                                <div class="flex items-center gap-2">
+                                    <button id="profile-delete-go" type="button" disabled class="bg-red-500 hover:bg-red-400 disabled:opacity-40 disabled:cursor-not-allowed text-white font-extrabold text-xs px-4 py-2.5 rounded-lg transition">Excluir definitivamente</button>
+                                    <button id="profile-delete-cancel" type="button" class="text-xs font-bold text-gray-400 hover:text-white px-3 py-2 transition">Cancelar</button>
+                                </div>
+                                <p id="profile-delete-msg" class="text-xs min-h-[1rem]" role="alert"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 `;
@@ -463,6 +480,48 @@ function buildProfilePage(template) {
     .replace('<body data-page="home"', '<body data-page="profile"')
     .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
     .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => profileHtml());
+}
+
+function moderationHtml() {
+  const tab = (id, label) => `<button type="button" id="mod-tab-${id}" data-tab="${id}" role="tab" class="text-xs font-extrabold py-2 px-4 rounded-lg transition">${label}</button>`;
+  return `
+                <div id="mod-root" class="space-y-6">
+                    <div>
+                        <h1 class="text-xl font-black text-white flex items-center gap-2"><i class="fa-solid fa-shield-halved text-cyan-400"></i> Moderação</h1>
+                        <p class="text-xs text-gray-500 mt-1">Área restrita aos moderadores do site.</p>
+                    </div>
+
+                    <p id="mod-loading" class="text-sm text-gray-400">Carregando…</p>
+
+                    <div id="mod-denied" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 text-center space-y-4">
+                        <p id="mod-denied-text" class="text-sm text-gray-300"></p>
+                        <button id="mod-login" type="button" onclick="toggleAuthModal()" class="hidden bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs px-6 py-2.5 rounded-xl transition">Entrar</button>
+                    </div>
+
+                    <div id="mod-panel" class="hidden space-y-4">
+                        <div id="mod-tabs" role="tablist" class="flex flex-wrap gap-1 bg-gray-950 border border-gray-800 rounded-xl p-1 w-fit">
+                            ${tab('reported', 'Denunciados')}
+                            ${tab('recent', 'Recentes')}
+                            ${tab('hidden', 'Escondidos')}
+                        </div>
+                        <p id="mod-status" class="text-xs text-gray-500 min-h-[1rem]" role="status" aria-live="polite"></p>
+                        <div id="mod-list" class="space-y-3"></div>
+                        <button id="mod-more" type="button" class="hidden w-full border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 text-xs font-bold py-3 rounded-xl transition">Carregar mais</button>
+                    </div>
+                </div>
+                `;
+}
+
+function buildModerationPage(template) {
+  const title = 'Moderação | ' + SITE_NAME;
+  return template
+    .replace('<!--CG:HEAD-->', headTags({
+      title, description: 'Área restrita.', url: SITE_URL + '/moderacao/', image: '', type: 'website'
+    }) + '\n    <meta name="robots" content="noindex, nofollow">')
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('<body data-page="home"', '<body data-page="moderation"')
+    .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => moderationHtml());
 }
 
 function searchHtml() {
@@ -628,6 +687,8 @@ async function main() {
   }
 
   // Página de perfil do leitor (privada: fora do Google e do sitemap)
+  fs.mkdirSync(path.join(DIST, 'moderacao'), { recursive: true });
+  fs.writeFileSync(path.join(DIST, 'moderacao', 'index.html'), buildModerationPage(template));
   fs.mkdirSync(path.join(DIST, 'perfil'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'perfil', 'index.html'), buildProfilePage(template));
 
