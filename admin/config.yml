@@ -46,7 +46,7 @@ collections:
       - { label: "Conteúdo da Matéria", name: "body", widget: "markdown" }
 
   - name: "paginas"
-    label: "Páginas (Privacidade e Termos)"
+    label: "Páginas do site"
     files:
       - label: "Política de Privacidade"
         name: "privacidade"
@@ -64,11 +64,35 @@ collections:
           - { label: "Descrição curta (para o Google)", name: "description", widget: "string", required: false }
           - { label: "Última atualização", name: "updated", widget: "string", hint: "Ex: 11 de outubro de 2026" }
           - { label: "Texto", name: "body", widget: "markdown" }
+      - label: "Sobre"
+        name: "sobre"
+        file: "content/pages/sobre.md"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descrição curta (para o Google)", name: "description", widget: "string", required: false }
+          - { label: "Última atualização", name: "updated", widget: "string", required: false, hint: "Opcional. Se preencher, aparece no topo da página." }
+          - { label: "Texto", name: "body", widget: "markdown", hint: "Use {{RESPONSAVEL}} onde quiser que apareça o responsável pelo site (vem de Configurações do site)." }
+      - label: "Contato"
+        name: "contato_pagina"
+        file: "content/pages/contato.md"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descrição curta (para o Google)", name: "description", widget: "string", required: false }
+          - { label: "Última atualização", name: "updated", widget: "string", required: false, hint: "Opcional. Se preencher, aparece no topo da página." }
+          - { label: "Texto", name: "body", widget: "markdown", hint: "Use {{EMAIL_LINK}} para o e-mail de contato e {{RESPONSAVEL}} para o responsável (vêm de Configurações do site)." }
+      - label: "Política Editorial"
+        name: "politica_editorial"
+        file: "content/pages/politica-editorial.md"
+        fields:
+          - { label: "Título", name: "title", widget: "string" }
+          - { label: "Descrição curta (para o Google)", name: "description", widget: "string", required: false }
+          - { label: "Última atualização", name: "updated", widget: "string", required: false, hint: "Ex: 16 de outubro de 2026" }
+          - { label: "Texto", name: "body", widget: "markdown" }
 
   - name: "configuracoes"
     label: "Configurações do site"
     files:
-      - label: "Contato e responsável (aparece em Privacidade e Termos)"
+      - label: "Contato e responsável (aparece em Privacidade, Termos, Sobre e Contato)"
         name: "contato"
         file: "content/settings/contato.json"
         fields:
