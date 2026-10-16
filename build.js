@@ -7,7 +7,7 @@
  *     (mesmo layout do site: cabeçalho, barra lateral e rodapé)
  *  3. Gera dist/posts.json (usado pela home e pela barra lateral)
  *  4. Gera dist/index.html (home), sitemap.xml e robots.txt
- *  5. Copia admin/ e uploads/ para dist/
+ *  5. Copia admin/ (para o endereço ADMIN_PATH) e uploads/ para dist/
  *
  * Layout do site = index.html (modelo). As partes trocadas em cada página
  * ficam entre os marcadores <!--CG:HEAD-->, <!--CG:HERO--> e <!--CG:MAIN-->.
@@ -21,6 +21,14 @@ const DIST = path.join(ROOT, 'dist');
 const POSTS_DIR = path.join(ROOT, 'content', 'posts');
 const AUTHORS_DIR = path.join(ROOT, 'content', 'authors');
 const SITE_NAME = 'Conexão Gamer';
+
+// Endereço do painel do CMS (Decap). A pasta do repositório continua sendo admin/;
+// só o endereço publicado muda. Para trocar: altere o texto abaixo (só letras minúsculas,
+// números e hífen) OU crie a variável ADMIN_PATH na Vercel. O antigo /admin/ deixa de existir.
+const ADMIN_PATH = String(process.env.ADMIN_PATH || 'cg-gestao-7q4').replace(/^\/+|\/+$/g, '');
+if (!/^[a-z0-9][a-z0-9-]*$/.test(ADMIN_PATH) || ADMIN_PATH === 'api') {
+  throw new Error('ADMIN_PATH inválido: use só letras minúsculas, números e hífen (ex.: cg-gestao-7q4)');
+}
 // Troque pelo domínio definitivo (ou defina a variável SITE_URL na Vercel)
 const SITE_URL = (process.env.SITE_URL || 'https://conexaogamer-seven.vercel.app').replace(/\/+$/, '');
 
@@ -716,10 +724,23 @@ async function main() {
     urls.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('\n') +
     '\n</urlset>\n');
   fs.writeFileSync(path.join(DIST, 'robots.txt'),
-    `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /perfil/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
+    `User-agent: *\nAllow: /\nDisallow: /perfil/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
   // Arquivos estáticos que precisam continuar acessíveis
-  const hasAdmin = copyDir(path.join(ROOT, 'admin'), path.join(DIST, 'admin'));
+  const adminOut = path.join(DIST, ADMIN_PATH);
+  const hasAdmin = copyDir(path.join(ROOT, 'admin'), adminOut);
+  if (hasAdmin) {
+    // Ajusta o admin/index.html para o endereço novo e impede a indexação no Google
+    const adminIndex = path.join(adminOut, 'index.html');
+    if (fs.existsSync(adminIndex)) {
+      let h = fs.readFileSync(adminIndex, 'utf8');
+      h = h.replace(/(href=["'])\/admin\/config\.yml(["'])/g, `$1/${ADMIN_PATH}/config.yml$2`);
+      if (!/name=["']robots["']/i.test(h)) {
+        h = h.replace(/<head>/i, '<head>\n  <meta name="robots" content="noindex, nofollow" />');
+      }
+      fs.writeFileSync(adminIndex, h);
+    }
+  }
   copyDir(path.join(ROOT, 'uploads'), path.join(DIST, 'uploads'));
   if (!hasAdmin) console.warn('[build] AVISO: pasta admin/ não encontrada - o painel do CMS não será publicado.');
 
