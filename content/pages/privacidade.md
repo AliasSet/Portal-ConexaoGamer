@@ -1,7 +1,8 @@
 ---
-title: "Política de Privacidade"
-description: "Como o Conexão Gamer coleta, usa e protege os seus dados pessoais, conforme a LGPD."
-updated: "11 de outubro de 2026"
+title: Política de Privacidade
+description: Como o Conexão Gamer coleta, usa e protege os seus dados pessoais,
+  conforme a LGPD.
+updated: 11 de outubro de 2026
 ---
 Esta Política explica, em linguagem simples, quais dados pessoais o **Conexão Gamer** (conexaogamer.com.br) coleta, para que os usa, com quem os compartilha e quais são os seus direitos, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018, a LGPD).
 
@@ -11,11 +12,11 @@ O responsável pelo tratamento dos seus dados pessoais (controlador) é {{RESPON
 
 ## 2. Resumo rápido
 
-- Você pode ler o site sem criar conta e sem informar nenhum dado pessoal.
-- A conta só é necessária para comentar.
-- Não vendemos os seus dados e não usamos cookies de publicidade.
-- O seu **nome de exibição, a sua foto e os seus comentários são públicos**. O seu e-mail nunca é exibido.
-- Você pode alterar o seu nome e a sua foto, apagar os seus comentários e pedir a exclusão da conta.
+* Você pode ler o site sem criar conta e sem informar nenhum dado pessoal.
+* A conta só é necessária para comentar.
+* Não vendemos os seus dados e não usamos cookies de publicidade.
+* O seu **nome de exibição, a sua foto e os seus comentários são públicos**. O seu e-mail nunca é exibido.
+* Você pode alterar o seu nome e a sua foto, apagar os seus comentários e pedir a exclusão da conta.
 
 ## 3. Quais dados coletamos e por quê
 
@@ -27,9 +28,9 @@ Como todo site, os servidores que entregam as páginas registram dados técnicos
 
 ### 3.2. Ao criar conta ou entrar
 
-- **Login com Google:** recebemos o seu nome, e-mail e foto de perfil da conta Google. Não acessamos outros dados do Google, como contatos, e-mails ou arquivos.
-- **Login com e-mail e senha:** coletamos o e-mail e a senha. A senha é guardada de forma criptografada pelo serviço de autenticação, e nós não temos acesso a ela.
-- **Nome de exibição:** é criado a partir do nome da sua conta Google (ou "Leitor" seguido de um número) e pode ser alterado em **Meu perfil**. Evite usar o seu e-mail como nome.
+* **Login com Google:** recebemos o seu nome, e-mail e foto de perfil da conta Google. Não acessamos outros dados do Google, como contatos, e-mails ou arquivos.
+* **Login com e-mail e senha:** coletamos o e-mail e a senha. A senha é guardada de forma criptografada pelo serviço de autenticação, e nós não temos acesso a ela.
+* **Nome de exibição:** é criado a partir do nome da sua conta Google (ou "Leitor" seguido de um número) e pode ser alterado em **Meu perfil**. Evite usar o seu e-mail como nome.
 
 Usamos esses dados para criar e manter a sua conta, identificar o autor dos comentários e prevenir fraudes e spam. As bases legais são a execução do serviço que você pediu ao criar a conta (art. 7º, V) e, no login com Google, o seu consentimento (art. 7º, I).
 
@@ -49,8 +50,8 @@ Se você nos escrever por e-mail, usamos a mensagem e o seu endereço apenas par
 
 Não usamos cookies de publicidade nem ferramentas de rastreamento de terceiros. O armazenamento local do seu navegador é usado apenas para:
 
-- manter você conectado à sua conta;
-- lembrar que você já foi contado como leitor de uma matéria no dia.
+* manter você conectado à sua conta;
+* lembrar que você já foi contado como leitor de uma matéria no dia.
 
 Você pode apagar esses dados nas configurações do navegador. Se fizer isso, será desconectado da conta.
 
@@ -58,12 +59,12 @@ Você pode apagar esses dados nas configurações do navegador. Se fizer isso, s
 
 Não vendemos os seus dados. Usamos prestadores de serviço que fazem o site funcionar:
 
-- **Supabase:** banco de dados, autenticação e armazenamento das fotos de perfil.
-- **Vercel:** hospedagem e entrega do site.
-- **Google:** o login com Google, caso você o escolha, e as fontes de letra do site.
-- **Serviços de entrega de arquivos (cdnjs/Cloudflare, jsDelivr e Tailwind):** fornecem estilos, ícones e scripts, e por isso recebem o endereço IP do visitante.
-- **Imagens das matérias:** algumas podem ser carregadas de servidores de terceiros.
-- **GitHub:** usado pela equipe para gerenciar o conteúdo do site. Não recebe dados dos leitores.
+* **Supabase:** banco de dados, autenticação e armazenamento das fotos de perfil.
+* **Vercel:** hospedagem e entrega do site.
+* **Google:** o login com Google, caso você o escolha, e as fontes de letra do site.
+* **Serviços de entrega de arquivos (cdnjs/Cloudflare, jsDelivr e Tailwind):** fornecem estilos, ícones e scripts, e por isso recebem o endereço IP do visitante.
+* **Imagens das matérias:** algumas podem ser carregadas de servidores de terceiros.
+* **GitHub:** usado pela equipe para gerenciar o conteúdo do site. Não recebe dados dos leitores.
 
 Também podemos compartilhar dados quando houver ordem judicial ou obrigação legal.
 
@@ -73,23 +74,23 @@ Alguns desses prestadores armazenam dados em servidores fora do Brasil. Buscamos
 
 ## 7. Por quanto tempo guardamos os dados
 
-- **Conta:** enquanto ela existir. Ela é excluída a pedido.
-- **Comentários:** até você apagá-los ou até serem removidos pela moderação. Se a conta for excluída, os comentários dela também são.
-- **Contadores de leitura:** são números agregados, sem identificação pessoal.
-- **Registros técnicos de acesso:** pelo prazo definido pelos prestadores ou exigido por lei.
-- **Denúncias:** pelo tempo necessário para a moderação.
+* **Conta:** enquanto ela existir. Ela é excluída a pedido.
+* **Comentários:** até você apagá-los ou até serem removidos pela moderação. Se a conta for excluída, os comentários dela também são.
+* **Contadores de leitura:** são números agregados, sem identificação pessoal.
+* **Registros técnicos de acesso:** pelo prazo definido pelos prestadores ou exigido por lei.
+* **Denúncias:** pelo tempo necessário para a moderação.
 
 ## 8. Os seus direitos
 
 Pela LGPD (art. 18), você pode pedir, a qualquer momento:
 
-- a confirmação de que tratamos os seus dados e o acesso a eles;
-- a correção de dados incompletos, inexatos ou desatualizados;
-- a anonimização, o bloqueio ou a eliminação de dados desnecessários ou tratados em desacordo com a lei;
-- a portabilidade dos dados;
-- a eliminação dos dados tratados com o seu consentimento;
-- informações sobre com quem compartilhamos os dados;
-- a revogação do consentimento.
+* a confirmação de que tratamos os seus dados e o acesso a eles;
+* a correção de dados incompletos, inexatos ou desatualizados;
+* a anonimização, o bloqueio ou a eliminação de dados desnecessários ou tratados em desacordo com a lei;
+* a portabilidade dos dados;
+* a eliminação dos dados tratados com o seu consentimento;
+* informações sobre com quem compartilhamos os dados;
+* a revogação do consentimento.
 
 **Como exercer:** você mesmo pode trocar o nome e a foto, e apagar os seus comentários, no site. Para os demais pedidos, inclusive a **exclusão da conta**, escreva para {{EMAIL_LINK}} a partir do e-mail cadastrado. Responderemos em até 15 dias.
 
@@ -98,6 +99,8 @@ Você também pode apresentar reclamação à Autoridade Nacional de Proteção 
 ## 9. Segurança
 
 Usamos conexão segura (HTTPS), regras de acesso no banco de dados que limitam cada pessoa aos próprios dados, senhas criptografadas e limites automáticos contra abuso. Nenhum sistema é totalmente imune a falhas. Se ocorrer um incidente de segurança relevante, comunicaremos os titulares e a ANPD, conforme a lei.
+
+Para proteger o cadastro e o login contra robôs, usamos o Cloudflare Turnstile, que analisa dados técnicos do navegador (como endereço IP) para verificar que a visita é de uma pessoa.
 
 ## 10. Crianças e adolescentes
 
