@@ -72,6 +72,27 @@ function slugify(text) {
     .replace(/^-+|-+$/g, '');
 }
 
+// Lê a data digitada no painel. Aceita:
+//  - data já pronta do YAML (Date) ou ISO (2026-10-07T21:12:00.000Z)
+//  - formato brasileiro do painel: 07/10/2026T21:12, 07/10/2026 21:12 ou só 07/10/2026
+// Datas sem fuso (as brasileiras) são lidas como horário de Brasília (UTC-3).
+// Devolve 0 se não entender (aí o build usa a data do nome do arquivo e avisa no log).
+function parsePostDate(v) {
+  if (v instanceof Date) return isNaN(v.getTime()) ? 0 : v.getTime();
+  if (v == null || v === '') return 0;
+  const str = String(v).trim();
+  const br = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[T\s]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+  if (br) {
+    const [, d, mo, y, h = '0', mi = '0', se = '0'] = br;
+    const t = Date.UTC(+y, +mo - 1, +d, +h + 3, +mi, +se);   // +3h: Brasília -> UTC
+    const chk = new Date(t - 3 * 3600 * 1000);                  // confere se o dia existe (ex.: 31/02)
+    return (chk.getUTCDate() === +d && chk.getUTCMonth() === +mo - 1) ? t : 0;
+  }
+  const iso = str.match(/^\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/);   // ISO sem fuso -> Brasília
+  const t = Date.parse(iso ? str.replace(' ', 'T') + '-03:00' : str);
+  return isNaN(t) ? 0 : t;
+}
+
 function fileDate(name) {
   const m = name.match(/^(\d{4})-(\d{2})-(\d{2})/);
   return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12)).getTime() : 0;
@@ -158,10 +179,11 @@ function parsePost(fileName, text, mdParse) {
   const meta = yaml.load(m[1]) || {};
   const body = (m[2] || '').trim();
 
-  let time = 0;
-  if (meta.date instanceof Date) time = meta.date.getTime();
-  else if (meta.date) time = Date.parse(meta.date) || 0;
-  if (!time) time = fileDate(fileName);
+  let time = parsePostDate(meta.date);
+  if (!time) {
+    if (meta.date) console.warn('[build] AVISO: data não entendida em ' + fileName + ' (' + JSON.stringify(meta.date) + '); usando a data do nome do arquivo.');
+    time = fileDate(fileName);
+  }
 
   const rating = Number(meta.rating);
   const words = body.split(/\s+/).filter(Boolean).length;
