@@ -21,6 +21,9 @@ const DIST = path.join(ROOT, 'dist');
 const POSTS_DIR = path.join(ROOT, 'content', 'posts');
 const AUTHORS_DIR = path.join(ROOT, 'content', 'authors');
 const SITE_NAME = 'Conexão Gamer';
+// Vercel Web Analytics: o script só coleta depois que você liga "Web Analytics" no painel da Vercel.
+// Para desligar o script do site sem mexer na Vercel, crie a variável ANALYTICS=off.
+const ANALYTICS = String(process.env.ANALYTICS || '').toLowerCase() !== 'off';
 
 // Endereço do painel do CMS (Decap). A pasta do repositório continua sendo admin/;
 // só o endereço publicado muda. Para trocar: altere o texto abaixo (só letras minúsculas,
@@ -277,7 +280,100 @@ function splitCaption(p) {
   return { html, caption };
 }
 
-function articleHtml(p) {
+/* ---------- Compartilhar e "Leia também" ---------- */
+
+const SHARE_BTN_BASE = 'items-center justify-center w-9 h-9 rounded-lg bg-gray-900 border border-gray-800 text-gray-300 hover:text-cyan-400 hover:border-cyan-400 transition text-sm';
+const SHARE_BTN = 'inline-flex ' + SHARE_BTN_BASE;
+
+// Barra de compartilhamento: links simples (sem rastreadores). "where" = 'top' ou 'bottom'.
+function shareHtml(p, where) {
+  const url = SITE_URL + p.url;
+  const u = encodeURIComponent(url), t = encodeURIComponent(p.title);
+  const links = [
+    ['WhatsApp', 'fa-brands fa-whatsapp', `https://wa.me/?text=${encodeURIComponent(p.title + ' ' + url)}`],
+    ['Telegram', 'fa-brands fa-telegram', `https://t.me/share/url?url=${u}&text=${t}`],
+    ['X (Twitter)', 'fa-brands fa-twitter', `https://x.com/intent/post?text=${t}&url=${u}`],
+    ['Facebook', 'fa-brands fa-facebook-f', `https://www.facebook.com/sharer/sharer.php?u=${u}`],
+    ['Reddit', 'fa-brands fa-reddit-alien', `https://www.reddit.com/submit?url=${u}&title=${t}`]
+  ].map(([name, icon, href]) =>
+    `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no ${esc(name)}" title="${esc(name)}" class="${SHARE_BTN}"><i class="${icon}"></i></a>`).join('');
+  const label = where === 'top' ? 'Compartilhar' : 'Gostou? Compartilhe';
+  return `<div class="cg-share flex flex-wrap items-center gap-2 ${where === 'top' ? 'mt-4' : 'mt-8'}" data-url="${esc(url)}" data-title="${esc(p.title)}">
+                        <span class="text-[11px] uppercase tracking-widest text-gray-500 font-extrabold mr-1"><i class="fa-solid fa-share-nodes text-cyan-400 mr-1"></i>${label}</span>
+                        ${links}
+                        <button type="button" data-cg-copy aria-label="Copiar link" title="Copiar link" class="${SHARE_BTN}"><i class="fa-solid fa-link"></i></button>
+                        <button type="button" data-cg-native aria-label="Compartilhar pelo celular" title="Mais opções" class="hidden ${SHARE_BTN_BASE}"><i class="fa-solid fa-ellipsis"></i></button>
+                    </div>`;
+}
+
+// Só uma vez por página: copiar link e o botão de compartilhar nativo do celular
+const SHARE_SCRIPT = `<script>
+(function () {
+    var bars = document.querySelectorAll('.cg-share');
+    // botão do celular: só em aparelho de toque que sabe compartilhar
+    if (navigator.share && window.matchMedia && matchMedia('(pointer: coarse)').matches) bars.forEach(function (b) { var n = b.querySelector('[data-cg-native]'); if (n) { n.classList.remove('hidden'); n.classList.add('inline-flex'); } });
+    function done(msg) { if (window.cgToast) cgToast(msg); }
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta); return ok;
+    }
+    document.addEventListener('click', function (e) {
+        var copy = e.target.closest && e.target.closest('[data-cg-copy]');
+        var nat = e.target.closest && e.target.closest('[data-cg-native]');
+        var bar = (copy || nat) && (copy || nat).closest('.cg-share');
+        if (!bar) return;
+        var url = bar.getAttribute('data-url'), title = bar.getAttribute('data-title');
+        if (nat) { navigator.share({ title: title, url: url }).catch(function () {}); return; }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function () { done('Link copiado!'); }, function () { done(fallbackCopy(url) ? 'Link copiado!' : 'Não consegui copiar. Copie o endereço pelo navegador.'); });
+        } else { done(fallbackCopy(url) ? 'Link copiado!' : 'Não consegui copiar. Copie o endereço pelo navegador.'); }
+    });
+})();
+</script>`;
+
+// "Leia também": 3 matérias parecidas (tags em comum pesam mais; "Notícias" é genérica e pesa pouco).
+// Se faltar parecida, completa com as mais recentes.
+function relatedPosts(p, posts, n) {
+  const tagSet = new Set(p.tags.map(normName));
+  const score = (q) => {
+    let sc = 0;
+    for (const t of q.tags) if (tagSet.has(normName(t))) sc += 3;
+    for (const c of q.categories) if (p.categories.includes(c)) sc += (c === 'Notícias' ? 0.5 : 2);
+    return sc;
+  };
+  const others = posts.filter((q) => q.slug !== p.slug).map((q) => ({ q, sc: score(q) }));
+  others.sort((a, b) => (b.sc - a.sc) || (Math.abs(a.q.time - p.time) - Math.abs(b.q.time - p.time)));
+  return others.slice(0, n).map((x) => x.q);
+}
+
+function relatedCardHtml(q) {
+  const cat = (q.categories[0] || 'Notícias');
+  return `<a href="${esc(q.url)}" class="group bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col">
+                                <div class="relative h-28 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">
+                                    ${okImg(q.image) ? `<img src="${esc(q.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
+                                    <span class="absolute top-2 left-2 border text-[10px] font-bold px-2 py-0.5 rounded uppercase ${catStyle(cat)}">${esc(cat)}</span>
+                                </div>
+                                <div class="p-3 flex flex-col flex-grow">
+                                    <h3 class="text-sm font-bold text-white group-hover:text-cyan-300 transition line-clamp-3">${esc(q.title)}</h3>
+                                    <p class="mt-auto pt-2 text-[11px] text-gray-500">${esc(fmtDateShort(q.time))}</p>
+                                </div>
+                            </a>`;
+}
+
+function relatedHtml(list) {
+  if (!list || !list.length) return '';
+  return `<section class="mt-10 pt-8 border-t border-gray-800" aria-label="Leia também">
+                        <h2 class="text-lg font-black text-white flex items-center gap-2"><i class="fa-solid fa-book-open text-cyan-400"></i> Leia também</h2>
+                        <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            ${list.map(relatedCardHtml).join('\n                            ')}
+                        </div>
+                    </section>`;
+}
+
+function articleHtml(p, related) {
   const { html: bodyHtml, caption } = splitCaption(p);
   const cats = p.categories.map((c) => {
     const cls = `text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase ${catStyle(c)}`;
@@ -299,9 +395,11 @@ function articleHtml(p) {
                         <span><i class="fa-regular fa-calendar text-cyan-400 mr-1"></i> <time datetime="${new Date(p.time).toISOString()}">${esc(fmtDateLong(p.time))}</time></span>
                         <span><i class="fa-regular fa-clock text-cyan-400 mr-1"></i> ${p.readMin} min de leitura</span>
                     </div>
+                    ${shareHtml(p, 'top')}
                     ${okImg(p.image) ? `<figure class="mt-6"><img src="${esc(p.image)}" alt="${esc(p.title)}" referrerpolicy="no-referrer" class="w-full max-h-[420px] object-cover rounded-2xl border border-gray-800" onerror="this.style.display='none'">${caption ? `<figcaption class="mt-2 text-xs text-gray-500 leading-relaxed">${caption}</figcaption>` : ''}</figure>` : ''}
                     <div class="article-body mt-6">${bodyHtml}</div>
                     ${tags ? `<div class="flex flex-wrap gap-2 mt-8">${tags}</div>` : ''}
+                    ${shareHtml(p, 'bottom')}
                     ${p.authorBio ? `<aside class="mt-8 flex gap-4 bg-gray-900 border border-gray-800 rounded-2xl p-5" aria-label="Sobre o autor">
                         ${p.authorPhoto ? authorImg(p, 'w-14 h-14') : '<span class="w-14 h-14 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-user text-cyan-400"></i></span>'}
                         <div class="min-w-0">
@@ -311,6 +409,8 @@ function articleHtml(p) {
                         </div>
                     </aside>` : ''}
 
+                    ${relatedHtml(related)}
+
                     <section id="comments" class="mt-10 pt-8 border-t border-gray-800 scroll-mt-24">
                         <h2 class="text-lg font-black text-white flex items-center gap-2"><i class="fa-regular fa-comments text-cyan-400"></i> Comentários <span id="comments-count" class="text-xs font-semibold text-gray-500"></span></h2>
                         <div id="comment-form-area" class="mt-4"><p class="text-sm text-gray-500">Carregando…</p></div>
@@ -318,6 +418,7 @@ function articleHtml(p) {
                         <button id="comments-more" type="button" class="hidden mt-6 text-xs font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-5 py-2.5 rounded-xl transition">Carregar mais comentários</button>
                     </section>
                 </article>
+                ${SHARE_SCRIPT}
                 `;
 }
 
@@ -546,7 +647,7 @@ function buildModerationPage(template) {
   const title = 'Moderação | ' + SITE_NAME;
   return template
     .replace('<!--CG:HEAD-->', headTags({
-      title, description: 'Área restrita.', url: SITE_URL + '/moderacao/', image: '', type: 'website'
+      title, description: 'Área restrita.', url: SITE_URL + '/moderacao/', image: '', type: 'website', noAnalytics: true
     }) + '\n    <meta name="robots" content="noindex, nofollow">')
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace('<body data-page="home"', '<body data-page="moderation"')
@@ -596,7 +697,7 @@ function buildCategoryPage(template, cat, list) {
     .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => categoryHtml(cat, list));
 }
 
-function headTags({ title, description, url, image, type, jsonLd }) {
+function headTags({ title, description, url, image, type, jsonLd, noAnalytics }) {
   const lines = [
     `<meta name="description" content="${esc(description)}">`,
     `<link rel="canonical" href="${esc(url)}">`,
@@ -617,6 +718,10 @@ function headTags({ title, description, url, image, type, jsonLd }) {
   if (jsonLd) {
     lines.push(`<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`);
   }
+  if (ANALYTICS && !noAnalytics) {
+    lines.push(`<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>`);
+    lines.push(`<script defer src="/_vercel/insights/script.js"></script>`);
+  }
   return lines.join('\n    ');
 }
 
@@ -634,7 +739,7 @@ function buildHome(template, posts) {
     }));
 }
 
-function buildPostPage(template, p) {
+function buildPostPage(template, p, posts) {
   const url = SITE_URL + p.url;
   const image = absUrl(p.image);
   const title = p.title + ' | ' + SITE_NAME;
@@ -660,7 +765,7 @@ function buildPostPage(template, p) {
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace('<body data-page="home"', `<body data-slug="${esc(p.slug)}" data-page="post"`)
     .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
-    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => articleHtml(p));
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => articleHtml(p, relatedPosts(p, posts || [], 3)));
   return html;
 }
 
@@ -701,7 +806,7 @@ async function main() {
   for (const p of posts) {
     const dir = path.join(DIST, 'noticias', p.slug);
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, 'index.html'), buildPostPage(template, p));
+    fs.writeFileSync(path.join(dir, 'index.html'), buildPostPage(template, p, posts));
   }
 
   // Páginas fixas: Política de Privacidade e Termos de Uso
