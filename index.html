@@ -327,6 +327,9 @@
 
             <p id="authMsg" role="alert" class="hidden text-xs rounded-lg px-3 py-2 mb-3 leading-relaxed"></p>
 
+            <!-- Verificação anti-robô (Cloudflare Turnstile): invisível, só aparece se o Cloudflare pedir interação -->
+            <div id="cgCaptchaBox" class="flex justify-center"></div>
+
             <!-- Entrar -->
             <form id="authView-login" onsubmit="authLogin(event)" class="space-y-3">
                 <input id="authLoginEmail" name="email" type="email" autocomplete="email" placeholder="Seu e-mail" required class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-[16px] sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-400">
@@ -421,6 +424,73 @@
         t._h = setTimeout(() => { t.style.opacity = '0'; }, 4500);
     }
 
+    // ---------- Verificação anti-robô (Cloudflare Turnstile) ----------
+    // A Site Key é pública. A Secret Key fica SÓ no painel do Supabase (nunca aqui).
+    // Enquanto o CAPTCHA não estiver ligado no Supabase, o token enviado é simplesmente ignorado.
+    const CG_TURNSTILE_KEY = '0x4AAAAAAFYHC-6LFCimBkG4';
+    const cgCap = { wid: null, token: '', loading: false, scriptFailed: false };
+
+    function cgCapEnsure() {
+        if (!CG_TURNSTILE_KEY || cgCap.wid !== null || cgCap.loading) return;
+        const box = cgEl('cgCaptchaBox');
+        if (!box) return;
+        const render = () => {
+            if (!window.turnstile || cgCap.wid !== null) return;
+            cgCap.wid = window.turnstile.render(box, {
+                sitekey: CG_TURNSTILE_KEY,
+                theme: 'dark',
+                language: 'pt-br',
+                size: 'flexible',
+                appearance: 'interaction-only',
+                callback: (t) => { cgCap.token = t; },
+                'expired-callback': () => { cgCap.token = ''; },
+                'error-callback': () => { cgCap.token = ''; setTimeout(cgCapReset, 2500); },
+                'before-interactive-callback': () => { box.classList.add('mb-3'); },
+                'after-interactive-callback': () => { box.classList.remove('mb-3'); }
+            });
+        };
+        if (window.turnstile) { render(); return; }
+        cgCap.loading = true;
+        const s = document.createElement('script');
+        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        s.async = true;
+        s.onload = () => { cgCap.loading = false; render(); };
+        s.onerror = () => { cgCap.loading = false; cgCap.scriptFailed = true; s.remove(); };
+        document.head.appendChild(s);
+    }
+
+    function cgCapReset() {
+        cgCap.token = '';
+        if (cgCap.wid !== null && window.turnstile) { try { window.turnstile.reset(cgCap.wid); } catch (e) {} }
+    }
+
+    // Devolve o token (cada um vale para UMA chamada), undefined se o recurso estiver desligado,
+    // ou null se não deu para verificar (bloqueador de anúncios, internet ruim etc.)
+    async function cgCapGet() {
+        if (!CG_TURNSTILE_KEY) return undefined;
+        cgCap.scriptFailed = false;
+        cgCapEnsure();
+        const t0 = Date.now();
+        while (!cgCap.token) {
+            if (cgCap.scriptFailed || Date.now() - t0 > 30000) return null;
+            await new Promise((r) => setTimeout(r, 200));
+            if (cgCap.wid === null) cgCapEnsure();
+        }
+        const t = cgCap.token;
+        cgCap.token = '';
+        return t;
+    }
+
+    // Roda uma chamada de autenticação com o token e já pede um token novo para a próxima
+    async function cgWithCaptcha(fn) {
+        const t = await cgCapGet();
+        if (t === null) {
+            authMsg('Não foi possível concluir a verificação de segurança. Se você usa bloqueador de anúncios, desative-o para este site, recarregue a página e tente de novo.', 'error');
+            return;
+        }
+        try { return await fn(t); } finally { cgCapReset(); }
+    }
+
     // ---------- Janela de login: telas Entrar / Criar conta / Esqueci a senha / Nova senha ----------
     const AUTH_VIEWS = ['login', 'signup', 'forgot', 'reset', 'sent'];
     const AUTH_TEXT = {
@@ -468,6 +538,7 @@
     function openAuthModal(view, msg, kind) {
         cgEl('authModal').classList.remove('hidden');
         setAuthView(view || 'login', msg, kind);
+        cgCapEnsure();
     }
     function closeAuthModal() {
         cgEl('authModal').classList.add('hidden');
@@ -495,6 +566,7 @@
         const code = String((error && error.code) || '').toLowerCase();
         const msg = String((error && error.message) || '').toLowerCase();
         const has = (...k) => k.some((x) => code.indexOf(x) !== -1 || msg.indexOf(x) !== -1);
+        if (has('captcha')) return 'A verificação de segurança falhou ou expirou. Tente de novo.';
         if (has('invalid_credentials', 'invalid login credentials')) return 'E-mail ou senha incorretos. Confira e tente de novo.';
         if (has('email_not_confirmed', 'email not confirmed')) return 'Você ainda não confirmou o seu e-mail. Procure a nossa mensagem na caixa de entrada (e no spam).';
         if (has('user_already_exists', 'already registered')) return 'Já existe uma conta com esse e-mail. Entre, ou use “Esqueci minha senha”.';
@@ -564,8 +636,8 @@
         cgPendingEmail = email;
         authMsg('');
         cgEl('authResendBtn').classList.add('hidden');
-        return authBusy(e.target, 'Entrando…', async () => {
-            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        return authBusy(e.target, 'Entrando…', () => cgWithCaptcha(async (captchaToken) => {
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password, options: { captchaToken } });
             if (error) {
                 authMsg(authErr(error), 'error');
                 const c = String(error.code || '') + ' ' + String(error.message || '');
@@ -574,7 +646,7 @@
             }
             closeAuthModal();
             cgToast('Pronto! Você entrou na sua conta.');
-        });
+        }));
     }
 
     // ---------- Criar conta ----------
@@ -586,10 +658,10 @@
         authMsg('');
         if (name.length < 2) { authMsg('Diga como quer ser chamado (pelo menos 2 letras).', 'error'); return; }
         if (password.length < 8) { authMsg('A senha precisa ter pelo menos 8 caracteres.', 'error'); return; }
-        return authBusy(e.target, 'Criando conta…', async () => {
+        return authBusy(e.target, 'Criando conta…', () => cgWithCaptcha(async (captchaToken) => {
             const { data, error } = await supabaseClient.auth.signUp({
                 email, password,
-                options: { emailRedirectTo: authBackTo(), data: { display_name: name, full_name: name } }
+                options: { emailRedirectTo: authBackTo(), captchaToken, data: { display_name: name, full_name: name } }
             });
             if (error) { authMsg(authErr(error), 'error'); return; }
             // e-mail que já tem conta: o Supabase devolve um usuário "vazio" (sem identidades)
@@ -599,7 +671,7 @@
             }
             if (data && data.session) { closeAuthModal(); cgToast('Conta criada! Bem-vindo(a) ao Conexão Gamer.'); return; }
             showSent('signup', email);
-        });
+        }));
     }
 
     // "Confira o seu e-mail"
@@ -619,11 +691,11 @@
         const email = cgEl('authForgotEmail').value.trim();
         cgPendingEmail = email;
         authMsg('');
-        return authBusy(e.target, 'Enviando…', async () => {
-            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/' });
+        return authBusy(e.target, 'Enviando…', () => cgWithCaptcha(async (captchaToken) => {
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/', captchaToken });
             if (error) { authMsg(authErr(error), 'error'); return; }
             showSent('forgot', email);
-        });
+        }));
     }
 
     // ---------- Nova senha (aberta pelo link do e-mail) ----------
@@ -646,12 +718,14 @@
         if (!cgPendingEmail) return;
         const wait = Math.ceil((cgResendAt + 60000 - Date.now()) / 1000);
         if (wait > 0) { authMsg('Aguarde ' + wait + ' segundos para pedir de novo.', 'error'); return; }
-        cgResendAt = Date.now();
-        const { error } = await supabaseClient.auth.resend({
-            type: 'signup', email: cgPendingEmail, options: { emailRedirectTo: authBackTo() }
+        await cgWithCaptcha(async (captchaToken) => {
+            cgResendAt = Date.now();
+            const { error } = await supabaseClient.auth.resend({
+                type: 'signup', email: cgPendingEmail, options: { emailRedirectTo: authBackTo(), captchaToken }
+            });
+            if (error) { cgResendAt = 0; authMsg(authErr(error), 'error'); return; }
+            authMsg('Pronto! Enviamos o e-mail de novo para ' + cgPendingEmail + '.', 'ok');
         });
-        if (error) { cgResendAt = 0; authMsg(authErr(error), 'error'); return; }
-        authMsg('Pronto! Enviamos o e-mail de novo para ' + cgPendingEmail + '.', 'ok');
     }
 
     // ---------- Sessão, nome e foto ----------
