@@ -163,25 +163,7 @@
             <div id="trending-tags" class="flex items-center gap-3 overflow-x-auto whitespace-nowrap text-gray-400"></div>
         </div>
 
-        <!-- LADO DIREITO: ÍCONES DAS REDES SOCIAIS (CORRIGIDO) -->
-        <div class="hidden md:flex items-center gap-3.5 border-l border-gray-800/80 pl-4 flex-shrink-0 text-gray-400 ml-auto">
-            <span class="text-[10px] uppercase font-bold text-gray-500 tracking-wider">SIGA:</span>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="hover:text-red-500 transition text-sm flex items-center" title="YouTube">
-                <i class="fa-brands fa-youtube"></i>
-            </a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition text-sm flex items-center" title="Facebook">
-                <i class="fa-brands fa-facebook"></i>
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="hover:text-pink-500 transition text-sm flex items-center" title="Instagram">
-                <i class="fa-brands fa-instagram"></i>
-            </a>
-            <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 transition text-sm flex items-center" title="X (Twitter)">
-                <i class="fa-brands fa-twitter"></i>
-            </a>
-            <a href="https://reddit.com" target="_blank" rel="noopener noreferrer" class="hover:text-orange-500 transition text-sm flex items-center" title="Reddit">
-                <i class="fa-brands fa-reddit-alien"></i>
-            </a>
-        </div>
+        <!-- (ícones das redes sociais: retirados por enquanto; voltam quando os perfis oficiais existirem) -->
 
     </div>
 </div>
@@ -277,19 +259,12 @@
         </div>
     </main>
 
-    <!-- RODAPÉ & COMUNIDADE (Newsletter + Discord) -->
+    <!-- RODAPÉ (Comunidade/Discord e redes: retirados por enquanto, voltam na revisão do rodapé) -->
     <footer class="bg-gray-950 border-t border-gray-800 text-gray-400 text-xs py-10 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
                 <span class="text-2xl font-black tracking-wider uppercase text-white leading-none">CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span></span>
                 <p class="text-gray-400 mt-2">Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.</p>
-            </div>
-            <div>
-                <h4 class="text-white font-bold uppercase mb-3">Comunidade</h4>
-                <p class="text-gray-400 mb-3">Junte-se ao nosso Discord e fique por dentro de todas as novidades do universo gamer.</p>
-                <a href="#" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-xl transition">
-                    <i class="fa-brands fa-discord"></i> Entrar no Discord
-                </a>
             </div>
             <div>
                 <h4 class="text-white font-bold uppercase mb-3">Navegação</h4>
@@ -863,6 +838,8 @@
     function show(which) {
         ['profile-loading', 'profile-guest', 'profile-user'].forEach((id) =>
             $(id).classList.toggle('hidden', id !== which));
+        const extra = $('profile-extra');
+        if (extra) extra.classList.toggle('hidden', which !== 'profile-user');
     }
     function msg(text, isError) {
         const el = $('profile-msg');
@@ -897,6 +874,7 @@
         msg('');
         $('profile-photo-msg').textContent = '';
         show('profile-user');
+        libInit(user.id);
     }
 
     const AVATAR_PREFIX = SUPABASE_URL + '/storage/v1/object/public/avatars/';
@@ -995,6 +973,159 @@
         pmsg('Foto personalizada removida.');
     });
 
+    // ---------- Minha área: Salvos / Meus comentários / Últimas lidas ----------
+    const LIB_PAGE = 10;
+    const LIB_EMPTY = {
+        saved: '<p class="text-xs text-gray-500 leading-relaxed">Você ainda não salvou nenhuma matéria. Use o botão <strong class="text-gray-300">Salvar</strong> no topo de uma matéria para ler depois.</p>',
+        comments: '<p class="text-xs text-gray-500 leading-relaxed">Você ainda não comentou. Entre na conversa em qualquer matéria!</p>',
+        recent: '<p class="text-xs text-gray-500 leading-relaxed">Nenhuma matéria lida ainda neste aparelho.</p>'
+    };
+    const LIB_ERR = '<p class="text-xs text-red-400">Não foi possível carregar agora. Tente de novo em instantes.</p>';
+    const libOkImg = (u) => /^(https?:)?\/\//i.test(u || '') || String(u || '').charAt(0) === '/';
+    const libDay = (d) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+    let libPosts = null, libUid = null, libTab = 'saved', libOffset = 0;
+    const libLoaded = { saved: false, comments: false, recent: false };
+
+    async function libGetPosts() {
+        if (libPosts) return libPosts;
+        try {
+            const r = await fetch('/posts.json');
+            const list = await r.json();
+            libPosts = new Map(list.map((p) => [p.slug, p]));
+            return libPosts;
+        } catch (e) { return new Map(); }
+    }
+
+    function libThumb(p) {
+        return libOkImg(p && p.image)
+            ? '<img src="' + esc(p.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover flex-shrink-0 bg-gray-800" onerror="this.style.visibility=\'hidden\'">'
+            : '<span class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-gray-800 flex-shrink-0"></span>';
+    }
+
+    function libPostRow(slug, p, opts) {
+        const o = opts || {};
+        const cat = p && p.categories && p.categories[0] ? p.categories[0] : '';
+        const inner = libThumb(p) +
+            '<div class="min-w-0 flex-1">' +
+            (cat ? '<p class="text-[10px] uppercase font-bold text-cyan-400">' + esc(cat) + '</p>' : '') +
+            '<p class="text-sm font-bold line-clamp-2 transition ' + (p ? 'text-white group-hover:text-cyan-300' : 'text-gray-500') + '">' + esc(p ? p.title : 'Esta matéria não está mais disponível') + '</p>' +
+            (o.when ? '<p class="text-[11px] text-gray-500 mt-1">' + esc(o.label || '') + esc(libDay(o.when)) + '</p>' : '') +
+            '</div>';
+        const body = p
+            ? '<a href="' + esc(p.url) + '" class="group flex items-center gap-3 flex-1 min-w-0">' + inner + '</a>'
+            : '<div class="flex items-center gap-3 flex-1 min-w-0">' + inner + '</div>';
+        const rm = o.remove
+            ? '<button type="button" data-lib-remove="' + esc(slug) + '" aria-label="Remover dos salvos" title="Remover dos salvos" class="text-gray-500 hover:text-red-400 transition px-2 py-2 flex-shrink-0"><i class="fa-solid fa-xmark"></i></button>'
+            : '';
+        return '<div class="flex items-center gap-2 bg-gray-950 border border-gray-800 rounded-xl p-3" data-slug="' + esc(slug) + '">' + body + rm + '</div>';
+    }
+
+    async function libLoadSaved() {
+        const list = $('lib-saved-list');
+        list.innerHTML = '<p class="text-xs text-gray-500">Carregando…</p>';
+        const [posts, res] = await Promise.all([
+            libGetPosts(),
+            supabaseClient.from('saved_posts').select('post_slug, created_at').order('created_at', { ascending: false }).limit(200)
+        ]);
+        if (res.error) {
+            console.warn('[Conexão Gamer] erro ao carregar salvos:', res.error.message);
+            libLoaded.saved = false; list.innerHTML = LIB_ERR; return;
+        }
+        const rows = res.data || [];
+        list.innerHTML = rows.length
+            ? rows.map((r) => libPostRow(r.post_slug, posts.get(r.post_slug), { remove: true, label: 'Salva em ', when: r.created_at })).join('')
+            : LIB_EMPTY.saved;
+    }
+
+    function libCommentRow(c, p) {
+        const text = String(c.content || '');
+        const short = text.length > 220 ? text.slice(0, 219).replace(/\s+\S*$/, '') + '…' : text;
+        const hidden = c.status === 'hidden'
+            ? ' · <span class="text-amber-400">escondido pela moderação</span>' : '';
+        return '<a href="/noticias/' + encodeURIComponent(c.post_slug) + '/#comments" class="block bg-gray-950 border border-gray-800 hover:border-cyan-400/50 rounded-xl p-4 transition">' +
+            '<p class="text-[11px] text-gray-500">' + (c.parent_id ? 'Resposta em ' : 'Comentou em ') +
+            '<span class="text-cyan-400 font-bold">' + esc(p ? p.title : c.post_slug) + '</span></p>' +
+            '<p class="text-sm text-gray-200 mt-2 whitespace-pre-line break-words">' + esc(short) + '</p>' +
+            '<p class="text-[11px] text-gray-500 mt-2">' + esc(libDay(c.created_at)) + (c.edited_at ? ' · editado' : '') + hidden + '</p></a>';
+    }
+
+    async function libLoadComments(more) {
+        const list = $('lib-comments-list'), btn = $('lib-comments-more');
+        if (!more) { libOffset = 0; list.innerHTML = '<p class="text-xs text-gray-500">Carregando…</p>'; }
+        btn.disabled = true;
+        const [posts, res] = await Promise.all([
+            libGetPosts(),
+            supabaseClient.rpc('my_comments', { p_limit: LIB_PAGE, p_offset: libOffset })
+        ]);
+        btn.disabled = false;
+        if (res.error) {
+            console.warn('[Conexão Gamer] erro ao carregar comentários:', res.error.message);
+            if (!more) { libLoaded.comments = false; list.innerHTML = LIB_ERR; } else { cgToast('Não foi possível carregar mais agora.'); }
+            return;
+        }
+        const rows = res.data || [];
+        const html = rows.map((c) => libCommentRow(c, posts.get(c.post_slug))).join('');
+        if (!more) list.innerHTML = rows.length ? html : LIB_EMPTY.comments;
+        else list.insertAdjacentHTML('beforeend', html);
+        libOffset += rows.length;
+        btn.classList.toggle('hidden', rows.length < LIB_PAGE);
+    }
+
+    async function libLoadRecent() {
+        const list = $('lib-recent-list');
+        let items = [];
+        try { items = JSON.parse(localStorage.getItem('cg_recent_v1') || '[]'); } catch (e) {}
+        const posts = await libGetPosts();
+        const rows = (Array.isArray(items) ? items : []).filter((x) => x && posts.get(x.s));
+        list.innerHTML = rows.length
+            ? rows.map((x) => libPostRow(x.s, posts.get(x.s), { label: 'Lida em ', when: x.t })).join('')
+            : LIB_EMPTY.recent;
+        $('lib-recent-clear').classList.toggle('hidden', !rows.length);
+    }
+
+    function libShowTab(name) {
+        libTab = name;
+        ['saved', 'comments', 'recent'].forEach((t) => {
+            const on = t === name;
+            $('lib-pane-' + t).classList.toggle('hidden', !on);
+            const b = $('lib-tab-' + t);
+            b.setAttribute('aria-selected', on ? 'true' : 'false');
+            b.className = 'text-xs font-extrabold py-2 rounded-lg transition ' + (on ? 'bg-cyan-400 text-black' : 'text-gray-400 hover:text-white');
+        });
+        if (libLoaded[name]) return;
+        libLoaded[name] = true;
+        if (name === 'saved') libLoadSaved();
+        else if (name === 'comments') libLoadComments(false);
+        else libLoadRecent();
+    }
+
+    // chamada a cada render(): só recarrega quando a pessoa logada muda
+    function libInit(uid) {
+        if (libUid === uid) return;
+        libUid = uid;
+        libLoaded.saved = libLoaded.comments = libLoaded.recent = false;
+        libShowTab('saved');
+    }
+
+    ['saved', 'comments', 'recent'].forEach((t) => $('lib-tab-' + t).addEventListener('click', () => libShowTab(t)));
+    $('lib-comments-more').addEventListener('click', () => libLoadComments(true));
+    $('lib-recent-clear').addEventListener('click', () => {
+        try { localStorage.removeItem('cg_recent_v1'); } catch (e) {}
+        libLoadRecent();
+    });
+    $('lib-saved-list').addEventListener('click', async (e) => {
+        const b = e.target.closest('[data-lib-remove]');
+        if (!b || !cgSession) return;
+        b.disabled = true;
+        const { error } = await supabaseClient.from('saved_posts').delete()
+            .eq('user_id', cgSession.user.id).eq('post_slug', b.getAttribute('data-lib-remove'));
+        if (error) { b.disabled = false; cgToast('Não foi possível remover agora.'); return; }
+        const row = b.closest('[data-slug]');
+        if (row) row.remove();
+        const list = $('lib-saved-list');
+        if (!list.querySelector('[data-slug]')) list.innerHTML = LIB_EMPTY.saved;
+    });
+
     window.addEventListener('cg:auth', (e) => render(e.detail));
     if (window.cgAuthState) render(window.cgAuthState);
 
@@ -1055,6 +1186,71 @@
         cgToast('Sua conta foi excluída. Obrigado por ter feito parte!');
         setTimeout(() => { window.location.href = '/'; }, 1800);
     });
+})();
+</script>
+
+<!-- PÁGINA DA MATÉRIA: "Últimas lidas" (só neste aparelho) e botão Salvar (só age quando body[data-page="post"]) -->
+<script>
+(function () {
+    if (document.body.getAttribute('data-page') !== 'post') return;
+    const slug = document.body.getAttribute('data-slug') || '';
+    if (!/^[a-z0-9][a-z0-9-]{0,119}$/.test(slug)) return;
+
+    // Últimas lidas: fica só no navegador desta pessoa (não vai para o servidor)
+    try {
+        const KEY = 'cg_recent_v1';
+        let list = JSON.parse(localStorage.getItem(KEY) || '[]');
+        if (!Array.isArray(list)) list = [];
+        list = list.filter((x) => x && x.s && x.s !== slug);
+        list.unshift({ s: slug, t: Date.now() });
+        localStorage.setItem(KEY, JSON.stringify(list.slice(0, 12)));
+    } catch (e) { /* navegador sem armazenamento: segue sem a lista */ }
+
+    const btn = document.getElementById('save-btn');
+    if (!btn) return;
+    let saved = false, busy = false;
+
+    function paint() {
+        btn.setAttribute('aria-pressed', saved ? 'true' : 'false');
+        btn.title = saved ? 'Remover dos salvos' : 'Salvar para ler depois';
+        btn.querySelector('i').className = saved ? 'fa-solid fa-bookmark text-cyan-400' : 'fa-regular fa-bookmark';
+        btn.querySelector('span').textContent = saved ? 'Salvo' : 'Salvar';
+        btn.classList.toggle('border-cyan-400', saved);
+        btn.classList.toggle('text-cyan-400', saved);
+    }
+
+    async function load() {
+        saved = false; paint();
+        if (!cgSession || !cgSession.user) return;
+        const uid = cgSession.user.id;
+        const { data, error } = await supabaseClient.from('saved_posts').select('post_slug').eq('post_slug', slug).maybeSingle();
+        if (error || !cgSession || cgSession.user.id !== uid) return;
+        saved = !!data; paint();
+    }
+
+    btn.addEventListener('click', async () => {
+        if (!cgSession || !cgSession.user) {
+            openAuthModal('login', 'Entre na sua conta para salvar matérias e ler depois.', 'ok');
+            return;
+        }
+        if (busy) return;
+        busy = true; btn.disabled = true;
+        const uid = cgSession.user.id;
+        if (saved) {
+            const { error } = await supabaseClient.from('saved_posts').delete().eq('user_id', uid).eq('post_slug', slug);
+            if (error) cgToast('Não foi possível remover agora.');
+            else { saved = false; paint(); cgToast('Removida dos salvos.'); }
+        } else {
+            const { error } = await supabaseClient.from('saved_posts').insert({ user_id: uid, post_slug: slug });
+            if (!error || error.code === '23505') { saved = true; paint(); if (!error) cgToast('Matéria salva! Ela fica em Meu perfil.'); }
+            else if (/cg_saved_limit/.test(error.message || '')) cgToast('Você chegou ao limite de 200 matérias salvas. Remova algumas no seu perfil.');
+            else { console.warn('[Conexão Gamer] erro ao salvar:', error.message); cgToast('Não foi possível salvar agora.'); }
+        }
+        busy = false; btn.disabled = false;
+    });
+
+    window.addEventListener('cg:auth', load);
+    if (window.cgAuthState) load();
 })();
 </script>
 

@@ -303,6 +303,7 @@ function shareHtml(p, where) {
                         ${links}
                         <button type="button" data-cg-copy aria-label="Copiar link" title="Copiar link" class="${SHARE_BTN}"><i class="fa-solid fa-link"></i></button>
                         <button type="button" data-cg-native aria-label="Compartilhar pelo celular" title="Mais opções" class="hidden ${SHARE_BTN_BASE}"><i class="fa-solid fa-ellipsis"></i></button>
+                        ${where === 'top' ? `<button type="button" id="save-btn" aria-pressed="false" title="Salvar para ler depois" class="ml-auto inline-flex items-center gap-2 h-9 px-3 rounded-lg bg-gray-900 border border-gray-800 text-gray-300 hover:text-cyan-400 hover:border-cyan-400 transition text-xs font-bold"><i class="fa-regular fa-bookmark"></i><span>Salvar</span></button>` : ''}
                     </div>`;
 }
 
@@ -520,7 +521,36 @@ function profileHtml() {
                             </button>
                         </div>
 
-                        <div class="mt-8 pt-6 border-t border-gray-800">
+                    </div>
+
+                    <div id="profile-extra" class="hidden mt-6 space-y-6">
+                        <div id="profile-library" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                            <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-bookmark text-cyan-400"></i> Minha área</h2>
+                            <div id="lib-tabs" role="tablist" class="grid grid-cols-3 gap-1 bg-gray-950 border border-gray-800 rounded-xl p-1 mt-4">
+                                <button type="button" id="lib-tab-saved" role="tab" class="text-xs font-extrabold py-2 rounded-lg transition">Salvos</button>
+                                <button type="button" id="lib-tab-comments" role="tab" class="text-xs font-extrabold py-2 rounded-lg transition">Meus comentários</button>
+                                <button type="button" id="lib-tab-recent" role="tab" class="text-xs font-extrabold py-2 rounded-lg transition">Últimas lidas</button>
+                            </div>
+
+                            <div id="lib-pane-saved" class="mt-5">
+                                <div id="lib-saved-list" class="space-y-3"></div>
+                            </div>
+
+                            <div id="lib-pane-comments" class="hidden mt-5">
+                                <div id="lib-comments-list" class="space-y-3"></div>
+                                <button id="lib-comments-more" type="button" class="hidden mt-4 text-xs font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-5 py-2.5 rounded-xl transition">Carregar mais</button>
+                            </div>
+
+                            <div id="lib-pane-recent" class="hidden mt-5">
+                                <div id="lib-recent-list" class="space-y-3"></div>
+                                <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
+                                    <p class="text-[11px] text-gray-600">Esta lista fica guardada só neste aparelho e navegador. Não vai para os nossos servidores.</p>
+                                    <button id="lib-recent-clear" type="button" class="hidden text-[11px] font-bold text-gray-500 hover:text-red-400 transition">Limpar lista</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white">Excluir minha conta</h2>
                             <p class="text-xs text-gray-400 mt-2 leading-relaxed">Apaga a sua conta, o seu nome e a sua foto. Os seus comentários também são apagados; se algum tiver respostas de outras pessoas, ele passa a aparecer como “Comentário removido”. Esta ação não pode ser desfeita.</p>
                             <button id="profile-delete-open" type="button" class="mt-3 inline-flex items-center gap-2 border border-red-500/40 hover:bg-red-500/10 text-red-400 text-xs font-bold px-4 py-2.5 rounded-xl transition">
