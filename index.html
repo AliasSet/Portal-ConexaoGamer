@@ -875,6 +875,7 @@
         $('profile-photo-msg').textContent = '';
         show('profile-user');
         libInit(user.id);
+        aboutInit(user.id);
     }
 
     const AVATAR_PREFIX = SUPABASE_URL + '/storage/v1/object/public/avatars/';
@@ -1126,6 +1127,119 @@
         if (!list.querySelector('[data-slug]')) list.innerHTML = LIB_EMPTY.saved;
     });
 
+    // ---------- Sobre você: bio, redes e perfil público ----------
+    const ABOUT_NETS = {
+        x:         { label: 'X (Twitter)', ph: 'usuario',          re: /^[A-Za-z0-9_]{1,15}$/ },
+        instagram: { label: 'Instagram',   ph: 'usuario',          re: /^[A-Za-z0-9._]{1,30}$/ },
+        youtube:   { label: 'YouTube',     ph: 'nome do canal (@)', re: /^[A-Za-z0-9._-]{3,30}$/ },
+        twitch:    { label: 'Twitch',      ph: 'usuario',          re: /^[A-Za-z0-9_]{3,25}$/ },
+        steam:     { label: 'Steam',       ph: 'id personalizado', re: /^[A-Za-z0-9_-]{2,32}$/ },
+        reddit:    { label: 'Reddit',      ph: 'usuario',          re: /^[A-Za-z0-9_-]{3,20}$/ },
+        tiktok:    { label: 'TikTok',      ph: 'usuario',          re: /^[A-Za-z0-9._]{2,24}$/ }
+    };
+    const ABOUT_ERRORS = {
+        cg_rate: 'Calma! Espere alguns segundos e salve de novo.',
+        cg_bio_long: 'A bio pode ter no máximo 160 caracteres.',
+        cg_bio_link: 'A bio não pode ter links. Use o campo de redes.',
+        cg_bad_links: 'Confira os nomes de usuário das redes (sem @, sem espaços e sem repetir a rede).',
+        cg_too_many_links: 'Você pode adicionar no máximo 4 redes.',
+        cg_not_logged: 'Entre na sua conta para salvar.'
+    };
+    let aboutUid = null;
+    function aboutMsg(text, isError) {
+        const el = $('about-msg');
+        el.textContent = text || '';
+        el.className = 'text-xs min-h-[1rem] ' + (isError ? 'text-red-400' : 'text-emerald-400');
+    }
+    const ABOUT_FIELD = 'bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400';
+    function aboutRow(net, handle) {
+        const row = document.createElement('div');
+        row.className = 'flex gap-2';
+        row.setAttribute('data-about-row', '');
+        row.innerHTML =
+            '<select aria-label="Rede" class="' + ABOUT_FIELD + ' w-36 flex-shrink-0">' +
+            Object.keys(ABOUT_NETS).map((k) => '<option value="' + k + '"' + (k === net ? ' selected' : '') + '>' + esc(ABOUT_NETS[k].label) + '</option>').join('') +
+            '</select>' +
+            '<input type="text" maxlength="32" autocomplete="off" aria-label="Usuário" placeholder="usuário (sem @)" class="' + ABOUT_FIELD + ' flex-1 min-w-0">' +
+            '<button type="button" aria-label="Remover rede" title="Remover" class="text-gray-500 hover:text-red-400 transition px-2 flex-shrink-0"><i class="fa-solid fa-xmark"></i></button>';
+        row.querySelector('input').value = handle || '';
+        row.querySelector('button').addEventListener('click', () => { row.remove(); aboutToggleAdd(); });
+        $('about-links').appendChild(row);
+        aboutToggleAdd();
+    }
+    function aboutToggleAdd() {
+        $('about-add').classList.toggle('hidden', $('about-links').children.length >= 4);
+    }
+    function aboutPublicLink(uid, isPublic) {
+        const row = $('about-link-row');
+        row.classList.toggle('hidden', !isPublic);
+        row.classList.toggle('flex', !!isPublic);
+        const url = location.origin + '/u/?id=' + encodeURIComponent(uid);
+        $('about-public-link').textContent = url;
+        $('about-public-link').setAttribute('href', url);
+    }
+    async function aboutInit(uid) {
+        if (aboutUid === uid) return;
+        aboutUid = uid;
+        $('about-links').innerHTML = '';
+        $('about-bio').value = ''; $('about-bio-count').textContent = '0';
+        $('about-public').checked = false; aboutPublicLink(uid, false); aboutMsg('');
+        aboutToggleAdd();
+        const [p, e] = await Promise.all([
+            supabaseClient.from('profiles').select('bio').eq('id', uid).maybeSingle(),
+            supabaseClient.from('profile_extras').select('links, is_public').eq('user_id', uid).maybeSingle()
+        ]);
+        if (aboutUid !== uid) return;
+        const bio = (p.data && p.data.bio) || '';
+        $('about-bio').value = bio; $('about-bio-count').textContent = String(bio.length);
+        const links = (e.data && Array.isArray(e.data.links)) ? e.data.links : [];
+        links.forEach((l) => { if (l && ABOUT_NETS[l.n]) aboutRow(l.n, l.h); });
+        const isPublic = !!(e.data && e.data.is_public);
+        $('about-public').checked = isPublic; aboutPublicLink(uid, isPublic);
+        if (p.error || e.error) aboutMsg('Não foi possível carregar tudo agora. Recarregue a página.', true);
+    }
+    $('about-bio').addEventListener('input', () => { $('about-bio-count').textContent = String($('about-bio').value.length); });
+    $('about-add').addEventListener('click', () => {
+        if ($('about-links').children.length >= 4) return;
+        const used = Array.from($('about-links').querySelectorAll('select')).map((x) => x.value);
+        const free = Object.keys(ABOUT_NETS).find((k) => used.indexOf(k) < 0);
+        if (free) aboutRow(free, '');
+    });
+    $('about-copy').addEventListener('click', () => {
+        const url = $('about-public-link').textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(() => cgToast('Link copiado!'), () => cgToast('Não consegui copiar. Copie o endereço manualmente.'));
+        else cgToast('Copie o endereço manualmente.');
+    });
+    $('about-form').addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        if (!cgSession) return;
+        const bio = $('about-bio').value.replace(/\s+/g, ' ').trim();
+        if (bio.length > 160) { aboutMsg(ABOUT_ERRORS.cg_bio_long, true); return; }
+        const links = [], seen = {};
+        const rows = Array.from($('about-links').querySelectorAll('[data-about-row]'));
+        for (const r of rows) {
+            const n = r.querySelector('select').value;
+            const h = r.querySelector('input').value.trim().replace(/^@/, '');
+            if (!h) continue;
+            if (seen[n] || !ABOUT_NETS[n].re.test(h) || !/[A-Za-z0-9]/.test(h)) { aboutMsg(ABOUT_ERRORS.cg_bad_links, true); return; }
+            seen[n] = true; links.push({ n: n, h: h });
+        }
+        const isPublic = $('about-public').checked;
+        const btn = $('about-save');
+        btn.disabled = true; aboutMsg('Salvando…');
+        const { error } = await supabaseClient.rpc('save_my_profile_v2', { p_bio: bio, p_links: links, p_is_public: isPublic });
+        btn.disabled = false;
+        if (error) {
+            const code = Object.keys(ABOUT_ERRORS).find((k) => String(error.message || '').indexOf(k) >= 0);
+            if (!code) console.warn('[Conexão Gamer] erro ao salvar o perfil v2:', error.message);
+            aboutMsg(code ? ABOUT_ERRORS[code] : 'Não foi possível salvar agora. Tente novamente em instantes.', true);
+            return;
+        }
+        $('about-bio').value = bio; $('about-bio-count').textContent = String(bio.length);
+        aboutPublicLink(cgSession.user.id, isPublic);
+        aboutMsg(isPublic ? 'Salvo! Seu perfil está público.' : 'Salvo! Seu perfil continua privado.');
+    });
+
     window.addEventListener('cg:auth', (e) => render(e.detail));
     if (window.cgAuthState) render(window.cgAuthState);
 
@@ -1251,6 +1365,105 @@
 
     window.addEventListener('cg:auth', load);
     if (window.cgAuthState) load();
+})();
+</script>
+
+<!-- PÁGINA /u/ (perfil público; só age quando body[data-page="public-profile"]) -->
+<script>
+(function () {
+    if (document.body.getAttribute('data-page') !== 'public-profile') return;
+    const $ = (id) => document.getElementById(id);
+    const esc = (str) => String(str == null ? '' : str).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const NETS = {
+        x:         { label: 'X',         icon: 'fa-brands fa-twitter',   url: (h) => 'https://x.com/' + h },
+        instagram: { label: 'Instagram', icon: 'fa-brands fa-instagram', url: (h) => 'https://instagram.com/' + h },
+        youtube:   { label: 'YouTube',   icon: 'fa-brands fa-youtube',   url: (h) => 'https://youtube.com/@' + h },
+        twitch:    { label: 'Twitch',    icon: 'fa-brands fa-twitch',    url: (h) => 'https://twitch.tv/' + h },
+        steam:     { label: 'Steam',     icon: 'fa-brands fa-steam',     url: (h) => 'https://steamcommunity.com/id/' + h },
+        reddit:    { label: 'Reddit',    icon: 'fa-brands fa-reddit-alien', url: (h) => 'https://reddit.com/user/' + h },
+        tiktok:    { label: 'TikTok',    icon: 'fa-brands fa-tiktok',    url: (h) => 'https://tiktok.com/@' + h }
+    };
+    const HANDLE_OK = /^[A-Za-z0-9._-]{1,32}$/;
+    const id = (new URLSearchParams(location.search).get('id') || '').toLowerCase();
+    const PAGE = 10;
+    let offset = 0, posts = null;
+
+    function missing() {
+        $('pub-loading').classList.add('hidden'); $('pub-card').classList.add('hidden');
+        $('pub-comments-wrap').classList.add('hidden'); $('pub-missing').classList.remove('hidden');
+    }
+    const day = (d) => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    async function getPosts() {
+        if (posts) return posts;
+        try { const r = await fetch('/posts.json'); posts = new Map((await r.json()).map((p) => [p.slug, p])); }
+        catch (e) { posts = new Map(); }
+        return posts;
+    }
+
+    async function loadComments(more) {
+        const btn = $('pub-comments-more'), box = $('pub-comments');
+        btn.disabled = true;
+        const [map, res] = await Promise.all([getPosts(), supabaseClient.rpc('public_profile_comments', { p_id: id, p_limit: PAGE, p_offset: offset })]);
+        btn.disabled = false;
+        if (res.error) { if (!more) box.innerHTML = '<p class="text-xs text-red-400">Não foi possível carregar os comentários agora.</p>'; return; }
+        const rows = res.data || [];
+        const html = rows.map((c) => {
+            const p = map.get(c.post_slug);
+            const text = String(c.content || '');
+            const short = text.length > 220 ? text.slice(0, 219).replace(/\s+\S*$/, '') + '…' : text;
+            return '<a href="/noticias/' + encodeURIComponent(c.post_slug) + '/#comments" class="block bg-gray-950 border border-gray-800 hover:border-cyan-400/50 rounded-xl p-4 transition">' +
+                '<p class="text-[11px] text-gray-500">' + (c.is_reply ? 'Respondeu em ' : 'Comentou em ') + '<span class="text-cyan-400 font-bold">' + esc(p ? p.title : c.post_slug) + '</span></p>' +
+                '<p class="text-sm text-gray-200 mt-2 whitespace-pre-line break-words">' + esc(short) + '</p>' +
+                '<p class="text-[11px] text-gray-500 mt-2">' + esc(day(c.created_at)) + '</p></a>';
+        }).join('');
+        if (!more) box.innerHTML = rows.length ? html : '<p class="text-xs text-gray-500">Ainda não há comentários públicos.</p>';
+        else box.insertAdjacentHTML('beforeend', html);
+        offset += rows.length;
+        btn.classList.toggle('hidden', rows.length < PAGE);
+    }
+
+    async function load() {
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) { missing(); return; }
+        const { data, error } = await supabaseClient.rpc('get_public_profile', { p_id: id });
+        const prof = Array.isArray(data) ? data[0] : data;
+        if (error || !prof) { missing(); return; }
+        const name = prof.username || 'Leitor';
+        document.title = name + ' | Conexão Gamer';
+        $('pub-name').textContent = name;
+        const safe = cgSafeAvatar(prof.avatar_url || '');
+        $('pub-avatar').innerHTML = '<span>' + esc(name.charAt(0).toUpperCase()) + '</span>' +
+            (safe ? '<img src="' + esc(safe) + '" alt="" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">' : '');
+        const bio = $('pub-bio');
+        if (prof.bio) { bio.textContent = prof.bio; bio.classList.remove('hidden'); } else bio.classList.add('hidden');
+        const links = (Array.isArray(prof.links) ? prof.links : []).filter((l) => l && NETS[l.n] && HANDLE_OK.test(String(l.h || '')));
+        $('pub-links').innerHTML = links.map((l) =>
+            '<a href="' + esc(NETS[l.n].url(l.h)) + '" target="_blank" rel="noopener noreferrer nofollow ugc" class="inline-flex items-center gap-2 text-xs font-bold bg-gray-950 border border-gray-800 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-2 rounded-lg transition"><i class="' + NETS[l.n].icon + '"></i> ' + esc(NETS[l.n].label) + '</a>').join('');
+        $('pub-loading').classList.add('hidden');
+        $('pub-card').classList.remove('hidden');
+        $('pub-comments-wrap').classList.remove('hidden');
+        offset = 0; loadComments(false);
+    }
+
+    $('pub-comments-more').addEventListener('click', () => loadComments(true));
+
+    // Botão de moderação (só aparece para quem está na tabela de moderadores)
+    async function checkMod() {
+        if (!cgSession) { $('pub-mod').classList.add('hidden'); return; }
+        const { data } = await supabaseClient.rpc('is_moderator');
+        $('pub-mod').classList.toggle('hidden', data !== true);
+    }
+    $('pub-mod').addEventListener('click', async () => {
+        if (!confirm('Limpar a bio e as redes deste perfil e deixá-lo privado?')) return;
+        const { error } = await supabaseClient.rpc('mod_clear_profile', { p_id: id });
+        if (error) { cgToast('Não foi possível limpar agora.'); return; }
+        cgToast('Perfil limpo e ocultado.'); missing();
+    });
+    window.addEventListener('cg:auth', checkMod);
+    if (window.cgAuthState) checkMod();
+
+    load();
 })();
 </script>
 

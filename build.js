@@ -524,6 +524,36 @@ function profileHtml() {
                     </div>
 
                     <div id="profile-extra" class="hidden mt-6 space-y-6">
+                        <div id="profile-about" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                            <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-id-card text-cyan-400"></i> Sobre você</h2>
+                            <form id="about-form" class="mt-4 space-y-5" novalidate>
+                                <div>
+                                    <label for="about-bio" class="block text-xs font-bold text-gray-300">Bio</label>
+                                    <p class="text-[11px] text-gray-500 mt-1">Até 160 caracteres, sem links. Aparece só no seu perfil público.</p>
+                                    <textarea id="about-bio" rows="3" maxlength="160" class="mt-2 w-full resize-none bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400"></textarea>
+                                    <p class="text-[11px] text-gray-600 mt-1 text-right"><span id="about-bio-count">0</span>/160</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-300">Redes <span class="font-normal text-gray-500">(até 4, só o nome de usuário)</span></p>
+                                    <div id="about-links" class="mt-2 space-y-2"></div>
+                                    <button type="button" id="about-add" class="mt-2 text-xs font-bold text-cyan-400 hover:text-cyan-300 transition"><i class="fa-solid fa-plus mr-1"></i> Adicionar rede</button>
+                                </div>
+                                <label class="flex items-start gap-3 bg-gray-950 border border-gray-800 rounded-xl p-4 cursor-pointer">
+                                    <input type="checkbox" id="about-public" class="mt-0.5 accent-cyan-400">
+                                    <span class="text-xs text-gray-300 leading-relaxed"><strong class="text-white">Tornar meu perfil público.</strong> Quem tiver o seu link poderá ver o seu nome, foto, bio, redes e os seus comentários publicados. Fica desligado até você ligar, e você pode desligar quando quiser.</span>
+                                </label>
+                                <div id="about-link-row" class="hidden flex-wrap items-center gap-2 text-xs">
+                                    <span class="text-gray-500">Seu link público:</span>
+                                    <a id="about-public-link" href="#" class="text-cyan-400 hover:underline break-all"></a>
+                                    <button type="button" id="about-copy" class="font-bold text-gray-400 hover:text-cyan-400 transition"><i class="fa-solid fa-link mr-1"></i> Copiar</button>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button id="about-save" type="submit" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Salvar</button>
+                                    <p id="about-msg" class="text-xs min-h-[1rem]" role="status" aria-live="polite"></p>
+                                </div>
+                            </form>
+                        </div>
+
                         <div id="profile-library" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-bookmark text-cyan-400"></i> Minha área</h2>
                             <div id="lib-tabs" role="tablist" class="grid grid-cols-3 gap-1 bg-gray-950 border border-gray-800 rounded-xl p-1 mt-4">
@@ -641,6 +671,52 @@ function buildProfilePage(template) {
     .replace('<body data-page="home"', '<body data-page="profile"')
     .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
     .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => profileHtml());
+}
+
+function publicProfileHtml() {
+  return `
+                <div id="pub-root" class="max-w-2xl">
+                    <p id="pub-loading" class="text-sm text-gray-500">Carregando…</p>
+
+                    <div id="pub-missing" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
+                        <i class="fa-regular fa-eye-slash text-4xl text-gray-600 mb-3"></i>
+                        <h1 class="text-lg font-black text-white">Perfil não encontrado</h1>
+                        <p class="text-sm text-gray-400 mt-2">Este perfil não existe ou não está público.</p>
+                        <a href="/" class="inline-block mt-5 text-xs font-bold text-cyan-400 hover:underline">Voltar para o início</a>
+                    </div>
+
+                    <div id="pub-card" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                        <div class="flex items-center gap-4">
+                            <div id="pub-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400 flex-shrink-0"></div>
+                            <div class="min-w-0">
+                                <h1 id="pub-name" class="text-xl font-black text-white break-words"></h1>
+                                <p class="text-[11px] uppercase tracking-wider font-bold text-gray-500 mt-1">Leitor do ${SITE_NAME}</p>
+                            </div>
+                        </div>
+                        <p id="pub-bio" class="hidden mt-5 text-sm text-gray-300 leading-relaxed break-words"></p>
+                        <div id="pub-links" class="mt-5 flex flex-wrap gap-2"></div>
+                        <button id="pub-mod" type="button" class="hidden mt-6 text-[11px] font-bold text-amber-400 hover:text-amber-300 border border-amber-400/30 rounded-lg px-3 py-1.5 transition"><i class="fa-solid fa-shield-halved mr-1"></i> Moderação: limpar bio e redes e ocultar este perfil</button>
+                    </div>
+
+                    <div id="pub-comments-wrap" class="hidden mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                        <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-comments text-cyan-400"></i> Comentários</h2>
+                        <div id="pub-comments" class="mt-4 space-y-3"></div>
+                        <button id="pub-comments-more" type="button" class="hidden mt-4 text-xs font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-5 py-2.5 rounded-xl transition">Carregar mais</button>
+                    </div>
+                </div>
+                `;
+}
+
+function buildPublicProfilePage(template) {
+  const title = 'Perfil de leitor | ' + SITE_NAME;
+  return template
+    .replace('<!--CG:HEAD-->', headTags({
+      title, description: 'Perfil de leitor do ' + SITE_NAME + '.', url: SITE_URL + '/u/', image: '', type: 'website'
+    }) + '\n    <meta name="robots" content="noindex, nofollow">')
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('<body data-page="home"', '<body data-page="public-profile"')
+    .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => publicProfileHtml());
 }
 
 function moderationHtml() {
@@ -854,6 +930,8 @@ async function main() {
   // Página de perfil do leitor (privada: fora do Google e do sitemap)
   fs.mkdirSync(path.join(DIST, 'moderacao'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'moderacao', 'index.html'), buildModerationPage(template));
+  fs.mkdirSync(path.join(DIST, 'u'), { recursive: true });
+  fs.writeFileSync(path.join(DIST, 'u', 'index.html'), buildPublicProfilePage(template));
   fs.mkdirSync(path.join(DIST, 'perfil'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'perfil', 'index.html'), buildProfilePage(template));
 
