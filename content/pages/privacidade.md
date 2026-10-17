@@ -16,7 +16,7 @@ O responsável pelo tratamento dos seus dados pessoais (controlador) é {{RESPON
 - Não vendemos os seus dados e não usamos cookies de publicidade.
 - Medimos as visitas de forma agregada, sem cookies e sem acompanhar você de um dia para o outro.
 - O seu **nome de exibição, a sua foto e os seus comentários são públicos**. O seu e-mail nunca é exibido.
-- O **perfil público** (bio, redes e página própria) é opcional e vem desligado. Você decide se quer ligá-lo.
+- O seu **perfil público** (nome, foto, bio, redes, data em que você entrou e comentários) vem ligado, e você pode desligá-lo quando quiser. Desligado, só o nome e a foto continuam aparecendo.
 - O **aviso por e-mail quando alguém responde ao seu comentário** pode ser desligado a qualquer momento.
 - Você pode alterar o seu nome e a sua foto, apagar os seus comentários e excluir a sua conta.
 
@@ -58,9 +58,13 @@ Para proteger o cadastro e o login contra robôs e ataques automáticos, usamos 
 
 A base legal para a lista de salvos é a execução do serviço que você pediu ao usar o recurso (art. 7º, V).
 
-### 3.7. Perfil público (opcional)
+### 3.7. Perfil público
 
-Em **Meu perfil**, você pode escrever uma pequena bio (até 160 caracteres, sem links) e informar até 4 nomes de usuário em redes sociais. Essas informações só se tornam públicas se você **ligar o perfil público**, que vem desligado por padrão. Quando está ligado, passa a existir uma página com o seu nome, a sua foto, a sua bio, os seus links de redes e os seus comentários, que pode ser vista por qualquer pessoa e encontrada na internet. Você pode desligar o perfil público ou apagar a bio e as redes a qualquer momento, e a página deixa de aparecer. A moderação pode limpar ou ocultar uma bio ou rede que viole as regras do site. A base legal é o seu consentimento (art. 7º, I).
+Quem clica no seu nome ou na sua foto, nos comentários, abre a sua página de perfil. Por padrão, o perfil vem **público**, e essa página mostra o seu nome, a sua foto, a data em que você entrou ("membro desde"), a sua bio e as suas redes, se você as preencheu, e os seus comentários publicados. Ela pode ser vista por qualquer pessoa e encontrada na internet.
+
+Em **Meu perfil**, você pode escrever uma pequena bio (até 160 caracteres, sem links) e informar até 4 nomes de usuário em redes sociais. Essas informações só aparecem porque você as preencheu, e você pode apagá-las quando quiser.
+
+Você também pode **desligar o perfil público** a qualquer momento. Desligado, a página mostra apenas o seu nome e a sua foto, que já são públicos junto com os seus comentários nas matérias, e esconde a bio, as redes, a data de entrada e a lista de comentários. A moderação pode limpar ou ocultar uma bio ou rede que viole as regras do site. As bases legais são o nosso legítimo interesse em manter uma comunidade com perfis visíveis (art. 7º, IX) e, para a bio e as redes que você escolhe preencher, o seu consentimento (art. 7º, I).
 
 ### 3.8. Avisos por e-mail de respostas
 
@@ -103,7 +107,7 @@ Alguns desses prestadores armazenam dados em servidores fora do Brasil. Buscamos
 
 - **Conta:** enquanto ela existir. Ela é excluída a pedido ou por você mesmo, em **Meu perfil**.
 - **Comentários:** até você apagá-los ou até serem removidos pela moderação. Se a conta for excluída, os comentários dela também são.
-- **Matérias salvas, bio, redes e preferências de aviso:** enquanto a conta existir, ou até você remover ou alterar. Tudo isso é apagado junto com a conta.
+- **Matérias salvas, bio, redes, escolha de perfil público e preferências de aviso:** enquanto a conta existir, ou até você remover ou alterar. Tudo isso é apagado junto com a conta.
 - **Lista de lidas recentemente:** fica só no seu navegador, até você limpar os dados do site.
 - **Registro dos avisos por e-mail:** pelo tempo necessário para o envio e o controle de limites, e é apagado junto com a conta.
 - **Contadores de leitura e medição de visitas:** são números agregados, sem identificação pessoal.
@@ -122,7 +126,7 @@ Pela LGPD (art. 18), você pode pedir, a qualquer momento:
 - informações sobre com quem compartilhamos os dados;
 - a revogação do consentimento.
 
-**Como exercer:** você mesmo pode, no site, em **Meu perfil**, trocar o nome e a foto, editar a bio e as redes, ligar ou desligar o perfil público, ligar ou desligar os avisos por e-mail, remover matérias salvas, apagar os seus comentários e **excluir a sua conta**. Para os demais pedidos, escreva para {{EMAIL_LINK}} a partir do e-mail cadastrado. Responderemos em até 15 dias.
+**Como exercer:** você mesmo pode, no site, em **Meu perfil**, trocar o nome e a foto, editar a bio e as redes, manter ou desligar o perfil público, ligar ou desligar os avisos por e-mail, remover matérias salvas, apagar os seus comentários e **excluir a sua conta**. Para os demais pedidos, escreva para {{EMAIL_LINK}} a partir do e-mail cadastrado. Responderemos em até 15 dias.
 
 Você também pode apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD), em gov.br/anpd.
 
