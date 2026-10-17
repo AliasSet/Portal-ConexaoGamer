@@ -12,7 +12,7 @@ summary: "Anunciado pela NetEase, ECC: Redline virou assunto nas redes sociais
   Apesar das acusações de cópia, jogadores frustrados com a franquia da
   Activision veem no título uma luz no fim do túnel."
 author: Redação Conexão Gamer
-date: 12/10/2026T20:23
+date: 14/10/2026T20:23
 rating: ""
 ---
 Novo jogo de tiro tático gratuito da NetEase combina jogabilidade de tiro idêntica ao Call of Duty com habilidades de heróis, dividindo opiniões entre acusações de plágio e empolgação pela volta da nostalgia de 2019.
