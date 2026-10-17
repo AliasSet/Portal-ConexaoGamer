@@ -15,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const { renderBody, embedExtras } = require('./embeds');   // imagens com legenda, YouTube e redes sociais
 
 const ROOT = __dirname;
 const DIST = path.join(ROOT, 'dist');
@@ -203,7 +204,7 @@ function parsePost(fileName, text, mdParse) {
     author: meta.author ? String(meta.author) : 'Redação Conexão Gamer',
     time,
     readMin: Math.max(1, Math.round(words / 200)),
-    html: mdParse(body)
+    html: renderBody(body, mdParse)
   };
 }
 
@@ -419,6 +420,7 @@ function articleHtml(p, related) {
                         <button id="comments-more" type="button" class="hidden mt-6 text-xs font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-5 py-2.5 rounded-xl transition">Carregar mais comentários</button>
                     </section>
                 </article>
+                ${embedExtras(bodyHtml)}
                 ${SHARE_SCRIPT}
                 `;
 }
@@ -1046,6 +1048,11 @@ async function main() {
     if (fs.existsSync(adminIndex)) {
       let h = fs.readFileSync(adminIndex, 'utf8');
       h = h.replace(/(href=["'])\/admin\/config\.yml(["'])/g, `$1/${ADMIN_PATH}/config.yml$2`);
+      // Carrega os blocos extras do editor (imagem com legenda, YouTube, redes sociais)
+      if (!/cms-components\.js/.test(h)) {
+        const tag = `<script src="/${ADMIN_PATH}/cms-components.js"></script>`;
+        h = /<\/body>/i.test(h) ? h.replace(/<\/body>/i, `  ${tag}\n</body>`) : h + '\n' + tag;
+      }
       if (!/name=["']robots["']/i.test(h)) {
         h = h.replace(/<head>/i, '<head>\n  <meta name="robots" content="noindex, nofollow" />');
       }
