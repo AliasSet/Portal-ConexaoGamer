@@ -13,7 +13,7 @@ summary: Um novo vazamento atribuído a Cyberleek trouxe cerca de 25 minutos de
   exploração, enquanto a Rockstar enfrenta mais uma exposição não autorizada de
   seu aguardado jogo.
 author: Redação Conexão Gamer
-date: 11/10/2026T02:55
+date: 10/10/2026T02:55
 rating: ""
 ---
 *GTA VI* voltou a ser assunto nas redes sociais após um novo vazamento atribuído a Cyberleek, conhecido por divulgar materiais não oficiais do aguardado jogo da Rockstar Games. Desta vez, o conteúdo divulgado teria cerca de 25 minutos de gameplay, com cenas de missões, corridas e exploração do mundo aberto.
