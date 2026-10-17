@@ -13,7 +13,7 @@ summary: Naoki Hamaguchi, diretor de Final Fantasy VII Rebirth e Final Fantasy
   que elas sejam divertidas, opcionais quando possível e bem integradas à
   aventura.
 author: Redação Conexão Gamer
-date: 10/10/2026T03:00
+date: 08/10/2026T03:00
 ---
 A quantidade de minigames em *Final Fantasy VII Rebirth* virou motivo de debate entre os jogadores, mas o diretor Naoki Hamaguchi acredita que a discussão está olhando para o lado errado. Para ele, o mais importante não é decidir se o jogo deveria ter mais ou menos atividades, mas garantir que elas sejam divertidas e façam sentido dentro da experiência.
 
