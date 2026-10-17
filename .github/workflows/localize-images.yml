@@ -1,0 +1,41 @@
+# Baixa para uploads/ as imagens que as matérias usam por link externo.
+# Roda sozinho quando uma matéria/autor é publicado pelo painel (ou à mão: aba Actions > Run workflow).
+name: Guardar imagens externas
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'content/posts/**'
+      - 'content/authors/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: localize-images
+  cancel-in-progress: false
+
+jobs:
+  localize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Baixar imagens externas
+        run: node scripts/localize-images.js
+      - name: Salvar no repositório
+        run: |
+          git config user.name "Conexão Gamer Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add uploads content
+          if git diff --cached --quiet; then
+            echo "Nada para salvar."
+          else
+            git commit -m "Guarda imagens externas em uploads/"
+            git pull --rebase origin main
+            git push
+          fi
