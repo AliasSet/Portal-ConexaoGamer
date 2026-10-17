@@ -497,6 +497,14 @@ function profileHtml() {
                                 </div>
                                 <p id="profile-name-hint" class="text-[11px] text-gray-500 mt-2">É o nome que aparece nos seus comentários. Evite usar o seu e-mail.</p>
                                 <p id="profile-since" class="text-xs text-gray-500 mt-1"></p>
+                                <div id="profile-stats" class="hidden mt-2">
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                                        <span id="profile-level"></span>
+                                        <span id="profile-count"></span>
+                                    </div>
+                                    <div class="mt-2 h-1.5 w-full max-w-[14rem] bg-gray-800 rounded-full overflow-hidden" aria-hidden="true"><div id="profile-bar" class="h-full bg-gradient-to-r from-cyan-400 to-fuchsia-500 rounded-full transition-all duration-500" style="width:0%"></div></div>
+                                    <p id="profile-next" class="text-[11px] text-gray-500 mt-1.5"></p>
+                                </div>
                                 <div class="mt-3 flex flex-wrap items-center gap-2">
                                     <button id="profile-photo-btn" type="button" class="text-[11px] font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-camera mr-1"></i> Alterar foto</button>
                                     <button id="profile-photo-remove" type="button" class="hidden text-[11px] font-bold text-gray-500 hover:text-red-400 px-2 py-1.5 transition">Remover foto</button>
@@ -724,6 +732,7 @@ function publicProfileHtml() {
                                 <h1 id="pub-name" class="text-xl font-black text-white break-words"></h1>
                                 <p id="pub-role" class="text-[11px] uppercase tracking-wider font-bold text-gray-500 mt-1">Leitor do ${SITE_NAME}</p>
                                 <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                                    <span id="pub-level" class="hidden"></span>
                                     <span id="pub-since" class="hidden"></span>
                                     <span id="pub-count" class="hidden"></span>
                                 </div>

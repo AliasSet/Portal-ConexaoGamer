@@ -392,6 +392,35 @@
     // Inicialização do cliente Supabase
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Níveis automáticos por número de comentários visíveis. Para mudar nomes ou limites, edite só esta lista.
+    const CG_LEVELS = [
+        { min: 0,   name: 'Novato',   icon: 'fa-seedling', cls: 'text-gray-300 bg-gray-500/10 border-gray-500/30' },
+        { min: 5,   name: 'Jogador',  icon: 'fa-gamepad',  cls: 'text-emerald-300 bg-emerald-400/10 border-emerald-400/30' },
+        { min: 20,  name: 'Veterano', icon: 'fa-medal',    cls: 'text-sky-300 bg-sky-400/10 border-sky-400/30' },
+        { min: 50,  name: 'Elite',    icon: 'fa-bolt',     cls: 'text-violet-300 bg-violet-400/10 border-violet-400/30' },
+        { min: 150, name: 'Lenda',    icon: 'fa-crown',    cls: 'text-amber-300 bg-amber-400/10 border-amber-400/30' }
+    ];
+    window.cgLevel = function (n) {
+        n = Math.max(0, Math.floor(Number(n) || 0));
+        let i = 0;
+        CG_LEVELS.forEach((l, k) => { if (n >= l.min) i = k; });
+        const cur = CG_LEVELS[i], next = CG_LEVELS[i + 1] || null;
+        return {
+            name: cur.name, icon: cur.icon, cls: cur.cls,
+            next: next ? next.name : null,
+            missing: next ? next.min - n : 0,
+            pct: next ? Math.round(((n - cur.min) / (next.min - cur.min)) * 100) : 100
+        };
+    };
+    window.cgLevelBadge = function (n) {
+        const l = window.cgLevel(n);
+        return '<span class="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider border rounded-md px-1.5 py-0.5 ' + l.cls + '"><i class="fa-solid ' + l.icon + ' text-[9px]"></i> ' + l.name + '</span>';
+    };
+    window.cgCountText = function (n) {
+        n = Math.max(0, Math.floor(Number(n) || 0));
+        return n === 0 ? 'Nenhum comentário ainda' : (n === 1 ? '1 comentário' : n.toLocaleString('pt-BR') + ' comentários');
+    };
+
     // Ids de quem é moderador (usado só para mostrar a etiqueta "Moderador"). Falhou? Sem etiquetas, sem erro.
     let cgModsP = null;
     window.cgGetMods = function () {
@@ -914,6 +943,7 @@
         aboutInit(user.id);
         notifyInit(user.id);
         modPanelInit(user.id);
+        statsInit();
     }
 
     const AVATAR_PREFIX = SUPABASE_URL + '/storage/v1/object/public/avatars/';
@@ -1117,6 +1147,7 @@
         if (row) row.remove();
         libOffset = Math.max(0, libOffset - 1);
         cgToast('Comentário excluído.');
+        statsInit();
         if (!$('lib-comments-list').querySelector('[data-lib-crow]')) libLoadComments(false);
         if (window.cgReloadSidebar) window.cgReloadSidebar();
     });
@@ -1367,6 +1398,21 @@
         if (error) { box.checked = !want; notifyMsg('Não foi possível salvar agora. Tente novamente.', true); return; }
         notifyMsg(want ? 'Pronto! Você vai receber os avisos de resposta.' : 'Pronto! Você não receberá mais avisos por e-mail.');
     });
+
+    /* ---------- Meu nível e meu contador de comentários ---------- */
+    async function statsInit() {
+        const box = $('profile-stats');
+        const { data, error } = await supabaseClient.rpc('my_comment_count');
+        if (error || data == null || isNaN(Number(data))) { box.classList.add('hidden'); return; }
+        const n = Number(data), lv = window.cgLevel(n);
+        $('profile-level').innerHTML = window.cgLevelBadge(n);
+        $('profile-count').innerHTML = '<i class="fa-regular fa-comment mr-1"></i>' + esc(window.cgCountText(n));
+        $('profile-bar').style.width = lv.pct + '%';
+        $('profile-next').textContent = lv.next
+            ? (lv.missing === 1 ? 'Falta 1 comentário' : 'Faltam ' + lv.missing + ' comentários') + ' para o nível ' + lv.next + '.'
+            : 'Você chegou ao nível máximo. Valeu por fazer parte da comunidade!';
+        box.classList.remove('hidden');
+    }
 
     /* ---------- Painel de moderação: gerenciar moderadores (só aparece para moderadores) ---------- */
     let modPanelUid = null;
@@ -1707,9 +1753,11 @@
         $('pub-since').textContent = since; $('pub-since').classList.toggle('hidden', !since);
         // número de comentários visíveis (só em perfil público; vem calculado do banco)
         const nC = isPublic && prof.comment_count != null ? Number(prof.comment_count) : NaN;
-        const cTxt = !isFinite(nC) ? '' : (nC <= 0 ? 'Nenhum comentário ainda' : (nC === 1 ? '1 comentário' : nC.toLocaleString('pt-BR') + ' comentários'));
+        const cTxt = !isFinite(nC) ? '' : window.cgCountText(nC);
         $('pub-count').innerHTML = cTxt ? '<i class="fa-regular fa-comment mr-1"></i>' + esc(cTxt) : '';
         $('pub-count').classList.toggle('hidden', !cTxt);
+        $('pub-level').innerHTML = cTxt ? window.cgLevelBadge(nC) : '';
+        $('pub-level').classList.toggle('hidden', !cTxt);
         $('pub-links').innerHTML = links.map((l) =>
             '<a href="' + esc(NETS[l.n].url(l.h)) + '" target="_blank" rel="noopener noreferrer nofollow ugc" class="inline-flex items-center gap-2 text-xs font-bold bg-gray-950 border border-gray-800 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-2 rounded-lg transition"><i class="' + NETS[l.n].icon + '"></i> ' + esc(NETS[l.n].label) + '</a>').join('');
 
