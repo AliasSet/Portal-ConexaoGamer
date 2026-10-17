@@ -606,6 +606,22 @@ function profileHtml() {
                             </div>
                             </div>
                         </div>
+
+                        <div id="profile-mod" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                            <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-solid fa-shield-halved text-cyan-400"></i> Painel de moderação</h2>
+                            <p class="text-xs text-gray-400 mt-2 leading-relaxed">Moderadores podem esconder, apagar e bloquear comentários e limpar perfis. Só a conta principal vê este painel e pode adicionar ou remover moderadores. Adicione só pessoas de confiança.</p>
+                            <a href="/moderacao/" class="inline-flex items-center gap-2 mt-3 h-9 px-3 border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 text-xs font-bold rounded-lg transition"><i class="fa-regular fa-comments"></i> Abrir fila de comentários</a>
+
+                            <h3 class="mt-6 text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">Moderadores</h3>
+                            <div id="mod-list" class="mt-3 space-y-2" aria-live="polite"><p class="text-xs text-gray-500">Carregando…</p></div>
+
+                            <form id="mod-add-form" class="mt-5 flex flex-wrap items-center gap-2" novalidate>
+                                <label for="mod-add-email" class="sr-only">E-mail da pessoa</label>
+                                <input id="mod-add-email" type="email" autocomplete="off" maxlength="120" placeholder="E-mail da pessoa (ela já precisa ter entrado no site)" class="h-9 flex-1 basis-56 min-w-0 bg-gray-950 border border-gray-800 hover:border-gray-700 focus:border-cyan-400 focus:outline-none rounded-lg px-3 text-[16px] sm:text-sm text-white placeholder-gray-600 transition">
+                                <button id="mod-add-btn" type="submit" class="inline-flex items-center justify-center h-9 px-4 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed text-black font-extrabold text-xs rounded-lg transition whitespace-nowrap">Adicionar moderador</button>
+                            </form>
+                            <p id="mod-msg" class="text-xs mt-3 cg-empty-hide" role="status" aria-live="polite"></p>
+                        </div>
                     </div>
                 </div>
                 `;

@@ -879,7 +879,7 @@
 
     function render(state) {
         const session = state && state.session;
-        if (!session || !session.user) { show('profile-guest'); return; }
+        if (!session || !session.user) { modPanelUid = null; show('profile-guest'); return; }
         const user = session.user;
         const name = cgName(user, state.profile);
         const url = cgAvatar(user, state.profile);
@@ -902,6 +902,7 @@
         libInit(user.id);
         aboutInit(user.id);
         notifyInit(user.id);
+        modPanelInit(user.id);
     }
 
     const AVATAR_PREFIX = SUPABASE_URL + '/storage/v1/object/public/avatars/';
@@ -1354,6 +1355,89 @@
         box.disabled = false;
         if (error) { box.checked = !want; notifyMsg('Não foi possível salvar agora. Tente novamente.', true); return; }
         notifyMsg(want ? 'Pronto! Você vai receber os avisos de resposta.' : 'Pronto! Você não receberá mais avisos por e-mail.');
+    });
+
+    /* ---------- Painel de moderação: gerenciar moderadores (só aparece para moderadores) ---------- */
+    let modPanelUid = null;
+    const MOD_ERRORS = {
+        cg_user_not_found: 'Não encontramos essa conta. A pessoa precisa entrar no site (com Google ou e-mail) pelo menos uma vez.',
+        cg_already: 'Essa conta já é moderadora.',
+        cg_too_many: 'Limite de moderadores atingido (20). Remova alguém antes de adicionar.',
+        cg_bad_email: 'Digite um e-mail válido.',
+        cg_not_allowed: 'Você não tem permissão para isso.',
+        cg_owner_only: 'Só a conta principal pode gerenciar moderadores.',
+        cg_self: 'Você não pode remover a si mesmo.',
+        cg_protected: 'Esta é a conta principal e não pode ser removida.',
+        cg_not_found: 'Essa conta já não é moderadora.'
+    };
+    function modMsg(text, isError) {
+        const el = $('mod-msg');
+        el.textContent = text || '';
+        el.className = 'text-xs mt-3 cg-empty-hide ' + (isError ? 'text-red-400' : 'text-emerald-400');
+    }
+    function modErr(error) {
+        const m = String((error && error.message) || '');
+        const code = Object.keys(MOD_ERRORS).find((k) => m.indexOf(k) >= 0);
+        if (!code) console.warn('[Conexão Gamer] erro no painel de moderação:', m);
+        return code ? MOD_ERRORS[code] : 'Não foi possível concluir agora. Tente novamente em instantes.';
+    }
+    function modRow(m, meId) {
+        const isMe = m.user_id === meId;
+        const tag = (t) => ' <span class="ml-1 text-[10px] font-extrabold uppercase text-cyan-300 bg-cyan-400/10 border border-cyan-400/30 rounded px-1.5 py-0.5 align-middle">' + t + '</span>';
+        const rm = (!isMe && !m.is_protected)
+            ? '<button type="button" data-mod-rm="' + esc(m.user_id) + '" class="text-[11px] font-bold text-gray-500 hover:text-red-400 transition px-2 py-1 flex-shrink-0"><i class="fa-regular fa-trash-can mr-1"></i> Remover</button>'
+            : '';
+        return '<div class="flex items-center justify-between gap-3 bg-gray-950 border border-gray-800 rounded-xl px-4 py-3">' +
+            '<div class="min-w-0"><p class="text-sm font-bold text-white truncate">' + esc(m.username || 'Sem nome') +
+            (m.is_protected ? tag('Principal') : '') + (isMe ? tag('Você') : '') + '</p>' +
+            '<p class="text-[11px] text-gray-500 truncate">' + esc(m.email || '') + '</p></div>' + rm + '</div>';
+    }
+    async function modLoadList() {
+        const list = $('mod-list');
+        const { data, error } = await supabaseClient.rpc('mod_list_moderators');
+        if (error) { list.innerHTML = '<p class="text-xs text-red-400">Não foi possível carregar a lista agora.</p>'; return; }
+        const meId = cgSession && cgSession.user ? cgSession.user.id : '';
+        list.innerHTML = (data || []).map((m) => modRow(m, meId)).join('') || '<p class="text-xs text-gray-500">Nenhum moderador cadastrado.</p>';
+    }
+    async function modPanelInit(uid) {
+        if (modPanelUid === uid) return;
+        modPanelUid = uid;
+        $('profile-mod').classList.add('hidden');
+        // só a conta principal (dona do site) gerencia moderadores; os demais moderadores não veem este painel
+        const { data } = await supabaseClient.rpc('mod_can_manage');
+        if (modPanelUid !== uid || data !== true) return;
+        $('profile-mod').classList.remove('hidden');
+        modLoadList();
+    }
+    $('mod-add-form').addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const email = String($('mod-add-email').value || '').trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { modMsg(MOD_ERRORS.cg_bad_email, true); return; }
+        const btn = $('mod-add-btn');
+        btn.disabled = true; modMsg('Adicionando…');
+        const { error } = await supabaseClient.rpc('mod_add_moderator', { p_email: email });
+        btn.disabled = false;
+        if (error) { modMsg(modErr(error), true); return; }
+        $('mod-add-email').value = '';
+        modMsg('Pronto! ' + email + ' agora é moderador(a).');
+        modLoadList();
+    });
+    // Remover moderador (confirmação em dois cliques)
+    $('mod-list').addEventListener('click', async (ev) => {
+        const btn = ev.target.closest('[data-mod-rm]');
+        if (!btn) return;
+        if (btn.getAttribute('data-armed') !== '1') {
+            const original = btn.innerHTML;
+            btn.setAttribute('data-armed', '1');
+            btn.textContent = 'Confirmar remoção?';
+            setTimeout(() => { if (btn.isConnected) { btn.removeAttribute('data-armed'); btn.innerHTML = original; } }, 4000);
+            return;
+        }
+        btn.disabled = true;
+        const { error } = await supabaseClient.rpc('mod_remove_moderator', { p_user_id: btn.getAttribute('data-mod-rm') });
+        if (error) { btn.disabled = false; btn.removeAttribute('data-armed'); btn.textContent = 'Erro ao remover'; modMsg(modErr(error), true); return; }
+        modMsg('Moderador removido.');
+        modLoadList();
     });
 
     window.addEventListener('cg:auth', (e) => render(e.detail));
