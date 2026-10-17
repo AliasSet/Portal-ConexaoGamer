@@ -14,7 +14,7 @@ summary: A demo gratuita de Teach My Little Sister How to Drive ficou tão
   equipe precisou recorrer a um empréstimo bancário e já considera alternativas
   para reduzir os custos.
 author: Redação Conexão Gamer
-date: 11/10/2026T02:51
+date: 08/10/2026T02:51
 ---
 O sucesso de um jogo na Steam virou uma dor de cabeça financeira para seus criadores. A equipe responsável por *Teach My Little Sister How to Drive* revelou que está gastando mais de US$ 1.000 por dia para manter a demo gratuita funcionando. Com o aumento inesperado de jogadores, os desenvolvedores chegaram a recorrer a um empréstimo bancário para bancar os custos de inteligência artificial (IA).
 
