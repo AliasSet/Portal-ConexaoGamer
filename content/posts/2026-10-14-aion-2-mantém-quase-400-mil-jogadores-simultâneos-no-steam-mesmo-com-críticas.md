@@ -10,10 +10,8 @@ summary: AION 2 chegou perto de 400 mil jogadores simultâneos no Steam durante
   sua primeira semana, mesmo com avaliações divididas. O sucesso inicial pode
   estar ligado à procura por novos MMORPGs de grande porte, mas críticas à
   monetização ainda preocupam parte da comunidade.
-date: 07/10/2026T21:47
+date: 09/10/2026T21:47
 ---
-# AION 2 mantém quase 400 mil jogadores simultâneos no Steam mesmo com críticas
-
 **MMORPG da NCSoft registrou mais de 390 mil jogadores simultâneos durante a primeira semana, mas avaliações divididas levantam dúvidas sobre sua monetização e o futuro do jogo.**
 
 *AION 2* começou sua trajetória global com números expressivos no Steam. Mesmo enfrentando críticas sobre monetização e outros aspectos da experiência, o MMORPG da NCSoft conseguiu manter uma base enorme de jogadores durante sua primeira semana de lançamento.
