@@ -694,7 +694,7 @@ function publicProfileHtml() {
                     <div id="pub-missing" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
                         <i class="fa-regular fa-eye-slash text-4xl text-gray-600 mb-3"></i>
                         <h1 class="text-lg font-black text-white">Perfil não encontrado</h1>
-                        <p class="text-sm text-gray-400 mt-2">Este perfil não existe ou não está público.</p>
+                        <p class="text-sm text-gray-400 mt-2">Este perfil não existe ou foi removido.</p>
                         <a href="/" class="inline-block mt-5 text-xs font-bold text-cyan-400 hover:underline">Voltar para o início</a>
                     </div>
 
@@ -708,6 +708,8 @@ function publicProfileHtml() {
                         </div>
                         <p id="pub-bio" class="hidden mt-5 text-sm text-gray-300 leading-relaxed break-words"></p>
                         <div id="pub-links" class="mt-5 flex flex-wrap gap-2"></div>
+                        <p id="pub-private" class="hidden mt-5 text-sm text-gray-400 leading-relaxed bg-gray-950 border border-gray-800 rounded-xl p-4"></p>
+                        <a id="pub-edit" href="/perfil/" class="hidden mt-5 inline-flex items-center gap-2 text-xs font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-4 py-2 rounded-lg transition"><i class="fa-regular fa-pen-to-square"></i> Editar meu perfil</a>
                         <button id="pub-mod" type="button" class="hidden mt-6 text-[11px] font-bold text-amber-400 hover:text-amber-300 border border-amber-400/30 rounded-lg px-3 py-1.5 transition"><i class="fa-solid fa-shield-halved mr-1"></i> Moderação: limpar bio e redes e ocultar este perfil</button>
                     </div>
 

@@ -1428,6 +1428,7 @@
     };
     const HANDLE_OK = /^[A-Za-z0-9._-]{1,32}$/;
     const id = (new URLSearchParams(location.search).get('id') || '').toLowerCase();
+    const UUID_OK = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
     const PAGE = 10;
     let offset = 0, posts = null;
 
@@ -1466,44 +1467,82 @@
         btn.classList.toggle('hidden', rows.length < PAGE);
     }
 
-    async function load() {
-        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) { missing(); return; }
-        const { data, error } = await supabaseClient.rpc('get_public_profile', { p_id: id });
-        const prof = Array.isArray(data) ? data[0] : data;
-        if (error || !prof) { missing(); return; }
+    let isPublic = false;
+
+    function paintCard(prof) {
         const name = prof.username || 'Leitor';
         document.title = name + ' | Conexão Gamer';
         $('pub-name').textContent = name;
         const safe = cgSafeAvatar(prof.avatar_url || '');
         $('pub-avatar').innerHTML = '<span>' + esc(name.charAt(0).toUpperCase()) + '</span>' +
             (safe ? '<img src="' + esc(safe) + '" alt="" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">' : '');
+    }
+
+    function paintPrivateNote() {
+        const note = $('pub-private');
+        const mine = cgSession && cgSession.user && cgSession.user.id === id;
+        note.innerHTML = '<i class="fa-solid fa-lock text-gray-500 mr-1.5"></i>' + (mine
+            ? 'O seu perfil está privado: as outras pessoas veem só o seu nome e a sua foto. Para mostrar bio, redes e comentários, ligue “Tornar meu perfil público” em Meu perfil.'
+            : 'Este perfil é privado. A pessoa escolheu não mostrar mais informações.');
+    }
+
+    async function load() {
+        if (!UUID_OK.test(id)) { missing(); return; }
+        // get_profile_card devolve nome e foto de qualquer conta; bio, redes e comentários só se o perfil for público.
+        // Se o SQL novo ainda não foi rodado, cai para a função antiga (que só mostra perfis públicos).
+        let res = await supabaseClient.rpc('get_profile_card', { p_id: id });
+        let prof = Array.isArray(res.data) ? res.data[0] : res.data;
+        if (res.error) {
+            res = await supabaseClient.rpc('get_public_profile', { p_id: id });
+            prof = Array.isArray(res.data) ? res.data[0] : res.data;
+            if (prof) prof.is_public = true;
+        }
+        if (res.error || !prof) { missing(); return; }
+        paintCard(prof);
+        isPublic = prof.is_public === true;
+
         const bio = $('pub-bio');
-        if (prof.bio) { bio.textContent = prof.bio; bio.classList.remove('hidden'); } else bio.classList.add('hidden');
-        const links = (Array.isArray(prof.links) ? prof.links : []).filter((l) => l && NETS[l.n] && HANDLE_OK.test(String(l.h || '')));
+        const links = isPublic ? (Array.isArray(prof.links) ? prof.links : []).filter((l) => l && NETS[l.n] && HANDLE_OK.test(String(l.h || ''))) : [];
+        if (isPublic && prof.bio) { bio.textContent = prof.bio; bio.classList.remove('hidden'); } else { bio.textContent = ''; bio.classList.add('hidden'); }
         $('pub-links').innerHTML = links.map((l) =>
             '<a href="' + esc(NETS[l.n].url(l.h)) + '" target="_blank" rel="noopener noreferrer nofollow ugc" class="inline-flex items-center gap-2 text-xs font-bold bg-gray-950 border border-gray-800 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-2 rounded-lg transition"><i class="' + NETS[l.n].icon + '"></i> ' + esc(NETS[l.n].label) + '</a>').join('');
+
+        $('pub-missing').classList.add('hidden');
         $('pub-loading').classList.add('hidden');
         $('pub-card').classList.remove('hidden');
-        $('pub-comments-wrap').classList.remove('hidden');
-        offset = 0; loadComments(false);
+        if (isPublic) {
+            $('pub-private').classList.add('hidden');
+            $('pub-comments-wrap').classList.remove('hidden');
+            offset = 0; loadComments(false);
+        } else {
+            paintPrivateNote();
+            $('pub-private').classList.remove('hidden');
+            $('pub-comments-wrap').classList.add('hidden');
+        }
+        checkOwner(); checkMod();
     }
 
     $('pub-comments-more').addEventListener('click', () => loadComments(true));
 
-    // Botão de moderação (só aparece para quem está na tabela de moderadores)
+    // Botão de moderação (só aparece para moderadores e só em perfil público: é ele que limpa bio e redes)
     async function checkMod() {
-        if (!cgSession) { $('pub-mod').classList.add('hidden'); return; }
+        if (!cgSession || !isPublic) { $('pub-mod').classList.add('hidden'); return; }
         const { data } = await supabaseClient.rpc('is_moderator');
-        $('pub-mod').classList.toggle('hidden', data !== true);
+        $('pub-mod').classList.toggle('hidden', data !== true || !isPublic);
+    }
+    // Se quem está olhando é o próprio dono, mostra o atalho "Editar meu perfil"
+    function checkOwner() {
+        const mine = !!(cgSession && cgSession.user && cgSession.user.id === id);
+        $('pub-edit').classList.toggle('hidden', !mine);
+        if (!isPublic && !$('pub-card').classList.contains('hidden')) paintPrivateNote();
     }
     $('pub-mod').addEventListener('click', async () => {
         if (!confirm('Limpar a bio e as redes deste perfil e deixá-lo privado?')) return;
         const { error } = await supabaseClient.rpc('mod_clear_profile', { p_id: id });
         if (error) { cgToast('Não foi possível limpar agora.'); return; }
-        cgToast('Perfil limpo e ocultado.'); missing();
+        cgToast('Perfil limpo e ocultado.'); load();
     });
-    window.addEventListener('cg:auth', checkMod);
-    if (window.cgAuthState) checkMod();
+    window.addEventListener('cg:auth', () => { checkOwner(); checkMod(); });
 
     load();
 })();
@@ -2102,6 +2141,18 @@
         return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
     }
 
+    // Link para o perfil de quem comentou (/u/?id=...). Sem id válido (ex.: conta excluída), não vira link.
+    const UID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    function profUrl(uid) { return UID_RE.test(String(uid || '')) ? '/u/?id=' + String(uid).toLowerCase() : ''; }
+    function profAvatar(uid, name, inner) {
+        const u = profUrl(uid);
+        return u ? '<a href="' + u + '" aria-label="Ver perfil de ' + esc(name) + '" class="flex-shrink-0 self-start rounded-full hover:ring-2 hover:ring-cyan-400/60 transition">' + inner + '</a>' : inner;
+    }
+    function profName(uid, name, cls) {
+        const u = profUrl(uid);
+        return u ? '<a href="' + u + '" class="' + cls + ' hover:text-cyan-400 hover:underline transition">' + esc(name) + '</a>' : '<span class="' + cls + '">' + esc(name) + '</span>';
+    }
+
     function avatarHtml(name, url, sizeCls, textCls) {
         const safe = cgSafeAvatar(url);
         return '<span class="relative inline-flex ' + sizeCls + ' rounded-full overflow-hidden bg-gray-800 border border-gray-700 items-center justify-center ' + textCls + ' font-black text-cyan-400 flex-shrink-0">' +
@@ -2128,8 +2179,8 @@
                 const post = bySlug.get(r.post_slug);
                 return '<div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800/80 text-xs space-y-1">' +
                     '<div class="flex items-center justify-between gap-2">' +
-                        '<div class="flex items-center gap-2 min-w-0">' + avatarHtml(r.display_name, r.avatar_url, 'w-5 h-5', 'text-[9px]') +
-                        '<span class="font-bold text-gray-200 truncate">' + esc(r.display_name) + '</span></div>' +
+                        '<div class="flex items-center gap-2 min-w-0">' + profAvatar(r.user_id, r.display_name, avatarHtml(r.display_name, r.avatar_url, 'w-5 h-5', 'text-[9px]')) +
+                        profName(r.user_id, r.display_name, 'font-bold text-gray-200 truncate') + '</div>' +
                         '<span class="text-[10px] text-gray-500 flex-shrink-0">' + esc(ago(r.created_at)) + '</span>' +
                     '</div>' +
                     '<p class="text-gray-400 line-clamp-2 italic break-words">"' + esc(r.content) + '"</p>' +
@@ -2228,10 +2279,10 @@
         const editing = ui.editId === c.id;
         const replying = ui.replyTo === c.id;
         return '<article class="flex gap-3">' +
-            avatarHtml(c.display_name, c.avatar_url, isReply ? 'w-7 h-7' : 'w-9 h-9', isReply ? 'text-xs' : 'text-sm') +
+            profAvatar(c.user_id, c.display_name, avatarHtml(c.display_name, c.avatar_url, isReply ? 'w-7 h-7' : 'w-9 h-9', isReply ? 'text-xs' : 'text-sm')) +
             '<div class="min-w-0 flex-1">' +
                 '<div class="flex flex-wrap items-baseline gap-x-2">' +
-                    '<span class="text-sm font-bold text-white">' + esc(c.display_name) + '</span>' +
+                    profName(c.user_id, c.display_name, 'text-sm font-bold text-white') +
                     '<span class="text-[11px] text-gray-500">' + esc(ago(c.created_at)) + '</span>' +
                     (c.edited_at ? '<span class="text-[11px] text-gray-600">· editado</span>' : '') +
                 '</div>' +
