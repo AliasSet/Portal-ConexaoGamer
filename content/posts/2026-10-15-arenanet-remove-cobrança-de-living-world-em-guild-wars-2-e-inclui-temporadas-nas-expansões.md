@@ -14,7 +14,7 @@ summary: Em uma das mudanças mais solicitadas pela comunidade, a ArenaNet
   Agora, todo o conteúdo narrativo foi integrado gratuitamente ao jogo base e às
   expansões correspondentes.
 author: Redação Conexão Gamer
-date: 13/10/2026T21:07
+date: 12/10/2026T21:07
 ---
 A ArenaNet anunciou uma reformulação completa na estrutura de monetização de Guild Wars 2. A partir de agora, todas as temporadas do Living World — os capítulos de história lançados entre as grandes expansões — foram incorporadas sem custo adicional ao jogo base e aos pacotes de expansões.
 
