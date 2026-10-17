@@ -18,7 +18,7 @@ A facilidade trazida pelas novas ferramentas de Inteligência Artificial generat
 
 A tendência veio à tona após a distribuidora e estúdio Alliance Arts anunciar o cancelamento da demo aberta do seu próximo jogo de horror, *Drunken Goddess Reflux*. A demonstração, que estava prevista para estrear publicamente na Steam, foi substituída de última hora por testes fechados sob convite para um grupo restrito de participantes.
 
-O estúdio pediu desculpas pelo aviso em cima da hora, mas justificou a mudança como uma medida de proteção essencial para impedir que o jogo fosse rapidamente "reverso-engenheirado" por IA e lançado por terceiros antes mesmo da sua estreia oficial.
+O estúdio pediu desculpas pelo aviso em cima da hora, mas justificou a mudança como uma medida de proteção essencial para impedir que o jogo sofresse engenharia reversa por IA e fosse lançado por terceiros antes mesmo da sua estreia oficial.
 
 ## "Vibe coding" e a clonagem expressa de jogos independentes
 
