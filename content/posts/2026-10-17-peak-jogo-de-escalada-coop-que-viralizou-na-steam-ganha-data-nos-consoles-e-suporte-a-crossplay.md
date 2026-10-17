@@ -7,7 +7,7 @@ category:
   - Consoles
 tags:
   - Peak
-image: https://flowgames.gg/wp-content/uploads/2025/06/peak-jogo.jpg
+image: /uploads/peak-jogo-2b6daa2faa.webp
 summary: Sucesso indie de escalada e sobrevivência cooperativa na Steam, Peak
   será lançado para PS5, Xbox Series X/S e Nintendo Switch 2 no dia 22 de
   outubro de 2026. O jogo contará com suporte total a crossplay e todas as
