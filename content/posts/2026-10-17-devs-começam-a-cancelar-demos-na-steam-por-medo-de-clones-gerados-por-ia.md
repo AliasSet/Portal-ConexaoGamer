@@ -1,5 +1,5 @@
 ---
-title: Devs começam a cancelar demos na Steam por medo de clones gerados por IA
+title: Devs estão cancelando demos na Steam por medo de clones gerados por IA
 category:
   - Notícias
   - PC
