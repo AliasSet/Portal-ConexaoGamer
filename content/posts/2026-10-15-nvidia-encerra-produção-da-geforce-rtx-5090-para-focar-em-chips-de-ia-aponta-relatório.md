@@ -1,6 +1,5 @@
 ---
-title: Nvidia encerra produção da GeForce RTX 5090 para focar em chips de IA,
-  aponta relatório
+title: Nvidia encerra produção da RTX 5090 para focar em chips de IA, aponta relatório
 category:
   - Notícias
   - PC
