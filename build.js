@@ -497,14 +497,6 @@ function profileHtml() {
                                 </div>
                                 <p id="profile-name-hint" class="text-[11px] text-gray-500 mt-2">É o nome que aparece nos seus comentários. Evite usar o seu e-mail.</p>
                                 <p id="profile-since" class="text-xs text-gray-500 mt-1"></p>
-                                <div id="profile-stats" class="hidden mt-2">
-                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
-                                        <span id="profile-level"></span>
-                                        <span id="profile-count"></span>
-                                    </div>
-                                    <div class="mt-2 h-1.5 w-full max-w-[14rem] bg-gray-800 rounded-full overflow-hidden" aria-hidden="true"><div id="profile-bar" class="h-full bg-gradient-to-r from-cyan-400 to-fuchsia-500 rounded-full transition-all duration-500" style="width:0%"></div></div>
-                                    <p id="profile-next" class="text-[11px] text-gray-500 mt-1.5"></p>
-                                </div>
                                 <div class="mt-3 flex flex-wrap items-center gap-2">
                                     <button id="profile-photo-btn" type="button" class="text-[11px] font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-camera mr-1"></i> Alterar foto</button>
                                     <button id="profile-photo-remove" type="button" class="hidden text-[11px] font-bold text-gray-500 hover:text-red-400 px-2 py-1.5 transition">Remover foto</button>
@@ -732,7 +724,6 @@ function publicProfileHtml() {
                                 <h1 id="pub-name" class="text-xl font-black text-white break-words"></h1>
                                 <p id="pub-role" class="text-[11px] uppercase tracking-wider font-bold text-gray-500 mt-1">Leitor do ${SITE_NAME}</p>
                                 <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
-                                    <span id="pub-level" class="hidden"></span>
                                     <span id="pub-since" class="hidden"></span>
                                     <span id="pub-count" class="hidden"></span>
                                 </div>
@@ -918,9 +909,23 @@ function headTags({ title, description, url, image, type, jsonLd, noAnalytics })
 
 const clip = (s, n) => (s.length <= n ? s : s.slice(0, n - 1).replace(/\s+\S*$/, '') + '…');
 
+// Cards das matérias já escritos no HTML da home (mesma lista que o JavaScript desenha: da 4ª em diante;
+// as 3 mais recentes ficam no destaque, que é do JavaScript, e entram aqui como links simples em <noscript>).
+// Quando a página abre, o JavaScript da home troca este conteúdo pelos cards dele, sem mudar nada para o leitor.
+const GRID_PLACEHOLDER = '<div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>';
+
+function homeGridHtml(posts) {
+  const cards = posts.slice(3).map(cardHtml).join('');
+  const lead = posts.slice(0, 3).map((p) => `<li><a href="${esc(p.url)}">${esc(p.title)}</a></li>`).join('');
+  return `<div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6">${cards}</div>` +
+    (lead ? `<noscript><ul>${lead}</ul></noscript>` : '');
+}
+
 function buildHome(template, posts) {
   const first = posts.find((p) => absUrl(p.image));
+  if (!template.includes(GRID_PLACEHOLDER)) console.warn('[build] AVISO: não achei #posts-container no index.html; a home sairá sem os cards pré-renderizados.');
   return template
+    .replace(GRID_PLACEHOLDER, () => homeGridHtml(posts))
     .replace('<!--CG:HEAD-->', headTags({
       title: SITE_NAME + ' | Portal de Notícias, Reviews e Lançamentos',
       description: 'Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.',
