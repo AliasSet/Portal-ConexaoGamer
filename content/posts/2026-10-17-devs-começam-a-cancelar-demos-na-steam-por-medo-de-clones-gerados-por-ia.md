@@ -28,6 +28,8 @@ O problema afeta principalmente jogos que entram na lista dos mais desejados (*w
 
 Outro caso emblemático mencionado na comunidade envolveu o simulador de colônia *Family Time*, que entrou no topo de jogos mais desejados da Steam e viu clones conceituais surgirem na rede pouco tempo depois de sua apresentação pública.
 
+https://cdn.mos.cms.futurecdn.net/GKQa5zy3HkJv4L6b6CfnyU-650-80.jpg.webp
+
 ## Testes fechados e novos contratos anti-IA tornam-se tendência
 
 Para conter o risco de engenharia reversa por IA, a dinâmica de divulgação de jogos independentes está mudando. A realização de playtests abertos durante eventos como o Steam Next Fest passa a ser avaliada com cautela por estúdios menores, que passam a dar preferência a sessões privadas sem distribuição pública do arquivo executável.
