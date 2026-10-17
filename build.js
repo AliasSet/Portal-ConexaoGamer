@@ -480,13 +480,20 @@ function profileHtml() {
                     </div>
 
                     <div id="profile-user" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
-                        <form id="profile-form" class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-6 border-b border-gray-800" novalidate>
-                            <div class="flex items-center gap-4 min-w-0 flex-1">
+                        <form id="profile-form" class="flex items-start gap-4 pb-6 border-b border-gray-800" novalidate>
                             <div id="profile-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400 flex-shrink-0"></div>
                             <div class="min-w-0 flex-1">
-                                <label for="profile-name" class="sr-only">Nome de exibição</label>
-                                <input id="profile-name" type="text" maxlength="40" autocomplete="nickname" aria-describedby="profile-name-hint" class="w-full min-w-0 bg-gray-950 border border-gray-800 hover:border-gray-700 focus:border-cyan-400 focus:outline-none rounded-lg px-3 py-1.5 text-lg font-black text-white transition">
-                                <p id="profile-name-hint" class="text-[11px] text-gray-500 mt-1.5">É o nome que aparece nos seus comentários. Evite usar o seu e-mail.</p>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <label for="profile-name" class="sr-only">Nome de exibição</label>
+                                    <input id="profile-name" type="text" maxlength="40" autocomplete="nickname" aria-describedby="profile-name-hint" class="h-9 flex-1 basis-40 min-w-0 max-w-xs bg-gray-950 border border-gray-800 hover:border-gray-700 focus:border-cyan-400 focus:outline-none rounded-lg px-3 text-[16px] sm:text-sm font-bold text-white transition">
+                                    <div class="flex items-center gap-2 ml-auto flex-shrink-0">
+                                        <button id="profile-save" type="submit" disabled class="inline-flex items-center justify-center h-9 px-4 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed text-black font-extrabold text-xs rounded-lg transition whitespace-nowrap">Salvar</button>
+                                        <button type="button" onclick="logout()" aria-label="Sair da conta" class="inline-flex items-center justify-center gap-2 h-9 px-3 flex-shrink-0 border border-gray-700 hover:border-red-400 hover:text-red-400 text-gray-300 text-xs font-bold rounded-lg transition whitespace-nowrap">
+                                            <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="sm:hidden">Sair</span><span class="hidden sm:inline">Sair da conta</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p id="profile-name-hint" class="text-[11px] text-gray-500 mt-2">É o nome que aparece nos seus comentários. Evite usar o seu e-mail.</p>
                                 <p id="profile-since" class="text-xs text-gray-500 mt-1"></p>
                                 <div class="mt-3 flex flex-wrap items-center gap-2">
                                     <button id="profile-photo-btn" type="button" class="text-[11px] font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-camera mr-1"></i> Alterar foto</button>
@@ -496,16 +503,9 @@ function profileHtml() {
                                 <p id="profile-photo-msg" class="text-[11px] mt-2 min-h-[1rem]" role="status" aria-live="polite"></p>
                                 <p id="profile-msg" class="text-xs min-h-[1rem] mt-1" role="status" aria-live="polite"></p>
                             </div>
-                            </div>
-                            <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-start">
-                                <button id="profile-save" type="submit" disabled class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed text-black font-extrabold text-xs px-4 py-2 rounded-lg transition whitespace-nowrap">Salvar</button>
-                                <button type="button" onclick="logout()" aria-label="Sair da conta" class="inline-flex flex-shrink-0 items-center gap-2 border border-gray-700 hover:border-red-400 hover:text-red-400 text-gray-300 text-xs font-bold px-3 py-2 rounded-xl transition whitespace-nowrap">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="sm:hidden">Sair</span><span class="hidden sm:inline">Sair da conta</span>
-                            </button>
-                            </div>
                         </form>
 
-                        <dl class="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <dl class="py-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs border-b border-gray-800">
                             <div>
                                 <dt class="text-gray-500">E-mail <span class="text-gray-600">(só você vê)</span></dt>
                                 <dd id="profile-email" class="text-gray-200 mt-1 break-all"></dd>
@@ -515,10 +515,8 @@ function profileHtml() {
                                 <dd id="profile-provider" class="text-gray-200 mt-1"></dd>
                             </div>
                         </dl>
-                    </div>
 
-                    <div id="profile-rest" class="hidden mt-6 space-y-6">
-                        <div id="profile-about" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                        <div id="profile-about" class="pt-6">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-id-card text-cyan-400"></i> Sobre você</h2>
                             <form id="about-form" class="mt-4 space-y-5" novalidate>
                                 <div>
@@ -538,7 +536,9 @@ function profileHtml() {
                                 </div>
                             </form>
                         </div>
+                    </div>
 
+                    <div id="profile-rest" class="hidden mt-6 space-y-6">
                         <div id="profile-library" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-bookmark text-cyan-400"></i> Minha área</h2>
                             <div id="lib-tabs" role="tablist" class="grid grid-cols-3 gap-1 bg-gray-950 border border-gray-800 rounded-xl p-1 mt-4">
