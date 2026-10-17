@@ -1,6 +1,6 @@
 ---
-title: ArenaNet remove cobrança de Living World em Guild Wars 2 e inclui
-  temporadas nas expansões
+title: Guild Wars 2 remove venda separada do Living World e facilita entrada de
+  novos jogadores
 category:
   - Notícias
   - PC
