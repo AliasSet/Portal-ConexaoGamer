@@ -5,11 +5,11 @@ category:
   - Notícias
   - Consoles
 image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG-2S9FWmTYM4Tjd5Yoff_U6MAB01zBoYWLX-JlHBrpslTnRDJ_QnQbl4&s=10
-summary: As vendas de consoles de videogame nos Estados Unidos despencaram para
-  marcas históricas. Segundo dados da consultoria Circana, o aumento constante
-  nos preços do PS5 e do Xbox Series X/S — impulsionado pela crise de memórias
-  RAM absorvidas por data centers de IA — colocou o mercado de hardware na
-  situação mais delicada desde o crash dos videogames nos anos 80.
+summary: As vendas de consoles nos Estados Unidos despencaram para marcas
+  históricas. Segundo dados da consultoria Circana, o aumento constante nos
+  preços do PS5 e do Xbox Series X/S — impulsionado pela crise de memórias RAM
+  absorvidas por data centers de IA — colocou o mercado de hardware na situação
+  mais delicada desde o crash dos videogames nos anos 80.
 author: Redação Conexão Gamer
 date: 17/10/2026T12:35
 ---
