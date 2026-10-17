@@ -909,14 +909,19 @@ function headTags({ title, description, url, image, type, jsonLd, noAnalytics })
 
 const clip = (s, n) => (s.length <= n ? s : s.slice(0, n - 1).replace(/\s+\S*$/, '') + '…');
 
-// Cards das matérias já escritos no HTML da home (mesma lista que o JavaScript desenha: da 4ª em diante;
-// as 3 mais recentes ficam no destaque, que é do JavaScript, e entram aqui como links simples em <noscript>).
+// Cards das matérias já escritos no HTML da home. A lista (da 4ª matéria em diante, pois as 3 mais recentes
+// ficam no destaque, que é do JavaScript) é dividida em abas de HOME_PAGE_SIZE matérias: aqui sai a 1ª aba.
+// As 3 do destaque e as das outras abas entram como links simples em <noscript> (plano B sem JavaScript).
 // Quando a página abre, o JavaScript da home troca este conteúdo pelos cards dele, sem mudar nada para o leitor.
+// (Se mudar HOME_PAGE_SIZE, mude também PAGE_SIZE no index.html.)
 const GRID_PLACEHOLDER = '<div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>';
+const HOME_PAGE_SIZE = 10;
 
 function homeGridHtml(posts) {
-  const cards = posts.slice(3).map(cardHtml).join('');
-  const lead = posts.slice(0, 3).map((p) => `<li><a href="${esc(p.url)}">${esc(p.title)}</a></li>`).join('');
+  const grid = posts.slice(3);
+  const cards = grid.slice(0, HOME_PAGE_SIZE).map(cardHtml).join('');
+  const others = posts.slice(0, 3).concat(grid.slice(HOME_PAGE_SIZE, HOME_PAGE_SIZE + 100));
+  const lead = others.map((p) => `<li><a href="${esc(p.url)}">${esc(p.title)}</a></li>`).join('');
   return `<div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6">${cards}</div>` +
     (lead ? `<noscript><ul>${lead}</ul></noscript>` : '');
 }

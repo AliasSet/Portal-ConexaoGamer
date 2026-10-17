@@ -220,16 +220,12 @@
                         <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
                             <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> Principais Matérias
                         </h2>
-                        <!-- Atalhos de categoria: levam para as páginas /categoria/... ("Todas" = esta própria lista) -->
-                        <nav aria-label="Categorias" class="flex items-center gap-2 max-w-full overflow-x-auto">
-                            <a href="/" aria-current="page" class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide whitespace-nowrap transition bg-cyan-400/10 border-cyan-500/50 text-cyan-300">Todas</a>
-                            <a href="/categoria/noticias/" class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide whitespace-nowrap transition bg-gray-900 border-gray-800 text-gray-300 hover:text-cyan-300 hover:border-cyan-500/50">Notícias</a>
-                            <a href="/categoria/pc/" class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide whitespace-nowrap transition bg-gray-900 border-gray-800 text-gray-300 hover:text-cyan-300 hover:border-cyan-500/50">PC</a>
-                            <a href="/categoria/consoles/" class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide whitespace-nowrap transition bg-gray-900 border-gray-800 text-gray-300 hover:text-cyan-300 hover:border-cyan-500/50">Consoles</a>
-                        </nav>
+                        <!-- Abas de página: aparecem sozinhas quando há mais de 10 matérias na lista (montadas pelo JavaScript) -->
+                        <nav id="home-pages" aria-label="Páginas de matérias" class="flex items-center gap-2 max-w-full overflow-x-auto" style="display:none"></nav>
                     </div>
 
                     <div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+                    <nav id="home-pages-bottom" aria-label="Páginas de matérias (rodapé da lista)" class="flex flex-wrap items-center justify-center gap-2" style="display:none"></nav>
                 </div>
                 <!--/CG:MAIN-->
             </div>
@@ -2159,8 +2155,67 @@
           '</a>').join('');
       }
 
-      function renderGrid(list) {
+      // ---------- Páginas da home (10 matérias por aba) ----------
+      const PAGE_SIZE = 10;
+      let homeAll = [];
+
+      function pageFromHash() {
+        const m = /^#pagina-(\d+)$/.exec(location.hash);
+        return m ? parseInt(m[1], 10) || 1 : 1;
+      }
+
+      // 1 … 4 5 6 … 20  (até 7 páginas mostra todas)
+      function pageList(page, pages) {
+        if (pages <= 7) return Array.from({ length: pages }, (_, i) => i + 1);
+        const set = new Set([1, pages, page - 1, page, page + 1]);
+        if (page <= 3) [2, 3, 4].forEach((n) => set.add(n));
+        if (page >= pages - 2) [pages - 3, pages - 2, pages - 1].forEach((n) => set.add(n));
+        const nums = Array.from(set).filter((n) => n >= 1 && n <= pages).sort((a, b) => a - b);
+        const out = [];
+        nums.forEach((n, i) => { if (i && n - nums[i - 1] > 1) out.push('…'); out.push(n); });
+        return out;
+      }
+
+      function pagerHtml(page, pages) {
+        const base = 'inline-flex items-center justify-center min-w-[2.25rem] px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide transition ';
+        return pageList(page, pages).map((n) => n === '…'
+          ? '<span class="px-1 text-gray-600 text-xs">…</span>'
+          : '<button type="button" data-page="' + n + '" aria-label="Página ' + n + '"' + (n === page ? ' aria-current="page"' : '') +
+            ' class="' + base + (n === page
+              ? 'bg-cyan-400/10 border-cyan-500/50 text-cyan-300'
+              : 'bg-gray-900 border-gray-800 text-gray-300 hover:text-cyan-300 hover:border-cyan-500/50') + '">' + n + '</button>').join('');
+      }
+
+      function renderPager(page, pages) {
+        ['home-pages', 'home-pages-bottom'].forEach((id) => {
+          const el = $(id);
+          if (!el) return;
+          el.style.display = pages > 1 ? '' : 'none';
+          el.innerHTML = pages > 1 ? pagerHtml(page, pages) : '';
+        });
+      }
+
+      document.addEventListener('click', (e) => {
+        const b = e.target.closest && e.target.closest('#home-pages [data-page], #home-pages-bottom [data-page]');
+        if (!b) return;
+        const n = parseInt(b.getAttribute('data-page'), 10);
+        if (!n) return;
+        try { history.replaceState(null, '', location.pathname + location.search + (n > 1 ? '#pagina-' + n : '')); } catch (err) {}
+        renderGrid(homeAll, true, n);
+        const main = $('home-main');
+        if (main) window.scrollTo({ top: main.getBoundingClientRect().top + window.pageYOffset - 80, behavior: 'smooth' });
+      });
+
+      function renderGrid(all, paginate, wantPage) {
         const box = $('posts-container');
+        let list = all;
+        if (paginate) {
+          homeAll = all;
+          const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+          const page = Math.min(Math.max(wantPage || pageFromHash(), 1), pages);
+          list = all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+          renderPager(page, pages);
+        }
         if (!list.length) {
           box.innerHTML = '<p class="sm:col-span-2 text-sm text-gray-500 py-6">Mais matérias em breve.</p>';
           return;
@@ -2363,7 +2418,7 @@
         }
         renderHero(posts[0]);
         renderSide(posts.slice(1, 3));
-        renderGrid(posts.slice(3));
+        renderGrid(posts.slice(3), true);
         renderSidebar(posts.slice(0, 5));
       }
 
