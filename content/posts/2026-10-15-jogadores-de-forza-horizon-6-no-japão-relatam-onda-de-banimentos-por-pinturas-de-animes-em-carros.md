@@ -1,6 +1,6 @@
 ---
-title: Jogadores de Forza Horizon 6 no Japão relatam onda de banimentos por
-  pinturas de animes em carros
+title: "Forza Horizon 6: Banimentos de artes de animes em carros geram revolta
+  no Japão"
 category:
   - Notícias
   - PC
