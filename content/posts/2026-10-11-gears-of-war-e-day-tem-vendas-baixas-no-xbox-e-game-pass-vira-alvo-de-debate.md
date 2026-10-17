@@ -16,8 +16,6 @@ author: Redação Conexão Gamer
 date: 07/10/2026T03:12
 rating: ""
 ---
-# Gears of War: E-Day tem vendas baixas no Xbox, e Game Pass vira alvo de debate
-
 **Estimativas indicam 230 mil cópias vendidas no lançamento, mas cerca de 1,7 milhão de jogadores acessaram o game pelo serviço de assinatura da Microsoft.**
 
 *Gears of War: E-Day* chegou com a responsabilidade de fortalecer uma das franquias mais importantes da história do Xbox. Mas, poucos dias após o lançamento, os primeiros números de vendas levantaram uma discussão complicada para a Microsoft: até que ponto o Game Pass pode estar afetando as vendas tradicionais de seus jogos?
