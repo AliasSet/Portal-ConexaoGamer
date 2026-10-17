@@ -15,7 +15,7 @@ summary: Segundo vazamentos da indústria, a Nvidia interrompeu a fabricação d
   produção para placas profissionais e data centers de IA, tornando a RTX 5080
   de 24GB a nova topo de linha para jogos.
 author: Redação Conexão Gamer
-date: 14/10/2026T21:18
+date: 16/10/2026T21:18
 ---
 A busca incessante por poder de processamento voltado para Inteligência Artificial fez mais uma vítima no mercado de hardware para jogos. De acordo com relatórios e vazamentos recentes da indústria, a Nvidia encerrou a produção da sua placa de vídeo topo de linha para consumidores, a GeForce RTX 5090.
 
