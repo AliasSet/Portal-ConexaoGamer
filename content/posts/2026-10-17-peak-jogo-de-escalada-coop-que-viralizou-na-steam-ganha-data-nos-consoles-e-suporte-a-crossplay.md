@@ -1,5 +1,5 @@
 ---
-title: "PEAK: Jogo de escalada viral chega aos consoles e promete suporte a crossplay"
+title: "PEAK: Coop viral de escalada chega aos consoles e promete suporte a crossplay"
 category:
   - Notícias
   - Steam
