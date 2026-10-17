@@ -25,6 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Instalar o otimizador de imagens
+        run: npm install --no-save --no-package-lock sharp
       - name: Baixar imagens externas
         run: node scripts/localize-images.js
       - name: Salvar no repositório
