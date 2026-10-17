@@ -11,7 +11,7 @@ summary: Mesmo registrando quase 400 mil jogadores simultâneos na Steam no
   lançamento, Aion 2 enfrentou uma queda superior a 7% nas ações da NCSoft.
   Entenda por que o mercado financeiro cobra metas irrealistas dos MMOs no
   Ocidente.
-date: 11/10/2026T08:58
+date: 10/10/2026T08:58
 ---
 O lançamento global de Aion 2 expôs um dos sintomas mais graves da indústria de games atual: a distância gritante entre o sucesso real de público e a ganância desmedida do mercado financeiro.
 
