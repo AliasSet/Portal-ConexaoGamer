@@ -37,8 +37,6 @@ Em Peak, os jogadores precisam cooperar para vencer montanhas íngremes distribu
 
 Para vencer a subida, é preciso gerenciar equipamentos como escadas, cordas e ganchos de ancoragem para criar rotas seguras para o grupo. No entanto, a física realista exige precisão nos saltos e coordenação constante entre os alpinistas, transformando cada subida em um teste de comunicação e paciência.
 
-[[imagem||media|Peak estará disponível digitalmente a partir de 22 de outubro no PS5, Xbox Series X/S e Nintendo Switch 2|]]
-
 Peak estará disponível digitalmente a partir de 22 de outubro no PS5, Xbox Series X/S e Nintendo Switch 2, além de sua versão já consagrada no PC via Steam.
 
 E você, acompanhou a febre de Peak na Steam? Pretende reunir os amigos para encarar a escalada nos consoles? Deixe seu comentário abaixo e participe da conversa!
