@@ -8,6 +8,10 @@
  * Olha: content/posts/*.md e content/authors/*.md
  *   - campos image: (capa) e photo: (foto do autor)
  *   - imagens do texto: ![alt](https://...)  e  [[imagem|https://...|...]]
+ * Cada imagem baixada é otimizada: reduzida para no máximo 1600 px de largura e salva em WebP
+ * (qualidade 82), o que costuma economizar de 60% a 90% do tamanho. GIFs e imagens animadas
+ * são guardados como vieram. Precisa do pacote "sharp" (o workflow instala sozinho);
+ * sem ele, as imagens são guardadas sem otimização.
  * Se uma imagem não puder ser baixada (site fora do ar, bloqueio, arquivo grande demais),
  * o link original é mantido e o aviso aparece no log. Nada quebra.
  */
@@ -21,6 +25,10 @@ const UPLOADS = path.join(ROOT, 'uploads');
 const DIRS = ['content/posts', 'content/authors'].map((d) => path.join(ROOT, d));
 const MAX_BYTES = 15 * 1024 * 1024;
 const TIMEOUT_MS = 20000;
+const MAX_WIDTH = 1600;
+const WEBP_QUALITY = 82;
+let sharp = null;
+try { sharp = require('sharp'); } catch (e) { console.warn('[imagens] AVISO: pacote "sharp" não encontrado: as imagens serão guardadas sem otimização.'); }
 const OWN_HOSTS = (process.env.OWN_HOSTS || 'conexaogamer-seven.vercel.app').split(',').map((s) => s.trim()).filter(Boolean);
 
 // Tipo real do arquivo pelos primeiros bytes (não confia na extensão nem no cabeçalho do site)
@@ -32,6 +40,23 @@ function sniff(buf) {
   if (buf.toString('latin1', 0, 4) === 'RIFF' && buf.toString('latin1', 8, 12) === 'WEBP') return 'webp';
   if (buf.toString('latin1', 4, 8) === 'ftyp' && /avif|avis/.test(buf.toString('latin1', 8, 16))) return 'avif';
   return null;   // SVG e outros formatos ficam de fora de propósito
+}
+
+// Reduz e converte para WebP. Se não compensar (ficou maior) ou não der, mantém o arquivo original.
+async function optimize(buf, ext) {
+  if (!sharp || ext === 'gif') return { buf, ext };
+  try {
+    const meta = await sharp(buf).metadata();
+    if ((meta.pages || 1) > 1) return { buf, ext };   // imagem animada
+    const out = await sharp(buf).rotate()
+      .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+      .webp({ quality: WEBP_QUALITY }).toBuffer();
+    const resized = (meta.width || 0) > MAX_WIDTH;
+    if (out.length < buf.length || resized) return { buf: out, ext: 'webp' };
+  } catch (e) {
+    console.warn('[imagens] AVISO: não consegui otimizar (' + e.message + '); guardando o original.');
+  }
+  return { buf, ext };
 }
 
 function isExternal(u) {
@@ -106,13 +131,14 @@ async function main() {
         if (existing) local = '/uploads/' + existing;
         else {
           try {
-            const { buf, ext } = await download(u);
+            const dl = await download(u);
+            const { buf, ext } = await optimize(dl.buf, dl.ext);
             fs.mkdirSync(UPLOADS, { recursive: true });
             const name = baseName(u) + '-' + hash + '.' + ext;
             fs.writeFileSync(path.join(UPLOADS, name), buf);
             local = '/uploads/' + name;
             saved++;
-            console.log('[imagens] baixada: ' + u + ' -> ' + local + ' (' + Math.round(buf.length / 1024) + ' KB)');
+            console.log('[imagens] baixada: ' + u + ' -> ' + local + ' (' + Math.round(buf.length / 1024) + ' KB' + (buf.length < dl.buf.length ? ', antes ' + Math.round(dl.buf.length / 1024) + ' KB' : '') + ')');
           } catch (e) {
             failed++;
             console.warn('[imagens] AVISO: não consegui baixar ' + u + ' (' + (e.name === 'AbortError' ? 'demorou demais' : e.message) + '). O link original foi mantido.');
