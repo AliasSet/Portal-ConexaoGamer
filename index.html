@@ -392,6 +392,17 @@
     // Inicialização do cliente Supabase
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Ids de quem é moderador (usado só para mostrar a etiqueta "Moderador"). Falhou? Sem etiquetas, sem erro.
+    let cgModsP = null;
+    window.cgGetMods = function () {
+        if (!cgModsP) {
+            cgModsP = Promise.resolve(supabaseClient.rpc('get_moderator_ids'))
+                .then((r) => new Set(r && !r.error ? (r.data || []).map((x) => String(x).toLowerCase()) : []))
+                .catch(() => new Set());
+        }
+        return cgModsP;
+    };
+
     // Estado do usuário logado (usado pelo cabeçalho e pela página de perfil)
     let cgSession = null;
     let cgProfile = null;
@@ -1676,6 +1687,12 @@
         }
         if (res.error || !prof) { missing(); return; }
         paintCard(prof);
+        const mods = await window.cgGetMods();
+        const role = $('pub-role');
+        if (role && mods.has(id)) {
+            role.innerHTML = '<i class="fa-solid fa-shield-halved mr-1"></i>' + esc(role.textContent.replace(/^Leitor/, 'Moderador'));
+            role.className = 'text-[11px] uppercase tracking-wider font-extrabold text-cyan-300 mt-1';
+        }
         isPublic = prof.is_public === true;
 
         const bio = $('pub-bio');
@@ -2332,6 +2349,11 @@
         const u = profUrl(uid);
         return u ? '<a href="' + u + '" aria-label="Ver perfil de ' + esc(name) + '" class="flex-shrink-0 self-start rounded-full hover:ring-2 hover:ring-cyan-400/60 transition">' + inner + '</a>' : inner;
     }
+    let modSet = new Set();
+    const isMod = (uid) => modSet.has(String(uid || '').toLowerCase());
+    function modBadge() {
+        return '<span class="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-cyan-300 bg-cyan-400/10 border border-cyan-400/30 rounded-md px-1.5 py-0.5"><i class="fa-solid fa-shield-halved text-[9px]"></i> Moderador</span>';
+    }
     function profName(uid, name, cls) {
         const u = profUrl(uid);
         return u ? '<a href="' + u + '" class="' + cls + ' hover:text-cyan-400 hover:underline transition">' + esc(name) + '</a>' : '<span class="' + cls + '">' + esc(name) + '</span>';
@@ -2352,6 +2374,7 @@
         if (!box) return;
         const posts = await (window.cgPostsReady || Promise.resolve([]));
         const bySlug = new Map(posts.map((p) => [p.slug, p]));
+        modSet = await window.cgGetMods();
         try {
             const { data, error } = await supabaseClient.rpc('recent_comments', { p_limit: 6 });
             if (error) throw error;
@@ -2365,7 +2388,8 @@
                 return '<div class="bg-gray-950/60 p-3 rounded-xl border border-gray-800/80 text-xs space-y-1">' +
                     '<div class="flex items-center justify-between gap-2">' +
                         '<div class="flex items-center gap-2 min-w-0">' + profAvatar(r.user_id, r.display_name, avatarHtml(r.display_name, r.avatar_url, 'w-5 h-5', 'text-[9px]')) +
-                        profName(r.user_id, r.display_name, 'font-bold text-gray-200 truncate') + '</div>' +
+                        profName(r.user_id, r.display_name, 'font-bold text-gray-200 truncate') +
+                        (isMod(r.user_id) ? '<i class="fa-solid fa-shield-halved text-cyan-400 text-[10px] flex-shrink-0" title="Moderador" aria-label="Moderador"></i>' : '') + '</div>' +
                         '<span class="text-[10px] text-gray-500 flex-shrink-0">' + esc(ago(r.created_at)) + '</span>' +
                     '</div>' +
                     '<p class="text-gray-400 line-clamp-2 italic break-words">"' + esc(r.content) + '"</p>' +
@@ -2468,6 +2492,7 @@
             '<div class="min-w-0 flex-1">' +
                 '<div class="flex flex-wrap items-baseline gap-x-2">' +
                     profName(c.user_id, c.display_name, 'text-sm font-bold text-white') +
+                    (isMod(c.user_id) ? modBadge() : '') +
                     '<span class="text-[11px] text-gray-500">' + esc(ago(c.created_at)) + '</span>' +
                     (c.edited_at ? '<span class="text-[11px] text-gray-600">· editado</span>' : '') +
                 '</div>' +
@@ -2500,6 +2525,7 @@
     async function load(reset, size) {
         if (loading) return;
         loading = true;
+        modSet = await window.cgGetMods();
         const { data, error } = await supabaseClient.rpc('list_comments', {
             p_slug: slug, p_limit: size || PAGE, p_offset: reset ? 0 : topsOf().length
         });

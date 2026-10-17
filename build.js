@@ -720,7 +720,7 @@ function publicProfileHtml() {
                             <div id="pub-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400 flex-shrink-0"></div>
                             <div class="min-w-0">
                                 <h1 id="pub-name" class="text-xl font-black text-white break-words"></h1>
-                                <p class="text-[11px] uppercase tracking-wider font-bold text-gray-500 mt-1">Leitor do ${SITE_NAME}</p>
+                                <p id="pub-role" class="text-[11px] uppercase tracking-wider font-bold text-gray-500 mt-1">Leitor do ${SITE_NAME}</p>
                                 <p id="pub-since" class="hidden text-xs text-gray-500 mt-1"></p>
                             </div>
                         </div>
