@@ -12,7 +12,7 @@ summary: Um mod em desenvolvimento promete transformar os pousos de Starfield em
   Wessberg já ganhou um vídeo de demonstração e terá lançamento gratuito para
   PC.
 author: Redação Conexão Gamer
-date: 11/10/2026T03:08
+date: 12/10/2026T03:08
 ---
 **Um projeto criado por Frederik Wessberg promete deixar a exploração espacial muito mais imersiva, com pousos contínuos, nuvens em 3D e até aterrissagens na água.**
 
