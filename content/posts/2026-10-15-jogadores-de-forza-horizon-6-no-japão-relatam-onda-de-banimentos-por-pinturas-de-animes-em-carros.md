@@ -5,10 +5,6 @@ category:
   - Notícias
   - PC
   - Consoles
-  - Xbox
-  - Steam
-  - Epic Games
-  - PlayStation
 tags:
   - Forza Horizon 6
 image: https://cdn.motor1.com/images/mgl/zxBBVb/s1/4x3/forza-horizon-6-teaser.webp
