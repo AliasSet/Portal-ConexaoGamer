@@ -7,7 +7,7 @@ category:
   - Consoles
 tags:
   - GTA VI
-image: https://images.openai.com/static-rsc-4/OmIf33U4ZR0AXnFpPpNdE3dsStlkOzV8tchWKYiOlj7QwYzRJ-iOTGGyVOYeqoNfkrToGccK-0ae0iQqbNydw3Os01dvh1z-4_MYFoCMfegdAqyt_B9M9UWa7OF8IgpUW_-sdQlzYsz8GiFLcYmPXUdxBVY_xlyO2b3J36IAg9olFFMo5nmDDlQn966hNsvI?purpose=fullsize
+image: /uploads/omif33u4zr0axnfpppnde3dsstlkozv8tchwkyio-a72b0ab5e5.jpg
 summary: O perfil Cyberleek ameaça divulgar uma suposta versão completa de GTA 6
   caso sua criptomoeda alcance US$ 30 milhões em valor de mercado. O leaker
   também exige que a Take-Two lance o jogo em discos físicos e faça um pedido

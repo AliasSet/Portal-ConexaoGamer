@@ -6,7 +6,7 @@ tags:
   - League of Legends
   - LOL
   - Riot Games
-image: https://external-preview.redd.it/league-of-legends-classic-will-be-shutting-down-at-the-end-v0-wUbBtO1tO_llZDKDiEMgzqNdqN93D2-8qnLIPUyQ84A.jpeg?auto=webp&s=8526df9bbc6d74e43cb3816e18478402e3b3455e
+image: /uploads/league-of-legends-classic-will-be-shutti-43e8b3ff07.webp
 summary: Menos de seis meses após o lançamento, a Riot Games confirmou o
   encerramento das atividades do League of Legends Classic para 6 de janeiro de
   2027. O estúdio citou a queda drástica na base de jogadores e revelou um plano

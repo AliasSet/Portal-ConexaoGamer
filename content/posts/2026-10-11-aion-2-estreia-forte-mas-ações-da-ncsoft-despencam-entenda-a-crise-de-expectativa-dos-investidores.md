@@ -6,7 +6,7 @@ category:
   - Steam
 tags:
   - AION 2
-image: https://www.gamerscore.com.br/wp-content/uploads/2025/10/AION-2.jpg
+image: /uploads/aion-2-b1ac0fc890.jpg
 summary: Mesmo registrando quase 400 mil jogadores simultâneos na Steam no
   lançamento, Aion 2 enfrentou uma queda superior a 7% nas ações da NCSoft.
   Entenda por que o mercado financeiro cobra metas irrealistas dos MMOs no

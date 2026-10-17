@@ -5,7 +5,7 @@ category:
   - Steam
 tags:
   - Aion 2
-image: https://images.openai.com/static-rsc-4/YqLGjrtawMEgJ-eDzQMzfw8W9fm5Gz_TGMFfs1Qb8vPQPxjsC0EglMu9nkTPqTBn3rc67EY8G9vpbwWEN-AqowL93ryYRqIqe-NXkrI-S3RAXL9NGF5GF75IjoUBbRbgC7PhYoKT8d9DPA8Op2OmOu-SZQ91VCeiLMqvj02ANDC3UJ3RcaiSlajOmaOQbSWq?purpose=fullsize
+image: /uploads/yqlgjrtawmegj-edzqmzfw8w9fm5gz-tgmffs1qb-589cccab1d.jpg
 summary: AION 2 chegou perto de 400 mil jogadores simultâneos no Steam durante
   sua primeira semana, mesmo com avaliações divididas. O sucesso inicial pode
   estar ligado à procura por novos MMORPGs de grande porte, mas críticas à

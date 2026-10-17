@@ -7,7 +7,7 @@ category:
 tags:
   - Intel
   - IA
-image: https://sm.ign.com/t/ign_br/screenshot/default/carlos-buarque-2-1_rut8.960.jpg
+image: /uploads/carlos-buarque-2-1-rut8-960-f7eb2441e7.webp
 summary: O perfil do gamer está mudando, e a Intel acredita que a inteligência
   artificial terá um papel cada vez maior nos computadores. Carlos Buarque,
   diretor de Marketing da Intel Brasil, explica como as NPUs podem abrir caminho

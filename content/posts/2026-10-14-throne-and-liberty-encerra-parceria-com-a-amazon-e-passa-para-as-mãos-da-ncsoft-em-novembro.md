@@ -8,7 +8,7 @@ category:
   - Epic Games
 tags:
   - Throne and Liberty
-image: https://store-images.s-microsoft.com/image/apps.49129.13835524495775181.0f9cab22-cbbd-4191-9515-4b08dc9a2fa4.d3126974-900b-4cba-8d38-69e4625bb22a
+image: /uploads/apps-49129-13835524495775181-0f9cab22-cb-b44ba93e1f.jpg
 summary: A Amazon Games deixará a publicação de Throne and Liberty no Ocidente.
   A transição de servidores e contas para a desenvolvedora sul-coreana NCSoft
   acontecerá no dia 10 de novembro de 2026, mantendo o progresso dos jogadores

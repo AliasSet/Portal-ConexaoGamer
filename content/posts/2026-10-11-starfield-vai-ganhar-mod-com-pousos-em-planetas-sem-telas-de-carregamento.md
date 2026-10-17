@@ -6,7 +6,7 @@ category:
   - Consoles
 tags:
   - Starfield
-image: https://image.api.playstation.com/vulcan/ap/rnd/202603/0401/154e007ddacddf6ef08034822dbee7f9613936398b8d7743.jpg
+image: /uploads/154e007ddacddf6ef08034822dbee7f961393639-034ad7f5d5.avif
 summary: Um mod em desenvolvimento promete transformar os pousos de Starfield em
   uma experiência contínua, sem telas de carregamento. O projeto de Frederik
   Wessberg já ganhou um vídeo de demonstração e terá lançamento gratuito para

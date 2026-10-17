@@ -8,7 +8,7 @@ category:
   - Epic Games
 tags:
   - Guild Wars 2
-image: https://gaming-cdn.com/images/products/29/orig/guild-wars-2-pc-spil-ncsoft-cover.jpg?v=1701274016
+image: /uploads/guild-wars-2-pc-spil-ncsoft-cover-8477b8ad1f.jpg
 summary: Em uma das mudanças mais solicitadas pela comunidade, a ArenaNet
   encerrou a venda separada dos episódios de Living World em Guild Wars 2.
   Agora, todo o conteúdo narrativo foi integrado gratuitamente ao jogo base e às

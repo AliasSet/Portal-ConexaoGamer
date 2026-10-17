@@ -8,7 +8,7 @@ tags:
   - GeForce RTX 5090
   - Nvidia
   - IA
-image: https://assetsio.gnwcdn.com/nvidia_ctHUg28.jpg?width=570&quality=85&format=jpg&auto=webp
+image: /uploads/nvidia-cthug28-e0af527979.webp
 summary: Segundo vazamentos da indústria, a Nvidia interrompeu a fabricação do
   chip GB202 usado na GeForce RTX 5090. A empresa decidiu redirecionar a
   produção para placas profissionais e data centers de IA, tornando a RTX 5080

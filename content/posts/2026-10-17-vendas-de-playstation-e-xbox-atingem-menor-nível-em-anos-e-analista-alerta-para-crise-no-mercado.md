@@ -4,7 +4,7 @@ title: Vendas de PlayStation e Xbox atingem menor nível em anos e analista
 category:
   - Notícias
   - Consoles
-image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG-2S9FWmTYM4Tjd5Yoff_U6MAB01zBoYWLX-JlHBrpslTnRDJ_QnQbl4&s=10
+image: /uploads/images-d28c699e6a.jpg
 summary: As vendas de consoles nos Estados Unidos despencaram para marcas
   históricas. Segundo dados da consultoria Circana, o aumento constante nos
   preços do PS5 e do Xbox Series X/S — impulsionado pela crise de memórias RAM

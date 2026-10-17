@@ -7,7 +7,7 @@ category:
 tags:
   - GTA VI
   - Vazamentos
-image: https://m.media-amazon.com/images/I/71cj+QoJRKL._AC_UF1000,1000_QL80_.jpg
+image: /uploads/71cj-qojrkl-ac-uf1000-1000-ql80-1a10015571.jpg
 summary: Um novo vazamento atribuído a Cyberleek trouxe cerca de 25 minutos de
   suposta gameplay de GTA VI. O material inclui corridas, cenas de missões e
   exploração, enquanto a Rockstar enfrenta mais uma exposição não autorizada de

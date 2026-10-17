@@ -7,7 +7,7 @@ category:
   - Consoles
 tags:
   - Gears of War
-image: https://xboxwire.thesourcemediaassets.com/sites/2/2026/07/GoW_EDAY_Versus_Breechshot_Final_Logo-183ca26533a83dbebb7b-1600x900.jpg
+image: /uploads/gow-eday-versus-breechshot-final-logo-18-5c703f8233.jpg
 summary: "Estimativas apontam que Gears of War: E-Day vendeu cerca de 230 mil
   cópias no lançamento, enquanto 1,7 milhão de jogadores acessaram o game pelo
   Game Pass. Os números reacendem o debate sobre o impacto da assinatura nas

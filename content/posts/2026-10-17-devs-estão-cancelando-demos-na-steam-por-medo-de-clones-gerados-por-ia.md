@@ -6,7 +6,7 @@ category:
   - Steam
 tags:
   - Inteligência Artificial
-image: https://nationalcioreview.com/wp-content/uploads/2025/09/TNCR-graphics-KB-2.gif
+image: /uploads/tncr-graphics-kb-2-84030f8dee.gif
 summary: A crescente onda de clonagem rápida por IA e a prática de "vibe coding"
   acenderam um sinal de alerta entre desenvolvedores independentes na Steam.
   Para evitar que seus projetos sejam copiados e lançados antes da versão
@@ -30,7 +30,7 @@ O problema afeta principalmente jogos que entram na lista dos mais desejados (*w
 
 Outro caso emblemático mencionado na comunidade envolveu o simulador de colônia *Family Time*, que entrou no topo de jogos mais desejados da Steam e viu clones conceituais surgirem na rede pouco tempo depois de sua apresentação pública.
 
-![](https://img.youtube.com/vi/Hy56ql96xAU/maxresdefault.jpg "Jogo Family Time foi plagiado horas após entrar na loja da Steam")
+![](/uploads/maxresdefault-99d8e76892.jpg "Jogo Family Time foi plagiado horas após entrar na loja da Steam")
 
 ## Testes fechados e novos contratos anti-IA tornam-se tendência
 

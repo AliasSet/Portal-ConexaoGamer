@@ -5,7 +5,7 @@ category:
   - PC
 tags:
   - GTA VI
-image: https://image.api.playstation.com/vulcan/ap/rnd/202606/1818/4a35c9a8490c69fe89af0f52d4ac0249b230b4fdb12e8469.jpg
+image: /uploads/4a35c9a8490c69fe89af0f52d4ac0249b230b4fd-39ef6f2d60.avif
 summary: GTA 6 pode ganhar uma versão para PC entre janeiro e março de 2027,
   poucos meses depois de seu lançamento nos consoles. A informação vem de um
   relatório baseado em quatro fontes da indústria, mas ainda não foi confirmada

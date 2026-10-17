@@ -6,7 +6,7 @@ category:
   - Consoles
 tags:
   - Final Fantasy 7 Rebirth
-image: https://images.openai.com/static-rsc-4/uP42lWBT7D9mxKT9aCvQhq5n4pkwdslaXZGfKzwhB_SWN_y3tBRcZUhVR4lGIa0kjQkVWDx9dCu6XhOzdCFL3i-wLfKRWw1O8czaSCIojx2giPYVqslDFiu2wR1AK_k0SQJA5CyF1QLtCgG_m6iKshQhCu08Ce3wPZPBfRWzhG3sFPuO3nUlQgBLU6BxTZ8T?purpose=fullsize
+image: /uploads/up42lwbt7d9mxkt9acvqhq5n4pkwdslaxzgfkzwh-ffa8fe9985.jpg
 summary: Naoki Hamaguchi, diretor de Final Fantasy VII Rebirth e Final Fantasy
   VII Revelation, defendeu a presença dos minigames na trilogia. Para ele, a
   prioridade não é aumentar ou reduzir a quantidade de atividades, mas garantir
