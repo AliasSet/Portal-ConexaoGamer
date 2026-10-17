@@ -721,7 +721,10 @@ function publicProfileHtml() {
                             <div class="min-w-0">
                                 <h1 id="pub-name" class="text-xl font-black text-white break-words"></h1>
                                 <p id="pub-role" class="text-[11px] uppercase tracking-wider font-bold text-gray-500 mt-1">Leitor do ${SITE_NAME}</p>
-                                <p id="pub-since" class="hidden text-xs text-gray-500 mt-1"></p>
+                                <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                                    <span id="pub-since" class="hidden"></span>
+                                    <span id="pub-count" class="hidden"></span>
+                                </div>
                             </div>
                         </div>
                         <p id="pub-bio" class="hidden mt-5 text-sm text-gray-300 leading-relaxed break-words"></p>

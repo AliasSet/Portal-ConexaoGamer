@@ -1705,6 +1705,11 @@
         } else { bio.textContent = ''; bio.classList.add('hidden'); }
         const since = isPublic ? memberSince(prof.member_since) : '';
         $('pub-since').textContent = since; $('pub-since').classList.toggle('hidden', !since);
+        // número de comentários visíveis (só em perfil público; vem calculado do banco)
+        const nC = isPublic && prof.comment_count != null ? Number(prof.comment_count) : NaN;
+        const cTxt = !isFinite(nC) ? '' : (nC <= 0 ? 'Nenhum comentário ainda' : (nC === 1 ? '1 comentário' : nC.toLocaleString('pt-BR') + ' comentários'));
+        $('pub-count').innerHTML = cTxt ? '<i class="fa-regular fa-comment mr-1"></i>' + esc(cTxt) : '';
+        $('pub-count').classList.toggle('hidden', !cTxt);
         $('pub-links').innerHTML = links.map((l) =>
             '<a href="' + esc(NETS[l.n].url(l.h)) + '" target="_blank" rel="noopener noreferrer nofollow ugc" class="inline-flex items-center gap-2 text-xs font-bold bg-gray-950 border border-gray-800 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-2 rounded-lg transition"><i class="' + NETS[l.n].icon + '"></i> ' + esc(NETS[l.n].label) + '</a>').join('');
 
