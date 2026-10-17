@@ -2404,6 +2404,23 @@
     }
     let modSet = new Set();
     const isMod = (uid) => modSet.has(String(uid || '').toLowerCase());
+    // Nível ao lado do nome: id -> número de comentários (null = perfil privado/sem dado = sem nível)
+    const lvCache = new Map();
+    function lvBadge(uid) {
+        const n = lvCache.get(String(uid || '').toLowerCase());
+        return (n == null || !isFinite(n)) ? '' : window.cgLevelBadge(n);
+    }
+    async function fetchLevels(rows, reset) {
+        if (reset) lvCache.clear();
+        const ids = Array.from(new Set(rows.map((r) => String(r.user_id || '').toLowerCase())))
+            .filter((id) => UID_RE.test(id) && !modSet.has(id) && !lvCache.has(id));
+        if (!ids.length) return;
+        const chunks = [];
+        for (let i = 0; i < ids.length; i += 50) chunks.push(ids.slice(i, i + 50));
+        const results = await Promise.all(chunks.map((c) => Promise.resolve(supabaseClient.rpc('get_comment_counts', { p_ids: c })).catch(() => ({ error: true }))));
+        ids.forEach((id) => lvCache.set(id, null));
+        results.forEach((r) => { if (r && !r.error) (r.data || []).forEach((x) => lvCache.set(String(x.user_id).toLowerCase(), Number(x.comment_count))); });
+    }
     function modBadge() {
         return '<span class="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-cyan-300 bg-cyan-400/10 border border-cyan-400/30 rounded-md px-1.5 py-0.5"><i class="fa-solid fa-shield-halved text-[9px]"></i> Moderador</span>';
     }
@@ -2545,7 +2562,7 @@
             '<div class="min-w-0 flex-1">' +
                 '<div class="flex flex-wrap items-baseline gap-x-2">' +
                     profName(c.user_id, c.display_name, 'text-sm font-bold text-white') +
-                    (isMod(c.user_id) ? modBadge() : '') +
+                    (isMod(c.user_id) ? modBadge() : lvBadge(c.user_id)) +
                     '<span class="text-[11px] text-gray-500">' + esc(ago(c.created_at)) + '</span>' +
                     (c.edited_at ? '<span class="text-[11px] text-gray-600">· editado</span>' : '') +
                 '</div>' +
@@ -2582,6 +2599,7 @@
         const { data, error } = await supabaseClient.rpc('list_comments', {
             p_slug: slug, p_limit: size || PAGE, p_offset: reset ? 0 : topsOf().length
         });
+        if (!error) await fetchLevels(data || [], reset);
         loading = false;
         if (error) {
             console.error('[Conexão Gamer] erro ao carregar comentários:', error);
