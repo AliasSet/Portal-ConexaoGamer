@@ -14,7 +14,7 @@ summary: A Amazon Games deixará a publicação de Throne and Liberty no Ocident
   acontecerá no dia 10 de novembro de 2026, mantendo o progresso dos jogadores
   intacto.
 author: Redação Conexão Gamer
-date: 14/10/2026T20:55
+date: 13/10/2026T20:55
 ---
 A publicação de Throne and Liberty no Ocidente sofrerá uma mudança estrutural importante. A partir de 10 de novembro de 2026, a operação global do MMORPG será transferida da Amazon Games diretamente para as mãos da sua desenvolvedora original, a sul-coreana NCSoft.
 
