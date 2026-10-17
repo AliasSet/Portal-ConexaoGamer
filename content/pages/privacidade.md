@@ -1,7 +1,7 @@
 ---
 title: "Política de Privacidade"
 description: "Como o Conexão Gamer coleta, usa e protege os seus dados pessoais, conforme a LGPD."
-updated: "16 de outubro de 2026"
+updated: "17 de outubro de 2026"
 ---
 Esta Política explica, em linguagem simples, quais dados pessoais o **Conexão Gamer** (conexaogamer.com.br) coleta, para que os usa, com quem os compartilha e quais são os seus direitos, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018, a LGPD).
 
@@ -16,7 +16,7 @@ O responsável pelo tratamento dos seus dados pessoais (controlador) é {{RESPON
 - Não vendemos os seus dados e não usamos cookies de publicidade.
 - Medimos as visitas de forma agregada, sem cookies e sem acompanhar você de um dia para o outro.
 - O seu **nome de exibição, a sua foto e os seus comentários são públicos**. O seu e-mail nunca é exibido.
-- O seu **perfil público** (nome, foto, bio, redes, data em que você entrou e comentários) vem ligado, e você pode desligá-lo quando quiser. Desligado, só o nome e a foto continuam aparecendo.
+- O seu **perfil público** (nome, foto, bio, redes, data em que você entrou, número de comentários e os comentários em si) vem ligado, e você pode desligá-lo quando quiser. Desligado, só o nome e a foto continuam aparecendo.
 - O **aviso por e-mail quando alguém responde ao seu comentário** pode ser desligado a qualquer momento.
 - Você pode alterar o seu nome e a sua foto, apagar os seus comentários e excluir a sua conta.
 
@@ -60,11 +60,11 @@ A base legal para a lista de salvos é a execução do serviço que você pediu 
 
 ### 3.7. Perfil público
 
-Quem clica no seu nome ou na sua foto, nos comentários, abre a sua página de perfil. Por padrão, o perfil vem **público**, e essa página mostra o seu nome, a sua foto, a data em que você entrou ("membro desde"), a sua bio e as suas redes, se você as preencheu, e os seus comentários publicados. Ela pode ser vista por qualquer pessoa e encontrada na internet.
+Quem clica no seu nome ou na sua foto, nos comentários, abre a sua página de perfil. Por padrão, o perfil vem **público**, e essa página mostra o seu nome, a sua foto, a data em que você entrou ("membro desde"), o número de comentários que você já publicou, a sua bio e as suas redes, se você as preencheu, e os seus comentários publicados. O número de comentários é calculado automaticamente a partir dos comentários visíveis no site, e não é um dado a mais que você nos envia. Ela pode ser vista por qualquer pessoa e encontrada na internet.
 
 Em **Meu perfil**, você pode escrever uma pequena bio (até 160 caracteres, sem links) e informar até 4 nomes de usuário em redes sociais. Essas informações só aparecem porque você as preencheu, e você pode apagá-las quando quiser.
 
-Você também pode **desligar o perfil público** a qualquer momento. Desligado, a página mostra apenas o seu nome e a sua foto, que já são públicos junto com os seus comentários nas matérias, e esconde a bio, as redes, a data de entrada e a lista de comentários. A moderação pode limpar ou ocultar uma bio ou rede que viole as regras do site. As bases legais são o nosso legítimo interesse em manter uma comunidade com perfis visíveis (art. 7º, IX) e, para a bio e as redes que você escolhe preencher, o seu consentimento (art. 7º, I).
+Você também pode **desligar o perfil público** a qualquer momento. Desligado, a página mostra apenas o seu nome e a sua foto, que já são públicos junto com os seus comentários nas matérias, e esconde a bio, as redes, a data de entrada, o número de comentários e a lista de comentários. A moderação pode limpar ou ocultar uma bio ou rede que viole as regras do site. As bases legais são o nosso legítimo interesse em manter uma comunidade com perfis visíveis (art. 7º, IX) e, para a bio e as redes que você escolhe preencher, o seu consentimento (art. 7º, I).
 
 ### 3.8. Avisos por e-mail de respostas
 
