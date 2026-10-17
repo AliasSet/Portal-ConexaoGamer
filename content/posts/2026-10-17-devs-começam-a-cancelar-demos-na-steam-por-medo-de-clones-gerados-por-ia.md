@@ -39,3 +39,5 @@ Além da mudança nas demonstrações, advogados especializados na indústria de
 Até o momento, a Valve exige que desenvolvedores informem se utilizam ferramentas de IA na produção de seus jogos comercializados na Steam, mas o debate sobre como proteger criadores contra a clonagem automatizada de projetos por terceiros ainda não possui uma solução definitiva.
 
 E você, acha justa a decisão dos desenvolvedores em fechar as demos ou acredita que isso prejudica os jogadores que querem testar os jogos antes de comprar? Deixe seu comentário abaixo e participe da conversa!
+
+![Jogo Family Time foi vítima de cópia na Steam horas após entrar na loja.](https://cdn.mos.cms.futurecdn.net/GKQa5zy3HkJv4L6b6CfnyU-650-80.jpg.webp)
