@@ -1,6 +1,6 @@
 ---
-title: Throne and Liberty encerra parceria com a Amazon e passa para as mãos da
-  NCSoft em novembro
+title: "Throne and Liberty: Amazon deixa publicação do MMORPG e NCSoft assume em
+  novembro"
 category:
   - Notícias
   - PC
