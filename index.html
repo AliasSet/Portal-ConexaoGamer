@@ -39,6 +39,7 @@
         body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Inter', sans-serif; }
         .cg-logo { font-family: 'Exo 2', 'Inter', sans-serif; }   /* fonte só do logo CONEXÃOGAMER (cabeçalho e rodapé) */
         .bg-glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(14px); }
+        .cg-empty-hide:empty { display: none; }   /* mensagens vazias não ocupam espaço */
         .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.2); }
     </style>
@@ -865,7 +866,7 @@
     function msg(text, isError) {
         const el = $('profile-msg');
         el.textContent = text || '';
-        el.className = 'text-xs min-h-[1rem] ' + (isError ? 'text-red-400' : 'text-emerald-400');
+        el.className = 'text-xs mt-1 cg-empty-hide ' + (isError ? 'text-red-400' : 'text-emerald-400');
     }
 
     function paintAvatar(name, url) {
@@ -910,7 +911,7 @@
     function pmsg(text, isError) {
         const el = $('profile-photo-msg');
         el.textContent = text || '';
-        el.className = 'text-[11px] mt-2 min-h-[1rem] ' + (isError ? 'text-red-400' : 'text-emerald-400');
+        el.className = 'text-[11px] mt-2 cg-empty-hide ' + (isError ? 'text-red-400' : 'text-emerald-400');
     }
 
     function cropToBlob(file) {
@@ -1068,12 +1069,45 @@
         const short = text.length > 220 ? text.slice(0, 219).replace(/\s+\S*$/, '') + '…' : text;
         const hidden = c.status === 'hidden'
             ? ' · <span class="text-amber-400">escondido pela moderação</span>' : '';
-        return '<a href="/noticias/' + encodeURIComponent(c.post_slug) + '/#comments" class="block bg-gray-950 border border-gray-800 hover:border-cyan-400/50 rounded-xl p-4 transition">' +
+        // o botão Excluir só aparece quando a lista traz o id do comentário
+        const del = c.id != null
+            ? '<button type="button" data-lib-del="' + esc(c.id) + '" class="text-[11px] font-bold text-gray-500 hover:text-red-400 transition px-2 py-1 -my-1 flex-shrink-0"><i class="fa-regular fa-trash-can mr-1"></i> Excluir</button>'
+            : '';
+        return '<div data-lib-crow="' + esc(c.id == null ? '' : c.id) + '" class="bg-gray-950 border border-gray-800 hover:border-cyan-400/50 rounded-xl p-4 transition">' +
+            '<a href="/noticias/' + encodeURIComponent(c.post_slug) + '/#comments" class="block">' +
             '<p class="text-[11px] text-gray-500">' + (c.parent_id ? 'Resposta em ' : 'Comentou em ') +
             '<span class="text-cyan-400 font-bold">' + esc(p ? p.title : c.post_slug) + '</span></p>' +
-            '<p class="text-sm text-gray-200 mt-2 whitespace-pre-line break-words">' + esc(short) + '</p>' +
-            '<p class="text-[11px] text-gray-500 mt-2">' + esc(libDay(c.created_at)) + (c.edited_at ? ' · editado' : '') + hidden + '</p></a>';
+            '<p class="text-sm text-gray-200 mt-2 whitespace-pre-line break-words">' + esc(short) + '</p></a>' +
+            '<div class="mt-2 flex items-center justify-between gap-3">' +
+            '<p class="text-[11px] text-gray-500">' + esc(libDay(c.created_at)) + (c.edited_at ? ' · editado' : '') + hidden + '</p>' + del + '</div></div>';
     }
+
+    // Excluir meu comentário (confirmação em dois cliques, sem janela pop-up, igual às matérias)
+    $('lib-comments-list').addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-lib-del]');
+        if (!btn) return;
+        e.preventDefault();
+        if (btn.getAttribute('data-armed') !== '1') {
+            const original = btn.innerHTML;
+            btn.setAttribute('data-armed', '1');
+            btn.textContent = 'Confirmar exclusão?';
+            setTimeout(() => { if (btn.isConnected) { btn.removeAttribute('data-armed'); btn.innerHTML = original; } }, 4000);
+            return;
+        }
+        btn.disabled = true;
+        const { error } = await supabaseClient.rpc('delete_comment', { p_comment_id: Number(btn.getAttribute('data-lib-del')) });
+        if (error) {
+            console.warn('[Conexão Gamer] erro ao excluir comentário:', error.message);
+            btn.disabled = false; btn.removeAttribute('data-armed'); btn.textContent = 'Erro ao excluir';
+            return;
+        }
+        const row = btn.closest('[data-lib-crow]');
+        if (row) row.remove();
+        libOffset = Math.max(0, libOffset - 1);
+        cgToast('Comentário excluído.');
+        if (!$('lib-comments-list').querySelector('[data-lib-crow]')) libLoadComments(false);
+        if (window.cgReloadSidebar) window.cgReloadSidebar();
+    });
 
     async function libLoadComments(more) {
         const list = $('lib-comments-list'), btn = $('lib-comments-more');
@@ -2228,6 +2262,7 @@
     }
 
     /* ---------- Últimos Comentários (barra lateral, em todas as páginas) ---------- */
+    window.cgReloadSidebar = function () { return loadSidebar(); };
     async function loadSidebar() {
         const box = $('sidebar-recent-comments');
         if (!box) return;

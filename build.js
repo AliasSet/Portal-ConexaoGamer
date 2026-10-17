@@ -480,7 +480,7 @@ function profileHtml() {
                     </div>
 
                     <div id="profile-user" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
-                        <form id="profile-form" class="flex items-start gap-4 pb-6 border-b border-gray-800" novalidate>
+                        <form id="profile-form" class="flex items-start gap-4 pb-4 border-b border-gray-800" novalidate>
                             <div id="profile-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400 flex-shrink-0"></div>
                             <div class="min-w-0 flex-1">
                                 <div class="flex flex-wrap items-center gap-2">
@@ -500,12 +500,12 @@ function profileHtml() {
                                     <button id="profile-photo-remove" type="button" class="hidden text-[11px] font-bold text-gray-500 hover:text-red-400 px-2 py-1.5 transition">Remover foto</button>
                                     <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
                                 </div>
-                                <p id="profile-photo-msg" class="text-[11px] mt-2 min-h-[1rem]" role="status" aria-live="polite"></p>
-                                <p id="profile-msg" class="text-xs min-h-[1rem] mt-1" role="status" aria-live="polite"></p>
+                                <p id="profile-photo-msg" class="text-[11px] mt-2 cg-empty-hide" role="status" aria-live="polite"></p>
+                                <p id="profile-msg" class="text-xs mt-1 cg-empty-hide" role="status" aria-live="polite"></p>
                             </div>
                         </form>
 
-                        <dl class="py-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs border-b border-gray-800">
+                        <dl class="py-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs border-b border-gray-800">
                             <div>
                                 <dt class="text-gray-500">E-mail <span class="text-gray-600">(só você vê)</span></dt>
                                 <dd id="profile-email" class="text-gray-200 mt-1 break-all"></dd>
