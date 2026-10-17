@@ -1,12 +1,12 @@
 ---
-title: "ECC: Redline: Conheça o novo FPS acusado de ser 'clone' de Warzone que
-  empolgou fãs de CoD"
+title: "ECC: Redline: Novo FPS acusado de ser 'clone' de Warzone empolga fãs de CoD"
 category:
   - Notícias
 tags:
   - "ECC: Redline"
   - Call of Duty
-image: /uploads/f4f88f62-ecc-redline-728b3041fb.webp
+  - Warzone
+image: https://i.ytimg.com/vi/50mYWyjPltU/maxresdefault.jpg
 summary: "Anunciado pela NetEase, ECC: Redline virou assunto nas redes sociais
   por trazer movimentação, interface e gunplay idênticos ao Warzone original.
   Apesar das acusações de cópia, jogadores frustrados com a franquia da
@@ -38,6 +38,8 @@ Por outro lado, uma parcela significativa da comunidade — cansada do estado at
 • Sons de Feedback: Efeitos sonoros de tiros, abates e movimentação que lembram a era de ouro de Verdansk.
 
 A principal novidade na fórmula do ECC: Redline fica por conta da adição de habilidades exclusivas e dispositivos táticos para cada operador, aproximando o ritmo do jogo do que se vê em jogos de tiro com heróis.
+
+[[imagem|https://mmorpgbr.com.br/wp-content/uploads/2026/10/r1791903074324505.webp|media|ECC: REDLINE chama atenção pela gunplay e dinamicidade dos combates|]]
 
 ## Frustração com a Activision impulsiona o interesse no projeto
 
