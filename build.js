@@ -540,7 +540,7 @@ function profileHtml() {
                                 </div>
                                 <label class="flex items-start gap-3 bg-gray-950 border border-gray-800 rounded-xl p-4 cursor-pointer">
                                     <input type="checkbox" id="about-public" class="mt-0.5 accent-cyan-400">
-                                    <span class="text-xs text-gray-300 leading-relaxed"><strong class="text-white">Tornar meu perfil público.</strong> Quem tiver o seu link poderá ver o seu nome, foto, bio, redes e os seus comentários publicados. Fica desligado até você ligar, e você pode desligar quando quiser.</span>
+                                    <span class="text-xs text-gray-300 leading-relaxed"><strong class="text-white">Manter meu perfil público.</strong> Quem clicar no seu nome nos comentários poderá ver o seu nome, foto, bio, redes, a data em que você entrou e os seus comentários publicados. Vem ligado, e você pode desligar quando quiser: aí só o seu nome e a sua foto continuam aparecendo.</span>
                                 </label>
                                 <div id="about-link-row" class="hidden flex-wrap items-center gap-2 text-xs">
                                     <span class="text-gray-500">Seu link público:</span>
@@ -704,6 +704,7 @@ function publicProfileHtml() {
                             <div class="min-w-0">
                                 <h1 id="pub-name" class="text-xl font-black text-white break-words"></h1>
                                 <p class="text-[11px] uppercase tracking-wider font-bold text-gray-500 mt-1">Leitor do ${SITE_NAME}</p>
+                                <p id="pub-since" class="hidden text-xs text-gray-500 mt-1"></p>
                             </div>
                         </div>
                         <p id="pub-bio" class="hidden mt-5 text-sm text-gray-300 leading-relaxed break-words"></p>

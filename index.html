@@ -1198,7 +1198,7 @@
         aboutUid = uid;
         $('about-links').innerHTML = '';
         $('about-bio').value = ''; $('about-bio-count').textContent = '0';
-        $('about-public').checked = false; aboutPublicLink(uid, false); aboutMsg('');
+        $('about-public').checked = true; aboutPublicLink(uid, true); aboutMsg('');
         aboutToggleAdd();
         const [p, e] = await Promise.all([
             supabaseClient.from('profiles').select('bio').eq('id', uid).maybeSingle(),
@@ -1209,7 +1209,8 @@
         $('about-bio').value = bio; $('about-bio-count').textContent = String(bio.length);
         const links = (e.data && Array.isArray(e.data.links)) ? e.data.links : [];
         links.forEach((l) => { if (l && ABOUT_NETS[l.n]) aboutRow(l.n, l.h); });
-        const isPublic = !!(e.data && e.data.is_public);
+        // sem registro = perfil público (é o padrão); só vira privado se a pessoa desligar
+        const isPublic = e.data ? !!e.data.is_public : !e.error;
         $('about-public').checked = isPublic; aboutPublicLink(uid, isPublic);
         if (p.error || e.error) aboutMsg('Não foi possível carregar tudo agora. Recarregue a página.', true);
     }
@@ -1252,7 +1253,7 @@
         }
         $('about-bio').value = bio; $('about-bio-count').textContent = String(bio.length);
         aboutPublicLink(cgSession.user.id, isPublic);
-        aboutMsg(isPublic ? 'Salvo! Seu perfil está público.' : 'Salvo! Seu perfil continua privado.');
+        aboutMsg(isPublic ? 'Salvo! Seu perfil está público.' : 'Salvo! Seu perfil está privado: só o nome e a foto aparecem.');
     });
 
     // ---------- Avisos por e-mail (respostas aos meus comentários) ----------
@@ -1469,6 +1470,24 @@
 
     let isPublic = false;
 
+    // Bio vazia: mensagem leve (sempre a mesma para a mesma pessoa, escolhida pelo id)
+    const NO_BIO = [
+        'Ainda não conhecemos bem esse usuário, mas temos certeza de que é gente boa.',
+        'Bio em branco por aqui. Deve estar ocupado zerando algum jogo.',
+        'Essa pessoa ainda não escreveu a bio. Mistério total, mas a vibe parece boa.',
+        'Nada na bio por enquanto. Provavelmente está salvando o progresso.',
+        'Bio ainda não carregada. Tudo indica que o player é gente boa.'
+    ];
+    function noBioText() {
+        let n = 0; for (let i = 0; i < id.length; i++) n += id.charCodeAt(i);
+        return NO_BIO[n % NO_BIO.length];
+    }
+    function memberSince(v) {
+        const t = Date.parse(v || '');
+        if (!isFinite(t)) return '';
+        return 'Membro desde ' + new Date(t).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric', timeZone: 'America/Sao_Paulo' });
+    }
+
     function paintCard(prof) {
         const name = prof.username || 'Leitor';
         document.title = name + ' | Conexão Gamer';
@@ -1482,7 +1501,7 @@
         const note = $('pub-private');
         const mine = cgSession && cgSession.user && cgSession.user.id === id;
         note.innerHTML = '<i class="fa-solid fa-lock text-gray-500 mr-1.5"></i>' + (mine
-            ? 'O seu perfil está privado: as outras pessoas veem só o seu nome e a sua foto. Para mostrar bio, redes e comentários, ligue “Tornar meu perfil público” em Meu perfil.'
+            ? 'O seu perfil está privado: as outras pessoas veem só o seu nome e a sua foto. Para mostrar bio, redes e comentários, ligue “Manter meu perfil público” em Meu perfil.'
             : 'Este perfil é privado. A pessoa escolheu não mostrar mais informações.');
     }
 
@@ -1503,7 +1522,14 @@
 
         const bio = $('pub-bio');
         const links = isPublic ? (Array.isArray(prof.links) ? prof.links : []).filter((l) => l && NETS[l.n] && HANDLE_OK.test(String(l.h || ''))) : [];
-        if (isPublic && prof.bio) { bio.textContent = prof.bio; bio.classList.remove('hidden'); } else { bio.textContent = ''; bio.classList.add('hidden'); }
+        if (isPublic) {
+            const has = !!(prof.bio && String(prof.bio).trim());
+            bio.textContent = has ? prof.bio : noBioText();
+            bio.classList.toggle('italic', !has); bio.classList.toggle('text-gray-500', !has); bio.classList.toggle('text-gray-300', has);
+            bio.classList.remove('hidden');
+        } else { bio.textContent = ''; bio.classList.add('hidden'); }
+        const since = isPublic ? memberSince(prof.member_since) : '';
+        $('pub-since').textContent = since; $('pub-since').classList.toggle('hidden', !since);
         $('pub-links').innerHTML = links.map((l) =>
             '<a href="' + esc(NETS[l.n].url(l.h)) + '" target="_blank" rel="noopener noreferrer nofollow ugc" class="inline-flex items-center gap-2 text-xs font-bold bg-gray-950 border border-gray-800 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-2 rounded-lg transition"><i class="' + NETS[l.n].icon + '"></i> ' + esc(NETS[l.n].label) + '</a>').join('');
 
