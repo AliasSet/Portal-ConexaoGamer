@@ -30,7 +30,7 @@ O problema afeta principalmente jogos que entram na lista dos mais desejados (*w
 
 Outro caso emblemático mencionado na comunidade envolveu o simulador de colônia *Family Time*, que entrou no topo de jogos mais desejados da Steam e viu clones conceituais surgirem na rede pouco tempo depois de sua apresentação pública.
 
-![Jogo Family Time foi plagiado horas após entrar na loja da Steam](https://img.youtube.com/vi/Hy56ql96xAU/maxresdefault.jpg "Jogo Family Time foi plagiado horas após entrar na loja da Steam")
+![](https://img.youtube.com/vi/Hy56ql96xAU/maxresdefault.jpg "Jogo Family Time foi plagiado horas após entrar na loja da Steam")
 
 ## Testes fechados e novos contratos anti-IA tornam-se tendência
 
