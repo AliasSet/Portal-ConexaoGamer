@@ -174,7 +174,7 @@
         
         <!--CG:HERO-->
         <!-- SEÇÃO HERO EM BENTO GRID (preenchida dinamicamente com os posts do CMS) -->
-        <section id="hero-section" class="mb-7 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section id="hero-section" class="mb-5 grid grid-cols-1 lg:grid-cols-3 gap-4">
 
             <!-- Card Principal (matéria mais recente) -->
             <div id="hero-card-container" class="lg:col-span-2 relative rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 shadow-2xl h-[420px] lg:h-[480px] group">
@@ -204,13 +204,13 @@
             </div>
 
             <!-- 2 Cards Secundários (preenchidos via JS) -->
-            <div id="hero-side" class="flex flex-col gap-6"></div>
+            <div id="hero-side" class="flex flex-col gap-4"></div>
 
         </section>
         <!--/CG:HERO-->
 
         <!-- LAYOUT PRINCIPAL (2 Colunas de Conteúdo + Sidebar Direita) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             
             <!-- COLUNA PRINCIPAL -->
             <div class="lg:col-span-2 min-w-0">
@@ -2143,7 +2143,7 @@
           return;
         }
         box.innerHTML = list.map((p) =>
-          '<a href="' + href(p) + '" class="relative rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 h-[228px] group block">' +
+          '<a href="' + href(p) + '" class="relative rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 h-[232px] group block">' +
             img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500') +
             '<div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent p-5 flex flex-col justify-end">' +
               '<div class="flex flex-wrap gap-1 mb-1">' + badges(p) + '</div>' +
