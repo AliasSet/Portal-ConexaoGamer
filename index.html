@@ -852,8 +852,10 @@
     function show(which) {
         ['profile-loading', 'profile-guest', 'profile-user'].forEach((id) =>
             $(id).classList.toggle('hidden', id !== which));
-        const extra = $('profile-extra');
-        if (extra) extra.classList.toggle('hidden', which !== 'profile-user');
+        ['profile-extra', 'profile-danger'].forEach((id) => {
+            const el = $(id);
+            if (el) el.classList.toggle('hidden', which !== 'profile-user');
+        });
     }
     function msg(text, isError) {
         const el = $('profile-msg');
@@ -1161,6 +1163,12 @@
         cg_not_logged: 'Entre na sua conta para salvar.'
     };
     let aboutUid = null;
+    let aboutState = null;   // o que está salvo no servidor: { bio, links, isPublic }
+    function publicMsg(text, isError) {
+        const el = $('public-msg');
+        el.textContent = text || '';
+        el.className = 'text-xs min-h-[1rem] mt-3 ' + (isError ? 'text-red-400' : 'text-emerald-400');
+    }
     function aboutMsg(text, isError) {
         const el = $('about-msg');
         el.textContent = text || '';
@@ -1198,7 +1206,8 @@
         aboutUid = uid;
         $('about-links').innerHTML = '';
         $('about-bio').value = ''; $('about-bio-count').textContent = '0';
-        $('about-public').checked = true; aboutPublicLink(uid, true); aboutMsg('');
+        aboutState = null;
+        $('about-public').checked = true; $('about-public').disabled = true; aboutPublicLink(uid, true); aboutMsg(''); publicMsg('');
         aboutToggleAdd();
         const [p, e] = await Promise.all([
             supabaseClient.from('profiles').select('bio').eq('id', uid).maybeSingle(),
@@ -1207,12 +1216,14 @@
         if (aboutUid !== uid) return;
         const bio = (p.data && p.data.bio) || '';
         $('about-bio').value = bio; $('about-bio-count').textContent = String(bio.length);
-        const links = (e.data && Array.isArray(e.data.links)) ? e.data.links : [];
-        links.forEach((l) => { if (l && ABOUT_NETS[l.n]) aboutRow(l.n, l.h); });
+        const links = ((e.data && Array.isArray(e.data.links)) ? e.data.links : []).filter((l) => l && ABOUT_NETS[l.n]);
+        links.forEach((l) => aboutRow(l.n, l.h));
         // sem registro = perfil público (é o padrão); só vira privado se a pessoa desligar
         const isPublic = e.data ? !!e.data.is_public : !e.error;
         $('about-public').checked = isPublic; aboutPublicLink(uid, isPublic);
-        if (p.error || e.error) aboutMsg('Não foi possível carregar tudo agora. Recarregue a página.', true);
+        if (p.error || e.error) { aboutMsg('Não foi possível carregar tudo agora. Recarregue a página.', true); publicMsg('Não foi possível carregar esta opção agora. Recarregue a página.', true); return; }
+        aboutState = { bio: bio, links: links.map((l) => ({ n: l.n, h: l.h })), isPublic: isPublic };
+        $('about-public').disabled = false;
     }
     $('about-bio').addEventListener('input', () => { $('about-bio-count').textContent = String($('about-bio').value.length); });
     $('about-add').addEventListener('click', () => {
@@ -1240,7 +1251,8 @@
             if (seen[n] || !ABOUT_NETS[n].re.test(h) || !/[A-Za-z0-9]/.test(h)) { aboutMsg(ABOUT_ERRORS.cg_bad_links, true); return; }
             seen[n] = true; links.push({ n: n, h: h });
         }
-        const isPublic = $('about-public').checked;
+        if (!aboutState) { aboutMsg('Ainda carregando. Tente de novo em instantes.', true); return; }
+        const isPublic = aboutState.isPublic;
         const btn = $('about-save');
         btn.disabled = true; aboutMsg('Salvando…');
         const { error } = await supabaseClient.rpc('save_my_profile_v2', { p_bio: bio, p_links: links, p_is_public: isPublic });
@@ -1252,8 +1264,27 @@
             return;
         }
         $('about-bio').value = bio; $('about-bio-count').textContent = String(bio.length);
-        aboutPublicLink(cgSession.user.id, isPublic);
-        aboutMsg(isPublic ? 'Salvo! Seu perfil está público.' : 'Salvo! Seu perfil está privado: só o nome e a foto aparecem.');
+        aboutState.bio = bio; aboutState.links = links;
+        aboutMsg(isPublic ? 'Salvo! Bio e redes aparecem no seu perfil público.' : 'Salvo! Seu perfil está privado, então bio e redes só aparecem quando você o tornar público.');
+    });
+
+    // Interruptor de perfil público: salva na hora (com a bio e as redes que já estão salvas)
+    $('about-public').addEventListener('change', async (ev) => {
+        const box = ev.target, want = box.checked;
+        if (!cgSession || !aboutState) { box.checked = !want; return; }
+        box.disabled = true; publicMsg('Salvando…');
+        const { error } = await supabaseClient.rpc('save_my_profile_v2', { p_bio: aboutState.bio, p_links: aboutState.links, p_is_public: want });
+        box.disabled = false;
+        if (error) {
+            box.checked = !want;
+            const code = Object.keys(ABOUT_ERRORS).find((k) => String(error.message || '').indexOf(k) >= 0);
+            if (!code) console.warn('[Conexão Gamer] erro ao salvar o perfil público:', error.message);
+            publicMsg(code ? ABOUT_ERRORS[code] : 'Não foi possível salvar agora. Tente novamente em instantes.', true);
+            return;
+        }
+        aboutState.isPublic = want;
+        aboutPublicLink(cgSession.user.id, want);
+        publicMsg(want ? 'Pronto! Seu perfil está público.' : 'Pronto! Seu perfil está privado: só o nome e a foto aparecem.');
     });
 
     // ---------- Avisos por e-mail (respostas aos meus comentários) ----------
