@@ -1,6 +1,6 @@
 ---
-title: "NetEase revela ECC: Redline, novo FPS acusado de ser 'clone' de Warzone
-  — mas fãs de Call of Duty comemoram"
+title: "ECC: Redline: Conheça o novo FPS acusado de ser 'clone' de Warzone que
+  empolgou fãs de CoD"
 category:
   - Notícias
 tags:
