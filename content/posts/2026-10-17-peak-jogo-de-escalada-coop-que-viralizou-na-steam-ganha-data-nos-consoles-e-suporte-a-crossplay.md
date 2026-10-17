@@ -1,6 +1,6 @@
 ---
-title: Febre de escalada na Steam, PEAK ganha data de lançamento nos consoles
-  com crossplay total
+title: "PEAK: Jogo de escalada coop que viral ganha data de lançamento nos
+  consoles e suporte a crossplay"
 category:
   - Notícias
   - Steam
