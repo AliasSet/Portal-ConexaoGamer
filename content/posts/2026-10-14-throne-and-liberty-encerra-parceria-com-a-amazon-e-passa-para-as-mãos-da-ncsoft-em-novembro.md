@@ -1,6 +1,6 @@
 ---
 title: "Throne and Liberty muda de dona no Ocidente: NCSoft assume operação após
-  fim da parceria com a Amazon"
+  fim da parceria com Amazon"
 category:
   - Notícias
   - PC
