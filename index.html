@@ -852,10 +852,15 @@
     function show(which) {
         ['profile-loading', 'profile-guest', 'profile-user'].forEach((id) =>
             $(id).classList.toggle('hidden', id !== which));
-        ['profile-extra', 'profile-danger'].forEach((id) => {
+        ['profile-rest'].forEach((id) => {
             const el = $(id);
             if (el) el.classList.toggle('hidden', which !== 'profile-user');
         });
+    }
+    let profileSavedName = '';
+    const cleanName = (v) => String(v || '').replace(/\s+/g, ' ').trim();
+    function syncNameSave() {
+        $('profile-save').disabled = cleanName($('profile-name').value) === profileSavedName;
     }
     function msg(text, isError) {
         const el = $('profile-msg');
@@ -878,8 +883,11 @@
         const name = cgName(user, state.profile);
         const url = cgAvatar(user, state.profile);
 
-        $('profile-title').textContent = name;
-        $('profile-name').value = name;
+        // nome editável: não sobrescreve o que a pessoa está digitando se a sessão só foi renovada
+        const typing = profileSavedName !== '' && $('profile-name').value !== profileSavedName;
+        profileSavedName = name;
+        if (!typing) $('profile-name').value = name;
+        syncNameSave();
         $('profile-email').textContent = user.email || '-';
         const provider = (user.app_metadata && user.app_metadata.provider) || 'email';
         $('profile-provider').textContent = provider === 'google' ? 'Conta Google' : 'E-mail e senha';
@@ -1317,6 +1325,7 @@
     window.addEventListener('cg:auth', (e) => render(e.detail));
     if (window.cgAuthState) render(window.cgAuthState);
 
+    $('profile-name').addEventListener('input', () => { syncNameSave(); msg(''); });
     $('profile-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!cgSession) return;
@@ -1335,7 +1344,7 @@
             return;
         }
         cgProfile = Object.assign({}, cgProfile, { username: name });
-        $('profile-title').textContent = name;
+        profileSavedName = name; $('profile-name').value = name; syncNameSave();
         refreshAuthUI();
         msg('Nome atualizado!');
     });

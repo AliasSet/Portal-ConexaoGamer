@@ -479,7 +479,66 @@ function profileHtml() {
                         <button type="button" onclick="toggleAuthModal()" class="bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Entrar</button>
                     </div>
 
-                    <div id="profile-extra" class="hidden mb-6 space-y-6">
+                    <div id="profile-user" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                        <form id="profile-form" class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 pb-6 border-b border-gray-800" novalidate>
+                            <div class="flex items-center gap-4 min-w-0 flex-1">
+                            <div id="profile-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400 flex-shrink-0"></div>
+                            <div class="min-w-0 flex-1">
+                                <label for="profile-name" class="sr-only">Nome de exibição</label>
+                                <input id="profile-name" type="text" maxlength="40" autocomplete="nickname" aria-describedby="profile-name-hint" class="w-full min-w-0 bg-gray-950 border border-gray-800 hover:border-gray-700 focus:border-cyan-400 focus:outline-none rounded-lg px-3 py-1.5 text-lg font-black text-white transition">
+                                <p id="profile-name-hint" class="text-[11px] text-gray-500 mt-1.5">É o nome que aparece nos seus comentários. Evite usar o seu e-mail.</p>
+                                <p id="profile-since" class="text-xs text-gray-500 mt-1"></p>
+                                <div class="mt-3 flex flex-wrap items-center gap-2">
+                                    <button id="profile-photo-btn" type="button" class="text-[11px] font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-camera mr-1"></i> Alterar foto</button>
+                                    <button id="profile-photo-remove" type="button" class="hidden text-[11px] font-bold text-gray-500 hover:text-red-400 px-2 py-1.5 transition">Remover foto</button>
+                                    <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+                                </div>
+                                <p id="profile-photo-msg" class="text-[11px] mt-2 min-h-[1rem]" role="status" aria-live="polite"></p>
+                                <p id="profile-msg" class="text-xs min-h-[1rem] mt-1" role="status" aria-live="polite"></p>
+                            </div>
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-start">
+                                <button id="profile-save" type="submit" disabled class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed text-black font-extrabold text-xs px-4 py-2 rounded-lg transition whitespace-nowrap">Salvar</button>
+                                <button type="button" onclick="logout()" aria-label="Sair da conta" class="inline-flex flex-shrink-0 items-center gap-2 border border-gray-700 hover:border-red-400 hover:text-red-400 text-gray-300 text-xs font-bold px-3 py-2 rounded-xl transition whitespace-nowrap">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="sm:hidden">Sair</span><span class="hidden sm:inline">Sair da conta</span>
+                            </button>
+                            </div>
+                        </form>
+
+                        <dl class="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <div>
+                                <dt class="text-gray-500">E-mail <span class="text-gray-600">(só você vê)</span></dt>
+                                <dd id="profile-email" class="text-gray-200 mt-1 break-all"></dd>
+                            </div>
+                            <div>
+                                <dt class="text-gray-500">Entrou com</dt>
+                                <dd id="profile-provider" class="text-gray-200 mt-1"></dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <div id="profile-rest" class="hidden mt-6 space-y-6">
+                        <div id="profile-about" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                            <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-id-card text-cyan-400"></i> Sobre você</h2>
+                            <form id="about-form" class="mt-4 space-y-5" novalidate>
+                                <div>
+                                    <label for="about-bio" class="block text-xs font-bold text-gray-300">Bio</label>
+                                    <p class="text-[11px] text-gray-500 mt-1">Até 160 caracteres, sem links. Aparece só no seu perfil público.</p>
+                                    <textarea id="about-bio" rows="3" maxlength="160" class="mt-2 w-full resize-none bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400"></textarea>
+                                    <p class="text-[11px] text-gray-600 mt-1 text-right"><span id="about-bio-count">0</span>/160</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-300">Redes <span class="font-normal text-gray-500">(até 4, só o nome de usuário)</span></p>
+                                    <div id="about-links" class="mt-2 space-y-2"></div>
+                                    <button type="button" id="about-add" class="mt-2 text-xs font-bold text-cyan-400 hover:text-cyan-300 transition"><i class="fa-solid fa-plus mr-1"></i> Adicionar rede</button>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button id="about-save" type="submit" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Salvar</button>
+                                    <p id="about-msg" class="text-xs min-h-[1rem]" role="status" aria-live="polite"></p>
+                                </div>
+                            </form>
+                        </div>
+
                         <div id="profile-library" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-bookmark text-cyan-400"></i> Minha área</h2>
                             <div id="lib-tabs" role="tablist" class="grid grid-cols-3 gap-1 bg-gray-950 border border-gray-800 rounded-xl p-1 mt-4">
@@ -509,12 +568,12 @@ function profileHtml() {
                         <div id="profile-prefs" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-solid fa-sliders text-cyan-400"></i> Preferências</h2>
                             <div class="mt-4">
-                                <label class="flex items-start gap-3 bg-gray-950 border border-gray-800 rounded-xl p-4 cursor-pointer">
+<label class="flex items-start gap-3 bg-gray-950 border border-gray-800 rounded-xl p-4 cursor-pointer">
                                     <input type="checkbox" id="about-public" class="mt-0.5 accent-cyan-400">
                                     <span class="text-xs text-gray-300 leading-relaxed"><strong class="text-white">Manter meu perfil público.</strong> Quem clicar no seu nome nos comentários poderá ver o seu nome, foto, bio, redes, a data em que você entrou e os seus comentários publicados. Vem ligado, e você pode desligar quando quiser: aí só o seu nome e a sua foto continuam aparecendo.</span>
                                 </label>
                                 <div id="about-link-row-wrap" class="mt-3">
-                                <div id="about-link-row" class="hidden flex-wrap items-center gap-2 text-xs">
+<div id="about-link-row" class="hidden flex-wrap items-center gap-2 text-xs">
                                     <span class="text-gray-500">Seu link público:</span>
                                     <a id="about-public-link" href="#" class="text-cyan-400 hover:underline break-all"></a>
                                     <button type="button" id="about-copy" class="font-bold text-gray-400 hover:text-cyan-400 transition"><i class="fa-solid fa-link mr-1"></i> Copiar</button>
@@ -523,80 +582,14 @@ function profileHtml() {
                                 <p id="public-msg" class="text-xs min-h-[1rem] mt-3" role="status" aria-live="polite"></p>
                             </div>
                             <div class="mt-3">
-                            <label class="mt-4 flex items-start gap-3 bg-gray-950 border border-gray-800 rounded-xl p-4 cursor-pointer">
+<label class="mt-4 flex items-start gap-3 bg-gray-950 border border-gray-800 rounded-xl p-4 cursor-pointer">
                                 <input type="checkbox" id="notify-replies" class="mt-0.5 accent-cyan-400" disabled>
                                 <span class="text-xs text-gray-300 leading-relaxed"><strong class="text-white">Avisar por e-mail quando alguém responder ao meu comentário.</strong> Enviamos para o e-mail da sua conta, no máximo 5 por hora, e todo aviso traz um link para parar de receber.</span>
                             </label>
                                 <p id="notify-msg" class="text-xs min-h-[1rem] mt-3" role="status" aria-live="polite"></p>
                             </div>
-                        </div>
-                    </div>
 
-                    <div id="profile-user" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
-                        <div class="flex items-start justify-between gap-4 pb-6 border-b border-gray-800">
-                            <div class="flex items-center gap-4 min-w-0">
-                            <div id="profile-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400 flex-shrink-0"></div>
-                            <div class="min-w-0">
-                                <p id="profile-title" class="text-lg font-black text-white truncate"></p>
-                                <p id="profile-since" class="text-xs text-gray-500 mt-1"></p>
-                                <div class="mt-3 flex flex-wrap items-center gap-2">
-                                    <button id="profile-photo-btn" type="button" class="text-[11px] font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-camera mr-1"></i> Alterar foto</button>
-                                    <button id="profile-photo-remove" type="button" class="hidden text-[11px] font-bold text-gray-500 hover:text-red-400 px-2 py-1.5 transition">Remover foto</button>
-                                    <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
-                                </div>
-                                <p id="profile-photo-msg" class="text-[11px] mt-2 min-h-[1rem]" role="status" aria-live="polite"></p>
-                            </div>
-                            </div>
-                            <button type="button" onclick="logout()" aria-label="Sair da conta" class="inline-flex flex-shrink-0 items-center gap-2 border border-gray-700 hover:border-red-400 hover:text-red-400 text-gray-300 text-xs font-bold px-3 py-2 rounded-xl transition whitespace-nowrap">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="sm:hidden">Sair</span><span class="hidden sm:inline">Sair da conta</span>
-                            </button>
-                        </div>
-
-                        <form id="profile-form" class="py-6 space-y-3 border-b border-gray-800" novalidate>
-                            <label for="profile-name" class="block text-xs font-bold text-gray-300">Nome de exibição</label>
-                            <p class="text-[11px] text-gray-500">É o nome que aparece nos seus comentários. Evite usar o seu e-mail.</p>
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <input id="profile-name" type="text" maxlength="40" autocomplete="nickname" class="flex-1 bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400">
-                                <button id="profile-save" type="submit" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Salvar</button>
-                            </div>
-                            <p id="profile-msg" class="text-xs min-h-[1rem]" role="status" aria-live="polite"></p>
-                        </form>
-
-                        <dl class="py-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs border-b border-gray-800">
-                            <div>
-                                <dt class="text-gray-500">E-mail <span class="text-gray-600">(só você vê)</span></dt>
-                                <dd id="profile-email" class="text-gray-200 mt-1 break-all"></dd>
-                            </div>
-                            <div>
-                                <dt class="text-gray-500">Entrou com</dt>
-                                <dd id="profile-provider" class="text-gray-200 mt-1"></dd>
-                            </div>
-                        </dl>
-
-                        <div id="profile-about" class="pt-6">
-                            <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-id-card text-cyan-400"></i> Sobre você</h2>
-                            <form id="about-form" class="mt-4 space-y-5" novalidate>
-                                <div>
-                                    <label for="about-bio" class="block text-xs font-bold text-gray-300">Bio</label>
-                                    <p class="text-[11px] text-gray-500 mt-1">Até 160 caracteres, sem links. Aparece só no seu perfil público.</p>
-                                    <textarea id="about-bio" rows="3" maxlength="160" class="mt-2 w-full resize-none bg-gray-950 border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-cyan-400"></textarea>
-                                    <p class="text-[11px] text-gray-600 mt-1 text-right"><span id="about-bio-count">0</span>/160</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-gray-300">Redes <span class="font-normal text-gray-500">(até 4, só o nome de usuário)</span></p>
-                                    <div id="about-links" class="mt-2 space-y-2"></div>
-                                    <button type="button" id="about-add" class="mt-2 text-xs font-bold text-cyan-400 hover:text-cyan-300 transition"><i class="fa-solid fa-plus mr-1"></i> Adicionar rede</button>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <button id="about-save" type="submit" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Salvar</button>
-                                    <p id="about-msg" class="text-xs min-h-[1rem]" role="status" aria-live="polite"></p>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div id="profile-danger" class="hidden mt-6">
-                        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                            <div class="mt-6 pt-6 border-t border-gray-800">
                             <h2 class="text-sm font-black text-white">Excluir minha conta</h2>
                             <p class="text-xs text-gray-400 mt-2 leading-relaxed">Apaga a sua conta, o seu nome e a sua foto. Os seus comentários também são apagados; se algum tiver respostas de outras pessoas, ele passa a aparecer como “Comentário removido”. Esta ação não pode ser desfeita.</p>
                             <button id="profile-delete-open" type="button" class="mt-3 inline-flex items-center gap-2 border border-red-500/40 hover:bg-red-500/10 text-red-400 text-xs font-bold px-4 py-2.5 rounded-xl transition">
@@ -610,6 +603,7 @@ function profileHtml() {
                                     <button id="profile-delete-cancel" type="button" class="text-xs font-bold text-gray-400 hover:text-white px-3 py-2 transition">Cancelar</button>
                                 </div>
                                 <p id="profile-delete-msg" class="text-xs min-h-[1rem]" role="alert"></p>
+                            </div>
                             </div>
                         </div>
                     </div>
