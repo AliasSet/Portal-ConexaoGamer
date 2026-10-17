@@ -5,7 +5,7 @@ category:
   - Steam
   - Consoles
 tags:
-  - Peak
+  - PEAK
 image: /uploads/peak-jogo-2b6daa2faa.webp
 summary: Sucesso indie de escalada e sobrevivência cooperativa na Steam, Peak
   será lançado para PS5, Xbox Series X/S e Nintendo Switch 2 no dia 22 de
