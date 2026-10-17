@@ -216,10 +216,17 @@
             <div class="lg:col-span-2 min-w-0">
                 <!--CG:MAIN-->
                 <div id="home-main" class="space-y-8">
-                    <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                    <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-gray-800 pb-3">
                         <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
                             <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> Principais Matérias
                         </h2>
+                        <!-- Atalhos de categoria: levam para as páginas /categoria/... ("Todas" = esta própria lista) -->
+                        <nav aria-label="Categorias" class="flex items-center gap-2 max-w-full overflow-x-auto">
+                            <a href="/" aria-current="page" class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide whitespace-nowrap transition bg-cyan-400/10 border-cyan-500/50 text-cyan-300">Todas</a>
+                            <a href="/categoria/noticias/" class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide whitespace-nowrap transition bg-gray-900 border-gray-800 text-gray-300 hover:text-cyan-300 hover:border-cyan-500/50">Notícias</a>
+                            <a href="/categoria/pc/" class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide whitespace-nowrap transition bg-gray-900 border-gray-800 text-gray-300 hover:text-cyan-300 hover:border-cyan-500/50">PC</a>
+                            <a href="/categoria/consoles/" class="inline-flex items-center px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wide whitespace-nowrap transition bg-gray-900 border-gray-800 text-gray-300 hover:text-cyan-300 hover:border-cyan-500/50">Consoles</a>
+                        </nav>
                     </div>
 
                     <div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
