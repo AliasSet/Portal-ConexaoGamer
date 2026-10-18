@@ -21,7 +21,7 @@ summary: Micron, Samsung, SanDisk e Kioxia estão reservando de 50% a 70% da
   por anos, e a TrendForce ainda prevê alta no fim de 2026. Seu próximo upgrade
   pode ter que esperar.
 author: Redação Conexão Gamer
-date: 16/10/2026T21:19
+date: 17/10/2026T16:19
 ---
 Se você está esperando o preço da memória RAM e do SSD cair para fazer aquele upgrade no PC, talvez seja a hora de rever os planos. Uma análise detalhada do GamersNexus aponta que as maiores fabricantes do setor encontraram uma forma de quebrar o histórico ciclo de queda nos preços, e quem paga a conta mais uma vez é o usuário comum.
 
