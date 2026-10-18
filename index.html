@@ -39,7 +39,9 @@
         body { background-color: #0b0f19; color: #f3f4f6; font-family: 'Inter', sans-serif; }
         .cg-logo { font-family: 'Exo 2', 'Inter', sans-serif; }   /* fonte só do logo CONEXÃOGAMER (cabeçalho e rodapé) */
         .bg-glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(14px); }
-        .cg-empty-hide:empty { display: none; }   /* mensagens vazias não ocupam espaço */
+        .cg-empty-hide:empty { display: none; }
+        .cg-noscrollbar { scrollbar-width: none; }   /* faixa de abas rola para o lado sem mostrar barra */
+        .cg-noscrollbar::-webkit-scrollbar { display: none; }   /* mensagens vazias não ocupam espaço */
         .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.2); }
     </style>

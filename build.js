@@ -466,7 +466,7 @@ function categoryHtml(cat, list) {
 function profileHtml() {
   return `
                 <div id="profile-root">
-                    <div class="border-b border-gray-800 pb-3 mb-6">
+                    <div class="mb-3">
                         <h1 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
                             <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> Meu perfil
                         </h1>
@@ -482,11 +482,13 @@ function profileHtml() {
                     </div>
 
                     <div id="profile-main" class="hidden">
-                        <div id="profile-tabs" role="tablist" aria-label="Seções do perfil" class="flex gap-1 border-b border-gray-800 mb-6 overflow-x-auto">
-                            <button type="button" id="ptab-btn-perfil" data-ptab="perfil" role="tab" aria-controls="ptab-perfil" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-3 -mb-px text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-regular fa-user hidden sm:inline text-cyan-400"></i> Perfil</button>
-                            <button type="button" id="ptab-btn-area" data-ptab="area" role="tab" aria-controls="ptab-area" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-3 -mb-px text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-regular fa-bookmark hidden sm:inline text-cyan-400"></i> Minha área</button>
-                            <button type="button" id="ptab-btn-config" data-ptab="config" role="tab" aria-controls="ptab-config" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-3 -mb-px text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-sliders hidden sm:inline text-cyan-400"></i> Configurações</button>
-                            <button type="button" id="ptab-btn-mod" data-ptab="mod" role="tab" aria-controls="ptab-mod" aria-selected="false" tabindex="-1" class="hidden inline-flex items-center gap-2 px-3 sm:px-4 py-3 -mb-px text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-shield-halved hidden sm:inline text-cyan-400"></i> Moderação</button>
+                        <div class="border-b border-gray-800 mb-4">
+                        <div id="profile-tabs" role="tablist" aria-label="Seções do perfil" class="flex gap-1 overflow-x-auto overflow-y-hidden cg-noscrollbar">
+                            <button type="button" id="ptab-btn-perfil" data-ptab="perfil" role="tab" aria-controls="ptab-perfil" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-regular fa-user hidden sm:inline text-cyan-400"></i> Perfil</button>
+                            <button type="button" id="ptab-btn-area" data-ptab="area" role="tab" aria-controls="ptab-area" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-regular fa-bookmark hidden sm:inline text-cyan-400"></i> Minha área</button>
+                            <button type="button" id="ptab-btn-config" data-ptab="config" role="tab" aria-controls="ptab-config" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-sliders hidden sm:inline text-cyan-400"></i> Configurações</button>
+                            <button type="button" id="ptab-btn-mod" data-ptab="mod" role="tab" aria-controls="ptab-mod" aria-selected="false" tabindex="-1" class="hidden inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-shield-halved hidden sm:inline text-cyan-400"></i> Moderação</button>
+                        </div>
                         </div>
 
                         <div id="ptab-perfil" role="tabpanel" aria-labelledby="ptab-btn-perfil">
