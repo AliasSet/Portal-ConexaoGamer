@@ -12,7 +12,7 @@ summary: Sucesso indie de escalada e sobrevivência cooperativa na Steam, Peak
   outubro de 2026. O jogo contará com suporte total a crossplay e todas as
   atualizações de conteúdo já lançadas no PC.
 author: Redação Conexão Gamer
-date: 17/10/2026T18:56
+date: 17/10/2026T09:56
 ---
 Um dos jogos independentes mais comentados e jogados na Steam ao longo dos últimos meses está prestes a alcançar uma nova comunidade de jogadores. A desenvolvedora Aggro Crab confirmou que Peak, seu aclamado jogo de escalada e sobrevivência cooperativa, será lançado oficialmente para PlayStation 5, Xbox Series X/S e Nintendo Switch 2 no dia 22 de outubro de 2026.
 
