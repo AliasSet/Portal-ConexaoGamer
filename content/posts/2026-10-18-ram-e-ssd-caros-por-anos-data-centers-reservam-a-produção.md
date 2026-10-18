@@ -14,7 +14,7 @@ tags:
   - Micron
   - Samsung
   - TrendForce
-image: /uploads/csm-ddr5-and-ddr4-ram-prices-have-skyroc-e337e25c2a.webp
+image: https://www.adrenaline.com.br/wp-content/uploads/2026/01/48-memoria-ddr-4-em-alta.jpg
 summary: Micron, Samsung, SanDisk e Kioxia estão reservando de 50% a 70% da
   produção para poucos clientes de data center, o que pode acabar com as quedas
   históricas de preço da memória. Análise do GamersNexus aponta RAM e SSD caros
@@ -87,7 +87,7 @@ A expansão das empresas chinesas gera atritos geopolíticos com o governo dos E
 
 Relatórios recentes da TrendForce apontam que os preços de contrato da DRAM e da NAND continuam em trajetória de alta, embora em ritmo ligeiramente mais brando do que nos trimestres anteriores. A consultoria alerta que a oferta de memórias para PCs deve continuar apertada nos próximos anos.
 
-[[imagem|/uploads/micron-ceo-expects-ram-shortage-to-last--b54a3a475e.webp|media||Micron prevê escassez até 2027, com possível redução à partir de 2028]]
+[[imagem|/uploads/micron-ceo-expects-ram-shortage-to-last--b54a3a475e.webp|media|Micron prevê escassez até 2027, com possível redução à partir de 2028|]]
 
 A leitura de especialistas da indústria é que a consolidação dos contratos de longo prazo reduz a volatilidade do mercado, mas fixa os preços em um patamar consideravelmente mais alto do que o visto em anos anteriores.
 
