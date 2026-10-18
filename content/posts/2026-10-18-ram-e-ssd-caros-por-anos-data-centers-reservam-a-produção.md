@@ -1,5 +1,6 @@
 ---
-title: RAM e SSD caros por anos? Data centers reservam a produção
+title: Preço de RAM e SSD pode continuar alto por anos devido a contratos de
+  longa duração, aponta análise
 category:
   - Notícias
   - Hardware
