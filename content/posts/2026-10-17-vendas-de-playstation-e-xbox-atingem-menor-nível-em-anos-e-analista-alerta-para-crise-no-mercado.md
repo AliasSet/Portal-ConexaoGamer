@@ -11,7 +11,7 @@ summary: As vendas de consoles nos Estados Unidos despencaram para marcas
   absorvidas por data centers de IA — colocou o mercado de hardware na situação
   mais delicada desde o crash dos videogames nos anos 80.
 author: Redação Conexão Gamer
-date: 17/10/2026T12:35
+date: 16/10/2026T12:35
 ---
 Vender consoles de videogame nunca foi uma tarefa tão desafiadora para Sony e Microsoft. De acordo com dados revelados por Mat Piscatella, analista sênior da empresa de pesquisas de mercado Circana, o setor de hardware nos Estados Unidos atravessa um momento crítico, registrando as menores marcas de vendas da geração atual.
 
