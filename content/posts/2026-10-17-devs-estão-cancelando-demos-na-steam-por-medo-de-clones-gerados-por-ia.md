@@ -6,7 +6,7 @@ category:
   - Steam
 tags:
   - Inteligência Artificial
-image: /uploads/tncr-graphics-kb-2-84030f8dee.gif
+image: https://www.dual7.ai/blog/what-is-vibe-coding.jpg
 summary: A crescente onda de clonagem rápida por IA e a prática de "vibe coding"
   acenderam um sinal de alerta entre desenvolvedores independentes na Steam.
   Para evitar que seus projetos sejam copiados e lançados antes da versão
