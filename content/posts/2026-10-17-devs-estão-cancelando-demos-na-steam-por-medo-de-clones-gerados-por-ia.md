@@ -13,7 +13,7 @@ summary: A crescente onda de clonagem rápida por IA e a prática de "vibe codin
   oficial, estúdios começaram a cancelar demonstrações públicas e migrar para
   testes fechados.
 author: Redação Conexão Gamer
-date: 17/10/2026T17:03
+date: 17/10/2026T21:38
 rating: ""
 ---
 A facilidade trazida pelas novas ferramentas de Inteligência Artificial generativa começou a causar um efeito colateral preocupante na indústria de jogos independentes. Temendo que usuários utilizem modelos avançados de IA e o chamado "vibe coding" para clonar mecânicas, assets e conceitos a partir de versões de demonstração, desenvolvedores estão voltando atrás na decisão de disponibilizar demos públicas na Steam.
