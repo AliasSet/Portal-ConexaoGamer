@@ -13,7 +13,7 @@ tags:
   - Micron
   - Samsung
   - TrendForce
-image: https://www.notebookcheck.info/fileadmin/_processed_/4/a/csm_DDR5-and-DDR4-RAM-prices-have-skyrocketed-to-new-highs_c008d97cee.jpg
+image: /uploads/csm-ddr5-and-ddr4-ram-prices-have-skyroc-e337e25c2a.webp
 summary: Micron, Samsung, SanDisk e Kioxia estão reservando de 50% a 70% da
   produção para poucos clientes de data center, o que pode acabar com as quedas
   históricas de preço da memória. Análise do GamersNexus aponta RAM e SSD caros
@@ -72,7 +72,7 @@ Projeções da TrendForce indicam que os investimentos das nove maiores empresas
 
 O próprio CEO da Amazon destacou que o encarecimento das peças para montar infraestrutura própria está forçando empresas a migrarem seus sistemas para a nuvem. Com isso, divisões como AWS, Google Cloud e Microsoft Azure registraram crescimentos expressivos de receita.
 
-[[imagem|https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2ZXPXdv4TRzJLHBSJIuc7QJ53hOLHpeA4lOivBBa_Zw87SO1SGAK1Io&s=10|media|Preços disparam em resposta à alta demanda de chips, futuro é incerto para o consumidor|]]
+[[imagem|/uploads/images-67310f95c5.jpg|media|Preços disparam em resposta à alta demanda de chips, futuro é incerto para o consumidor|]]
 
 A grande preocupação levantada pela comunidade é que, se montar um computador gamer se tornar financeiramente inviável para o público geral, jogar via serviços de nuvem acabe se tornando a única alternativa viável a longo prazo.
 
@@ -86,7 +86,7 @@ A expansão das empresas chinesas gera atritos geopolíticos com o governo dos E
 
 Relatórios recentes da TrendForce apontam que os preços de contrato da DRAM e da NAND continuam em trajetória de alta, embora em ritmo ligeiramente mais brando do que nos trimestres anteriores. A consultoria alerta que a oferta de memórias para PCs deve continuar apertada nos próximos anos.
 
-[[imagem|https://sm.ign.com/ign_br/news/m/micron-ceo/micron-ceo-expects-ram-shortage-to-last-through-2027-start-t_urzy.jpg|media||Micron prevê escassez até 2027, com possível redução à partir de 2028]]
+[[imagem|/uploads/micron-ceo-expects-ram-shortage-to-last--b54a3a475e.webp|media||Micron prevê escassez até 2027, com possível redução à partir de 2028]]
 
 A leitura de especialistas da indústria é que a consolidação dos contratos de longo prazo reduz a volatilidade do mercado, mas fixa os preços em um patamar consideravelmente mais alto do que o visto em anos anteriores.
 
