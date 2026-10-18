@@ -486,7 +486,7 @@ function profileHtml() {
                         <div id="profile-tabs" role="tablist" aria-label="Seções do perfil" class="flex gap-1 overflow-x-auto overflow-y-hidden cg-noscrollbar">
                             <button type="button" id="ptab-btn-perfil" data-ptab="perfil" role="tab" aria-controls="ptab-perfil" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-regular fa-user hidden sm:inline text-cyan-400"></i> Perfil</button>
                             <button type="button" id="ptab-btn-area" data-ptab="area" role="tab" aria-controls="ptab-area" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-regular fa-bookmark hidden sm:inline text-cyan-400"></i> Minha área</button>
-                            <button type="button" id="ptab-btn-config" data-ptab="config" role="tab" aria-controls="ptab-config" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-sliders hidden sm:inline text-cyan-400"></i> Configurações</button>
+                            <button type="button" id="ptab-btn-config" data-ptab="config" role="tab" aria-controls="ptab-config" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-sliders hidden sm:inline text-cyan-400"></i> Preferências</button>
                             <button type="button" id="ptab-btn-mod" data-ptab="mod" role="tab" aria-controls="ptab-mod" aria-selected="false" tabindex="-1" class="hidden inline-flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-shield-halved hidden sm:inline text-cyan-400"></i> Moderação</button>
                         </div>
                         </div>
@@ -592,16 +592,11 @@ function profileHtml() {
                         <div id="profile-prefs" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-solid fa-sliders text-cyan-400"></i> Preferências</h2>
                             <div class="mt-4">
-<label class="flex items-start gap-3 bg-gray-950 border border-gray-800 rounded-xl p-4 cursor-pointer">
+<div class="bg-gray-950 border border-gray-800 rounded-xl p-4">
+                                <label class="flex items-start gap-3 cursor-pointer">
                                     <input type="checkbox" id="about-public" class="mt-0.5 accent-cyan-400">
                                     <span class="text-xs text-gray-300 leading-relaxed"><strong class="text-white">Manter meu perfil público.</strong> Quem clicar no seu nome nos comentários poderá ver o seu nome, foto, bio, redes, a data em que você entrou e os seus comentários publicados. Vem ligado, e você pode desligar quando quiser: aí só o seu nome e a sua foto continuam aparecendo.</span>
                                 </label>
-                                <div id="about-link-row-wrap" class="mt-3">
-<div id="about-link-row" class="hidden flex-wrap items-center gap-2 text-xs">
-                                    <span class="text-gray-500">Seu link público:</span>
-                                    <a id="about-public-link" href="#" class="text-cyan-400 hover:underline break-all"></a>
-                                    <button type="button" id="about-copy" class="font-bold text-gray-400 hover:text-cyan-400 transition"><i class="fa-solid fa-link mr-1"></i> Copiar</button>
-                                </div>
                                 </div>
                                 <p id="public-msg" class="text-xs min-h-[1rem] mt-3" role="status" aria-live="polite"></p>
                             </div>

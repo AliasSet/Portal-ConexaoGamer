@@ -1290,21 +1290,13 @@
     function aboutToggleAdd() {
         $('about-add').classList.toggle('hidden', $('about-links').children.length >= 4);
     }
-    function aboutPublicLink(uid, isPublic) {
-        const row = $('about-link-row');
-        row.classList.toggle('hidden', !isPublic);
-        row.classList.toggle('flex', !!isPublic);
-        const url = location.origin + '/u/?id=' + encodeURIComponent(uid);
-        $('about-public-link').textContent = url;
-        $('about-public-link').setAttribute('href', url);
-    }
     async function aboutInit(uid) {
         if (aboutUid === uid) return;
         aboutUid = uid;
         $('about-links').innerHTML = '';
         $('about-bio').value = ''; $('about-bio-count').textContent = '0';
         aboutState = null;
-        $('about-public').checked = true; $('about-public').disabled = true; aboutPublicLink(uid, true); aboutMsg(''); publicMsg('');
+        $('about-public').checked = true; $('about-public').disabled = true; aboutMsg(''); publicMsg('');
         aboutToggleAdd();
         const [p, e] = await Promise.all([
             supabaseClient.from('profiles').select('bio').eq('id', uid).maybeSingle(),
@@ -1317,7 +1309,7 @@
         links.forEach((l) => aboutRow(l.n, l.h));
         // sem registro = perfil público (é o padrão); só vira privado se a pessoa desligar
         const isPublic = e.data ? !!e.data.is_public : !e.error;
-        $('about-public').checked = isPublic; aboutPublicLink(uid, isPublic);
+        $('about-public').checked = isPublic;
         if (p.error || e.error) { aboutMsg('Não foi possível carregar tudo agora. Recarregue a página.', true); publicMsg('Não foi possível carregar esta opção agora. Recarregue a página.', true); return; }
         aboutState = { bio: bio, links: links.map((l) => ({ n: l.n, h: l.h })), isPublic: isPublic };
         $('about-public').disabled = false;
@@ -1328,11 +1320,6 @@
         const used = Array.from($('about-links').querySelectorAll('select')).map((x) => x.value);
         const free = Object.keys(ABOUT_NETS).find((k) => used.indexOf(k) < 0);
         if (free) aboutRow(free, '');
-    });
-    $('about-copy').addEventListener('click', () => {
-        const url = $('about-public-link').textContent;
-        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(() => cgToast('Link copiado!'), () => cgToast('Não consegui copiar. Copie o endereço manualmente.'));
-        else cgToast('Copie o endereço manualmente.');
     });
     $('about-form').addEventListener('submit', async (ev) => {
         ev.preventDefault();
@@ -1380,7 +1367,7 @@
             return;
         }
         aboutState.isPublic = want;
-        aboutPublicLink(cgSession.user.id, want);
+       
         publicMsg(want ? 'Pronto! Seu perfil está público.' : 'Pronto! Seu perfil está privado: só o nome e a foto aparecem.');
     });
 
@@ -1411,7 +1398,7 @@
         notifyMsg(want ? 'Pronto! Você vai receber os avisos de resposta.' : 'Pronto! Você não receberá mais avisos por e-mail.');
     });
 
-    /* ---------- Abas do perfil: Perfil / Minha área / Configurações (+ Moderação para a conta principal) ---------- */
+    /* ---------- Abas do perfil: Perfil / Minha área / Preferências (+ Moderação para a conta principal) ---------- */
     const PTABS = ['perfil', 'area', 'config', 'mod'];
     const PTAB_ON = ['border-cyan-400', 'text-cyan-300'];
     const PTAB_OFF = ['border-transparent', 'text-gray-400', 'hover:text-gray-200'];
