@@ -398,8 +398,8 @@
     // Níveis automáticos por número de comentários visíveis. Para mudar nomes ou limites, edite só esta lista.
     const CG_LEVELS = [
         { min: 0,   name: 'Novato',   icon: 'fa-seedling', cls: 'text-gray-300 bg-gray-500/10 border-gray-500/30' },
-        { min: 5,   name: 'Jogador',  icon: 'fa-gamepad',  cls: 'text-emerald-300 bg-emerald-400/10 border-emerald-400/30' },
-        { min: 20,  name: 'Veterano', icon: 'fa-medal',    cls: 'text-sky-300 bg-sky-400/10 border-sky-400/30' },
+        { min: 6,   name: 'Jogador',  icon: 'fa-gamepad',  cls: 'text-emerald-300 bg-emerald-400/10 border-emerald-400/30' },
+        { min: 21,  name: 'Veterano', icon: 'fa-medal',    cls: 'text-sky-300 bg-sky-400/10 border-sky-400/30' },
         { min: 50,  name: 'Elite',    icon: 'fa-bolt',     cls: 'text-violet-300 bg-violet-400/10 border-violet-400/30' },
         { min: 150, name: 'Lenda',    icon: 'fa-crown',    cls: 'text-amber-300 bg-amber-400/10 border-amber-400/30' }
     ];
@@ -407,13 +407,7 @@
         n = Math.max(0, Math.floor(Number(n) || 0));
         let i = 0;
         CG_LEVELS.forEach((l, k) => { if (n >= l.min) i = k; });
-        const cur = CG_LEVELS[i], next = CG_LEVELS[i + 1] || null;
-        return {
-            name: cur.name, icon: cur.icon, cls: cur.cls,
-            next: next ? next.name : null,
-            missing: next ? next.min - n : 0,
-            pct: next ? Math.round(((n - cur.min) / (next.min - cur.min)) * 100) : 100
-        };
+        return { name: CG_LEVELS[i].name, icon: CG_LEVELS[i].icon, cls: CG_LEVELS[i].cls };
     };
     window.cgLevelBadge = function (n) {
         const l = window.cgLevel(n);
@@ -894,12 +888,8 @@
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
     function show(which) {
-        ['profile-loading', 'profile-guest', 'profile-user'].forEach((id) =>
+        ['profile-loading', 'profile-guest', 'profile-main'].forEach((id) =>
             $(id).classList.toggle('hidden', id !== which));
-        ['profile-rest'].forEach((id) => {
-            const el = $(id);
-            if (el) el.classList.toggle('hidden', which !== 'profile-user');
-        });
     }
     let profileSavedName = '';
     const cleanName = (v) => String(v || '').replace(/\s+/g, ' ').trim();
@@ -918,6 +908,7 @@
             (url ? '<img src="' + esc(url) + '" alt="" referrerpolicy="no-referrer" class="absolute inset-0 w-full h-full object-cover" onerror="this.remove()">' : '');
         const own = cgProfile && cgProfile.avatar_url && cgProfile.avatar_url.indexOf(AVATAR_PREFIX) === 0;
         $('profile-photo-remove').classList.toggle('hidden', !own);
+        $('profile-photo-caret').classList.toggle('hidden', !own);
     }
 
     function render(state) {
@@ -941,7 +932,8 @@
         paintAvatar(name, url);
         msg('');
         $('profile-photo-msg').textContent = '';
-        show('profile-user');
+        show('profile-main');
+        if (!tabsReady) { tabsReady = true; setTab(tabFromHash()); }
         libInit(user.id);
         aboutInit(user.id);
         notifyInit(user.id);
@@ -994,7 +986,21 @@
         });
     }
 
-    $('profile-photo-btn').addEventListener('click', () => $('profile-photo-input').click());
+    // Menu único "Alterar foto": escolher nova ou remover. Sem foto própria, o botão abre direto o seletor de arquivo.
+    function photoMenu(open) {
+        $('profile-photo-menu').classList.toggle('hidden', !open);
+        $('profile-photo-menu-btn').setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    $('profile-photo-menu-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if ($('profile-photo-remove').classList.contains('hidden')) { $('profile-photo-input').click(); return; }
+        photoMenu($('profile-photo-menu').classList.contains('hidden'));
+    });
+    document.addEventListener('click', (e) => {
+        if (!$('profile-photo-menu').classList.contains('hidden') && !e.target.closest('#profile-photo-menu')) photoMenu(false);
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') photoMenu(false); });
+    $('profile-photo-btn').addEventListener('click', () => { photoMenu(false); $('profile-photo-input').click(); });
 
     $('profile-photo-input').addEventListener('change', async (e) => {
         const file = e.target.files && e.target.files[0];
@@ -1033,6 +1039,7 @@
     });
 
     $('profile-photo-remove').addEventListener('click', async () => {
+        photoMenu(false);
         if (!cgSession) return;
         const previous = cgProfile && cgProfile.avatar_url;
         pmsg('Removendo…');
@@ -1402,18 +1409,53 @@
         notifyMsg(want ? 'Pronto! Você vai receber os avisos de resposta.' : 'Pronto! Você não receberá mais avisos por e-mail.');
     });
 
+    /* ---------- Abas do perfil: Perfil / Minha área / Configurações (+ Moderação para a conta principal) ---------- */
+    const PTABS = ['perfil', 'area', 'config', 'mod'];
+    const PTAB_ON = ['border-cyan-400', 'text-cyan-300'];
+    const PTAB_OFF = ['border-transparent', 'text-gray-400', 'hover:text-gray-200'];
+    let tabsReady = false;
+    function tabFromHash() {
+        const t = String(location.hash || '').replace('#', '');
+        return PTABS.indexOf(t) >= 0 ? t : 'perfil';
+    }
+    let pendingTab = null;   // aba pedida pelo endereço (#mod) que ainda não pôde abrir (a aba Moderação aparece depois da checagem)
+    function setTab(name, focus, keepHash) {
+        if (PTABS.indexOf(name) < 0) name = 'perfil';
+        if (name === 'mod' && $('ptab-btn-mod').classList.contains('hidden')) { pendingTab = 'mod'; name = 'perfil'; keepHash = true; }
+        else if (!keepHash) pendingTab = null;
+        PTABS.forEach((t) => {
+            const on = t === name, btn = $('ptab-btn-' + t);
+            $('ptab-' + t).classList.toggle('hidden', !on);
+            btn.setAttribute('aria-selected', on ? 'true' : 'false');
+            btn.tabIndex = on ? 0 : -1;
+            PTAB_ON.forEach((c) => btn.classList.toggle(c, on));
+            PTAB_OFF.forEach((c) => btn.classList.toggle(c, !on));
+            if (on && focus) btn.focus();
+        });
+        if (!keepHash) { try { history.replaceState(null, '', name === 'perfil' ? location.pathname + location.search : '#' + name); } catch (e) { /* ignora */ } }
+    }
+    $('profile-tabs').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-ptab]');
+        if (b) setTab(b.getAttribute('data-ptab'));
+    });
+    $('profile-tabs').addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        const vis = PTABS.filter((t) => !$('ptab-btn-' + t).classList.contains('hidden'));
+        const cur = vis.findIndex((t) => $('ptab-btn-' + t).getAttribute('aria-selected') === 'true');
+        const next = vis[(cur + (e.key === 'ArrowRight' ? 1 : vis.length - 1)) % vis.length];
+        e.preventDefault();
+        setTab(next, true);
+    });
+    window.addEventListener('hashchange', () => { if (tabsReady) setTab(tabFromHash()); });
+
     /* ---------- Meu nível e meu contador de comentários ---------- */
     async function statsInit() {
         const box = $('profile-stats');
         const { data, error } = await supabaseClient.rpc('my_comment_count');
         if (error || data == null || isNaN(Number(data))) { box.classList.add('hidden'); return; }
-        const n = Number(data), lv = window.cgLevel(n);
+        const n = Number(data);
         $('profile-level').innerHTML = window.cgLevelBadge(n);
         $('profile-count').innerHTML = '<i class="fa-regular fa-comment mr-1"></i>' + esc(window.cgCountText(n));
-        $('profile-bar').style.width = lv.pct + '%';
-        $('profile-next').textContent = lv.next
-            ? (lv.missing === 1 ? 'Falta 1 comentário' : 'Faltam ' + lv.missing + ' comentários') + ' para o nível ' + lv.next + '.'
-            : 'Você chegou ao nível máximo. Valeu por fazer parte da comunidade!';
         box.classList.remove('hidden');
     }
 
@@ -1459,14 +1501,17 @@
         const meId = cgSession && cgSession.user ? cgSession.user.id : '';
         list.innerHTML = (data || []).map((m) => modRow(m, meId)).join('') || '<p class="text-xs text-gray-500">Nenhum moderador cadastrado.</p>';
     }
+    const ptabIsMod = () => $('ptab-btn-mod').getAttribute('aria-selected') === 'true';
     async function modPanelInit(uid) {
         if (modPanelUid === uid) return;
         modPanelUid = uid;
-        $('profile-mod').classList.add('hidden');
+        $('ptab-btn-mod').classList.add('hidden');
+        if (ptabIsMod()) setTab('perfil');
         // só a conta principal (dona do site) gerencia moderadores; os demais moderadores não veem este painel
         const { data } = await supabaseClient.rpc('mod_can_manage');
         if (modPanelUid !== uid || data !== true) return;
-        $('profile-mod').classList.remove('hidden');
+        $('ptab-btn-mod').classList.remove('hidden');
+        if (pendingTab === 'mod') setTab('mod');
         modLoadList();
     }
     $('mod-add-form').addEventListener('submit', async (ev) => {

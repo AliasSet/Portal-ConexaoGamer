@@ -481,13 +481,32 @@ function profileHtml() {
                         <button type="button" onclick="toggleAuthModal()" class="bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Entrar</button>
                     </div>
 
-                    <div id="profile-user" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                    <div id="profile-main" class="hidden">
+                        <div id="profile-tabs" role="tablist" aria-label="Seções do perfil" class="flex gap-1 border-b border-gray-800 mb-6 overflow-x-auto">
+                            <button type="button" id="ptab-btn-perfil" data-ptab="perfil" role="tab" aria-controls="ptab-perfil" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-3 -mb-px text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-regular fa-user hidden sm:inline text-cyan-400"></i> Perfil</button>
+                            <button type="button" id="ptab-btn-area" data-ptab="area" role="tab" aria-controls="ptab-area" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-3 -mb-px text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-regular fa-bookmark hidden sm:inline text-cyan-400"></i> Minha área</button>
+                            <button type="button" id="ptab-btn-config" data-ptab="config" role="tab" aria-controls="ptab-config" aria-selected="false" tabindex="-1" class="inline-flex items-center gap-2 px-3 sm:px-4 py-3 -mb-px text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-sliders hidden sm:inline text-cyan-400"></i> Configurações</button>
+                            <button type="button" id="ptab-btn-mod" data-ptab="mod" role="tab" aria-controls="ptab-mod" aria-selected="false" tabindex="-1" class="hidden inline-flex items-center gap-2 px-3 sm:px-4 py-3 -mb-px text-xs sm:text-sm font-extrabold border-b-2 border-transparent text-gray-400 hover:text-gray-200 whitespace-nowrap transition"><i class="fa-solid fa-shield-halved hidden sm:inline text-cyan-400"></i> Moderação</button>
+                        </div>
+
+                        <div id="ptab-perfil" role="tabpanel" aria-labelledby="ptab-btn-perfil">
+                    <div id="profile-user" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                         <form id="profile-form" class="flex items-start gap-4 pb-4 border-b border-gray-800" novalidate>
-                            <div id="profile-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400 flex-shrink-0"></div>
+                            <div class="flex flex-col items-center gap-2 flex-shrink-0">
+                                <div id="profile-avatar" class="relative w-20 h-20 rounded-full overflow-hidden bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl font-black text-cyan-400"></div>
+                                <div class="relative">
+                                    <button id="profile-photo-menu-btn" type="button" aria-haspopup="menu" aria-expanded="false" class="inline-flex items-center gap-1.5 h-7 px-2.5 text-[11px] font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 rounded-lg transition whitespace-nowrap"><i class="fa-solid fa-camera"></i> Alterar foto <i id="profile-photo-caret" class="hidden fa-solid fa-chevron-down text-[8px]"></i></button>
+                                    <div id="profile-photo-menu" role="menu" class="hidden absolute left-0 top-full mt-1 z-20 w-44 bg-gray-900 border border-gray-700 rounded-lg shadow-xl overflow-hidden">
+                                        <button id="profile-photo-btn" type="button" role="menuitem" class="block w-full text-left text-xs font-bold text-gray-200 hover:bg-gray-800 px-3 py-2 transition"><i class="fa-regular fa-image mr-2 text-cyan-400"></i> Escolher nova foto</button>
+                                        <button id="profile-photo-remove" type="button" role="menuitem" class="hidden block w-full text-left text-xs font-bold text-gray-300 hover:bg-gray-800 hover:text-red-400 px-3 py-2 transition"><i class="fa-regular fa-trash-can mr-2"></i> Remover foto</button>
+                                    </div>
+                                    <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+                                </div>
+                            </div>
                             <div class="min-w-0 flex-1">
                                 <div class="flex flex-wrap items-center gap-2">
                                     <label for="profile-name" class="sr-only">Nome de exibição</label>
-                                    <input id="profile-name" type="text" maxlength="40" autocomplete="nickname" aria-describedby="profile-name-hint" class="h-9 flex-1 basis-40 min-w-0 max-w-xs bg-gray-950 border border-gray-800 hover:border-gray-700 focus:border-cyan-400 focus:outline-none rounded-lg px-3 text-[16px] sm:text-sm font-bold text-white transition">
+                                    <input id="profile-name" type="text" maxlength="40" autocomplete="nickname" class="h-9 flex-1 basis-40 min-w-0 max-w-xs bg-gray-950 border border-gray-800 hover:border-gray-700 focus:border-cyan-400 focus:outline-none rounded-lg px-3 text-[16px] sm:text-sm font-bold text-white transition">
                                     <div class="flex items-center gap-2 ml-auto flex-shrink-0">
                                         <button id="profile-save" type="submit" disabled class="inline-flex items-center justify-center h-9 px-4 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed text-black font-extrabold text-xs rounded-lg transition whitespace-nowrap">Salvar</button>
                                         <button type="button" onclick="logout()" aria-label="Sair da conta" class="inline-flex items-center justify-center gap-2 h-9 px-3 flex-shrink-0 border border-gray-700 hover:border-red-400 hover:text-red-400 text-gray-300 text-xs font-bold rounded-lg transition whitespace-nowrap">
@@ -495,12 +514,10 @@ function profileHtml() {
                                         </button>
                                     </div>
                                 </div>
-                                <p id="profile-name-hint" class="text-[11px] text-gray-500 mt-2">É o nome que aparece nos seus comentários. Evite usar o seu e-mail.</p>
-                                <p id="profile-since" class="text-xs text-gray-500 mt-1"></p>
-                                <div class="mt-3 flex flex-wrap items-center gap-2">
-                                    <button id="profile-photo-btn" type="button" class="text-[11px] font-bold border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-camera mr-1"></i> Alterar foto</button>
-                                    <button id="profile-photo-remove" type="button" class="hidden text-[11px] font-bold text-gray-500 hover:text-red-400 px-2 py-1.5 transition">Remover foto</button>
-                                    <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+                                <p id="profile-since" class="text-xs text-gray-500 mt-2"></p>
+                                <div id="profile-stats" class="hidden mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                                    <span id="profile-level"></span>
+                                    <span id="profile-count"></span>
                                 </div>
                                 <p id="profile-photo-msg" class="text-[11px] mt-2 cg-empty-hide" role="status" aria-live="polite"></p>
                                 <p id="profile-msg" class="text-xs mt-1 cg-empty-hide" role="status" aria-live="polite"></p>
@@ -539,8 +556,9 @@ function profileHtml() {
                             </form>
                         </div>
                     </div>
+                        </div>
 
-                    <div id="profile-rest" class="hidden mt-6 space-y-6">
+                        <div id="ptab-area" role="tabpanel" aria-labelledby="ptab-btn-area" class="hidden">
                         <div id="profile-library" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-regular fa-bookmark text-cyan-400"></i> Minha área</h2>
                             <div id="lib-tabs" role="tablist" class="grid grid-cols-3 gap-1 bg-gray-950 border border-gray-800 rounded-xl p-1 mt-4">
@@ -566,7 +584,9 @@ function profileHtml() {
                                 </div>
                             </div>
                         </div>
+                        </div>
 
+                        <div id="ptab-config" role="tabpanel" aria-labelledby="ptab-btn-config" class="hidden">
                         <div id="profile-prefs" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-solid fa-sliders text-cyan-400"></i> Preferências</h2>
                             <div class="mt-4">
@@ -608,8 +628,10 @@ function profileHtml() {
                             </div>
                             </div>
                         </div>
+                        </div>
 
-                        <div id="profile-mod" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
+                        <div id="ptab-mod" role="tabpanel" aria-labelledby="ptab-btn-mod" class="hidden">
+                        <div id="profile-mod" class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8">
                             <h2 class="text-sm font-black text-white flex items-center gap-2"><i class="fa-solid fa-shield-halved text-cyan-400"></i> Painel de moderação</h2>
                             <p class="text-xs text-gray-400 mt-2 leading-relaxed">Moderadores podem esconder, apagar e bloquear comentários e limpar perfis. Só a conta principal vê este painel e pode adicionar ou remover moderadores. Adicione só pessoas de confiança.</p>
                             <a href="/moderacao/" class="inline-flex items-center gap-2 mt-3 h-9 px-3 border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 text-gray-300 text-xs font-bold rounded-lg transition"><i class="fa-regular fa-comments"></i> Abrir fila de comentários</a>
@@ -623,6 +645,7 @@ function profileHtml() {
                                 <button id="mod-add-btn" type="submit" class="inline-flex items-center justify-center h-9 px-4 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-40 disabled:cursor-not-allowed text-black font-extrabold text-xs rounded-lg transition whitespace-nowrap">Adicionar moderador</button>
                             </form>
                             <p id="mod-msg" class="text-xs mt-3 cg-empty-hide" role="status" aria-live="polite"></p>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -724,6 +747,7 @@ function publicProfileHtml() {
                                 <h1 id="pub-name" class="text-xl font-black text-white break-words"></h1>
                                 <p id="pub-role" class="text-[11px] uppercase tracking-wider font-bold text-gray-500 mt-1">Leitor do ${SITE_NAME}</p>
                                 <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                                    <span id="pub-level" class="hidden"></span>
                                     <span id="pub-since" class="hidden"></span>
                                     <span id="pub-count" class="hidden"></span>
                                 </div>
