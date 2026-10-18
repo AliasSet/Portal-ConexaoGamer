@@ -7,7 +7,7 @@ category:
 tags:
   - Outlast Trials
   - Outlast
-image: https://i.ytimg.com/vi/JLL0uDxqojQ/maxresdefault.jpg
+image: /uploads/maxresdefault-2e20ecafbd.webp
 summary: Antes de se tornar um dos maiores fenômenos de terror do mundo dos
   games, o primeiro Outlast foi recusado por diversas publishers da indústria.
   Hoje, com mais de 60 milhões de jogadores acumulados na franquia, o estúdio
@@ -28,7 +28,7 @@ Durante as reuniões com potenciais parceiros de publicação, a resposta das em
 
 Morin revelou que executivos de diferentes publishers chegaram a afirmar diretamente aos desenvolvedores que preferiam investir US$ 50 mil em dez jogos mobile diferentes do que colocar US$ 500 mil em um projeto de terror para PC e consoles.
 
-[[imagem|https://static0.thegamerimages.com/wordpress/wp-content/uploads/2020/06/Outlast-2.jpg?q=50&fit=crop&w=825&dpr=1.5|media|Outlast II manteve a mecânica de perspectiva através da câmera de vídeo.|OUTLAST TRIALS, OUTLAST II]]
+[[imagem|/uploads/outlast-2-20424805ce.webp|media|Outlast II manteve a mecânica de perspectiva através da câmera de vídeo.|OUTLAST TRIALS, OUTLAST II]]
 
 Sem o apoio financeiro das grandes distribuidoras, a Red Barrels decidiu assumir o risco de forma independente, acelerando o desenvolvimento para lançar o jogo na Steam antes de esgotar seus últimos recursos financeiros.
 
@@ -46,7 +46,7 @@ Anos após a estreia do título original e o lançamento de *Outlast 2*, a franq
 
 Diferente de outros títulos no modelo *live service* que buscam durar para sempre a qualquer custo, Morin destacou que o estúdio continuará criando atualizações para *The Outlast Trials* enquanto a comunidade pedir por novos conteúdos, sem perder de vista a essência da franquia.
 
-[[imagem|https://imgproxy.eneba.games/Nxol4lV9loOaGoFJlrWY6r_d-ZCpqq3HWl_VsS1S1Eg/rs:fit:300/ar:1/czM6Ly9wcm9kdWN0/cy5lbmViYS5nYW1l/cy9wcm9kdWN0cy9D/YVJCbElqYXphaF9G/N3JfeF9oVUpWak9U/OXQ1ZVF2Y3p2d29p/TWVLNXo0LmpwZw|media|Outlast Trials trouxe para a franquia o tão aguardado fator multiplayer|Outlast]]
+[[imagem|/uploads/twvlnxo0lmpwzw-2bf8a6e8d3.webp|media|Outlast Trials trouxe para a franquia o tão aguardado fator multiplayer|Outlast]]
 
 Quanto a um aguardado *Outlast 3*, o cofundador reforçou que o estúdio ainda deseja produzir um novo capítulo principal focado na experiência narrativa individual em determinado momento do futuro, embora a prioridade atual permaneça no suporte contínuo aos experimentos macabros de *Trials*.
 
