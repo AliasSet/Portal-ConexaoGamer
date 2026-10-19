@@ -1,6 +1,6 @@
 ---
-title: Nenhuma publisher quis financiar OUTLAST; hoje a franquia passa de 60
-  milhões de jogadores
+title: "Outlast: Das negativas iniciais ao sucesso absoluto, hoje a franquia
+  passa de 60 milhões de jogadores"
 category:
   - PC
   - Consoles
