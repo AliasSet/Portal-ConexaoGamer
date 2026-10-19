@@ -27,7 +27,7 @@ Para o público gamer, essa mudança de postura traz consequências diretas que 
 
 Se no passado os eventos da Nvidia eram centrados em anúncios de novas arquiteturas GeForce e parcerias com grandes estúdios de desenvolvimento de jogos, hoje o foco principal das conferências do CEO Jensen Huang está na computação de altíssimo desempenho, redes neurais e supercomputadores.
 
-[[imagem|https://www.seudinheiro.com/uploads/2024/10/nvidia-acoes-nvda-ia-CAPA-SD.jpg|media|Efeito IA: Nvidia atinge US$ 4 trilhões de valor de mercado e quebra recorde histórico|]]
+[[imagem|/uploads/nvidia-acoes-nvda-ia-capa-sd-f22d5b4b58.webp|media|Efeito IA: Nvidia atinge US$ 4 trilhões de valor de mercado e quebra recorde histórico|]]
 
 O mercado de data centers e aceleradores para modelos de inteligência artificial passou a responder pela maior parte da receita bruta da corporação.
 
@@ -43,7 +43,7 @@ O mercado de data centers e aceleradores para modelos de inteligência artificia
 
 Para os entusiastas de hardware e jogadores de PC, o novo posicionamento da Nvidia exige uma recalibragem nas expectativas. A linha GeForce continuará existindo e recebendo inovações tecnológicas como DLSS, Ray Tracing e novos recursos de IA, mas o segmento de consumo deixou de ditar os rumos de pesquisa e desenvolvimento do chip principal.
 
-[[imagem|https://conexaogamer.com.br/uploads/images-926868740b.webp|media|O futuro é incrível: até onde a IA pode chegar?|]]
+[[imagem|/uploads/images-926868740b-6f89c570fa.webp|media|O futuro é incrível: até onde a IA pode chegar?|]]
 
 Isso ajuda a explicar o fenômeno recente de preços elevados nas placas topo de linha, onde os consumidores domésticos passam a competir diretamente pelo silício com empresas e centros de processamento dispostos a pagar valores significativamente maiores.
 
