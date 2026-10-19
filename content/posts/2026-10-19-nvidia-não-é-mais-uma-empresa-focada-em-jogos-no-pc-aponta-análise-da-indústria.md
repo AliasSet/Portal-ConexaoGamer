@@ -1,5 +1,5 @@
 ---
-title: Nvidia não é mais uma empresa focada em jogos no PC, aponta análise da
+title: Nvidia não é mais uma empresa focada em jogos de PC, aponta análise da
   indústria
 category:
   - Notícias
@@ -27,7 +27,7 @@ Para o público gamer, essa mudança de postura traz consequências diretas que 
 
 Se no passado os eventos da Nvidia eram centrados em anúncios de novas arquiteturas GeForce e parcerias com grandes estúdios de desenvolvimento de jogos, hoje o foco principal das conferências do CEO Jensen Huang está na computação de altíssimo desempenho, redes neurais e supercomputadores.
 
-[[imagem|/uploads/images-926868740b.webp|media|Impulsionada por boom da IA, Nvidia já chega à 4 trilhões de valor|]]
+[[imagem|/uploads/images-926868740b.webp|media|Efeito IA: Nvidia atinge US$ 4 trilhões de valor de mercado e quebra recorde histórico|]]
 
 O mercado de data centers e aceleradores para modelos de inteligência artificial passou a responder pela maior parte da receita bruta da corporação.
 
