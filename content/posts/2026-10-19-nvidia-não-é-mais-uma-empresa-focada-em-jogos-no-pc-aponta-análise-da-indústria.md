@@ -8,7 +8,7 @@ category:
 tags:
   - Inteligência Artificial
   - NVIDIA
-image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZPTRnSOaKLeeujHYaZ_dPQ98nXyR8POFvHel46wLv2IUaoRIeSS4IZRmJ&s=10
+image: /uploads/images-27b54b4a35.webp
 summary: Com a explosão do mercado de inteligência artificial e a expansão dos
   centros de dados, a Nvidia transformou radicalmente seu modelo de negócios. O
   setor de placas de vídeo para jogos, que antes era o pilar central da empresa,
@@ -27,7 +27,7 @@ Para o público gamer, essa mudança de postura traz consequências diretas que 
 
 Se no passado os eventos da Nvidia eram centrados em anúncios de novas arquiteturas GeForce e parcerias com grandes estúdios de desenvolvimento de jogos, hoje o foco principal das conferências do CEO Jensen Huang está na computação de altíssimo desempenho, redes neurais e supercomputadores.
 
-[[imagem|https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVNILtqDptDlhUor5p1-dneAquG1I2ic1j5VaGMO5iZjTye22yVwaysv0&s=10|media|Impulsionada por boom da IA, Nvidia já chega à 4 trilhões de valor|]]
+[[imagem|/uploads/images-926868740b.webp|media|Impulsionada por boom da IA, Nvidia já chega à 4 trilhões de valor|]]
 
 O mercado de data centers e aceleradores para modelos de inteligência artificial passou a responder pela maior parte da receita bruta da corporação.
 
