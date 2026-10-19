@@ -1,5 +1,5 @@
 ---
-title: Nvidia não é mais uma empresa focada hardware gamer, aponta análise
+title: Nvidia não é mais uma empresa focada em hardware gamer, aponta análise
 category:
   - Notícias
   - Hardware
