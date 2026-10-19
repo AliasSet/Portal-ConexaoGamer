@@ -7,7 +7,7 @@ category:
 tags:
   - Inteligência Artificial
   - NVIDIA
-image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOb0LV785cx13BLpP-mxDMpUh7N_KCrK88EdFub48uu2Cc0_KxXZO2288&s=10
+image: /uploads/images-f486c4b188.webp
 summary: Com a explosão do mercado de inteligência artificial e a expansão dos
   centros de dados, a Nvidia transformou radicalmente seu modelo de negócios. O
   setor de placas de vídeo para jogos, que antes era o pilar central da empresa,
