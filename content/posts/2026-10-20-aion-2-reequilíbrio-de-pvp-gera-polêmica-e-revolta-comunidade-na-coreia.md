@@ -9,7 +9,7 @@ tags:
   - MMORPG
   - AION 2
   - NCSoft
-image: https://i.redd.it/erhaotkly48f1.png
+image: /uploads/erhaotkly48f1-e7a9faefe2.webp
 summary: A NCSoft implementou alterações profundas no sistema de combate entre
   jogadores de AION 2, mas as mudanças geraram forte insatisfação na comunidade
   coreana. Jogadores acusam o estúdio de desvalorizar o tempo e os recursos
@@ -27,7 +27,7 @@ A principal insatisfação do público reside na perda imediata de eficiência d
 
 Em MMORPGs focados em PvP de grande escala, alterações bruscas nas estatísticas de habilidades costumam gerar impactos em toda a economia e na estrutura das guildas. Em AION 2, a insatisfação tomou proporções maiores devido à percepção de que certas classes foram inutilizadas sem um período adequado de testes ou compensação.
 
-[[imagem|https://aion2.online/wp-content/uploads/2025/11/image-1024x569.png|media|Nerfs recentes chegam a reduzir 25% do dano Pv|Aion 2 mmorpg]]
+[[imagem|/uploads/image-1024x569-2d4957f5fb.webp|media|Nerfs recentes chegam a reduzir 25% do dano Pv|Aion 2 mmorpg]]
 
 Jogadores sul-coreanos apontam que o novo balanceamento alterou drasticamente o *meta* competitivo, favorecendo determinados arquétipos de combate enquanto tornou outros praticamente inviáveis em confrontos diretos.
 
@@ -43,7 +43,7 @@ Jogadores sul-coreanos apontam que o novo balanceamento alterou drasticamente o 
 
 A polêmica envolvendo AION 2 expõe um dos maiores desafios enfrentados por desenvolvedoras de MMORPGs modernos: balancear o combate competitivo em jogos que possuem forte progressão de equipamento e investimento de longo prazo.
 
-[[imagem|https://image.u4n.com/article/202604/IUjts58okL8b92bpiLSZXaJs2JLahzfkTWk4ITHw.webp|media|Mudanças afetam drasticamente os itens endgame, que não são fáceis de obter|Aion 2]]
+[[imagem|/uploads/iujts58okl8b92bpilszxajs2jlahzfktwk4ithw-d8923cfdaf.webp|media|Mudanças afetam drasticamente os itens endgame, que não são fáceis de obter|Aion 2]]
 
 Enquanto ajustes são essenciais para manter o ambiente saudável e impedir que poucas classes dominem o campo de batalha de forma absoluta, intervenções agressivas correm o risco de afastar a base de jogadores mais engajada.
 
