@@ -7,7 +7,7 @@ category:
   - Steam
 tags:
   - ArcheAge Chronicles
-image: https://preview.redd.it/archeage-chronicles-network-test-is-now-live-v0-0f4kkky776ph1.png?auto=webp&s=596ecff097f07cbcc90349376ece8d7a0f99eef7
+image: /uploads/archeage-chronicles-network-test-is-now--1ae8d08623.webp
 summary: A XLGAMES liberou oficialmente a demo aberta de ArcheAge Chronicles
   como parte do Steam Next Fest. Disponível até o dia 26 de outubro, o teste
   gratuito permite explorar a região de Diamond Shores, testar quatro classes e
@@ -25,7 +25,7 @@ O client de instalação ocupa cerca de 38,1 GB no armazenamento do computador, 
 
 A versão de testes foca nas mecânicas principais de combate e na navegação pelo mundo de Auroria, apresentando um recorte das fases iniciais da jornada.
 
-[[imagem|https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSg-KMTbHyIZQDLToL8QY8gIQhvQDwXnaCz9WimwuxQYju8zsxM7mTn_TAr&s=10|media|ArcheAge Chronicles ainda é esperado até o fim do 4º trimestre de 2026|]]
+[[imagem|/uploads/images-625c35815f.jpg|media|ArcheAge Chronicles ainda é esperado até o fim do 4º trimestre de 2026|]]
 
 Durante a semana de testes, os jogadores podem explorar a região de Diamond Shores e experimentar quatro classes principais: Warrior, Ranger, Berserker e Mage. Embora mecânicas consagradas da franquia como construção de casas (*housing*) e rotas de comércio (*trading*) não estejam habilitadas neste teste, o sistema de PvP foi liberado com requisitos de nível reduzidos.
 
@@ -37,7 +37,7 @@ Durante a semana de testes, os jogadores podem explorar a região de Diamond Sho
 
 • Aprimoramentos Visuais e Sonoros: Sincronização labial e animações faciais totalmente integradas aos diálogos, além de correções no áudio de combate.
 
-[[imagem|https://i.redd.it/p27dwku6c85h1.jpeg|media|Gráficos deslumbrantes chamam atenção no novo lançamento da franquia ArcheAge|]]
+[[imagem|/uploads/p27dwku6c85h1-5205a4c483.webp|media|Gráficos deslumbrantes chamam atenção no novo lançamento da franquia ArcheAge|]]
 
 • Ajustes no Sistema de Gender-Lock: A desenvolvedora confirmou que começou o desenvolvimento para remover a trava de gênero de classes selecionadas no futuro, embora essa mudança ainda não esteja presente na demo atual.
 
