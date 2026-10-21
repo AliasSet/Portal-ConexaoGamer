@@ -1,7 +1,7 @@
 ---
 title: "Política de Privacidade"
 description: "Como o Conexão Gamer coleta, usa e protege os seus dados pessoais, conforme a LGPD."
-updated: "17 de outubro de 2026"
+updated: "20 de outubro de 2026"
 ---
 Esta Política explica, em linguagem simples, quais dados pessoais o **Conexão Gamer** (conexaogamer.com.br) coleta, para que os usa, com quem os compartilha e quais são os seus direitos, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018, a LGPD).
 
@@ -18,6 +18,7 @@ O responsável pelo tratamento dos seus dados pessoais (controlador) é {{RESPON
 - O seu **nome de exibição, a sua foto e os seus comentários são públicos**. O seu e-mail nunca é exibido.
 - O seu **perfil público** (nome, foto, bio, redes, data em que você entrou, número de comentários, nível e os comentários em si) vem ligado, e você pode desligá-lo quando quiser. Desligado, só o nome e a foto continuam aparecendo.
 - O **aviso por e-mail quando alguém responde ao seu comentário** pode ser desligado a qualquer momento.
+- A **lista de novidades por e-mail (newsletter)** é opcional: você digita o e-mail no rodapé, confirma por e-mail e pode cancelar a qualquer momento, por um link em cada mensagem.
 - Você pode alterar o seu nome e a sua foto, apagar os seus comentários e excluir a sua conta.
 
 ## 3. Quais dados coletamos e por quê
@@ -49,7 +50,7 @@ Guardamos o texto do comentário, a data e a hora, e o vínculo com a sua conta.
 
 ### 3.5. Verificação anti-robô
 
-Para proteger o cadastro e o login contra robôs e ataques automáticos, usamos o **Cloudflare Turnstile**. Ele roda em segundo plano, na maioria das vezes sem que você perceba, e analisa dados técnicos do seu navegador e da sua conexão, como o endereço IP, para distinguir pessoas de programas automáticos. Essa verificação acontece ao entrar, criar conta, recuperar a senha e reenviar a confirmação por e-mail (não acontece no login com Google). A base legal é o nosso legítimo interesse em proteger o site e os usuários contra fraudes e abusos (art. 7º, IX).
+Para proteger o cadastro e o login contra robôs e ataques automáticos, usamos o **Cloudflare Turnstile**. Ele roda em segundo plano, na maioria das vezes sem que você perceba, e analisa dados técnicos do seu navegador e da sua conexão, como o endereço IP, para distinguir pessoas de programas automáticos. Essa verificação acontece ao entrar, criar conta, recuperar a senha, reenviar a confirmação por e-mail e ao se cadastrar na lista de novidades por e-mail (não acontece no login com Google). A base legal é o nosso legítimo interesse em proteger o site e os usuários contra fraudes e abusos (art. 7º, IX).
 
 ### 3.6. Matérias salvas e lidas recentemente
 
@@ -70,7 +71,13 @@ Você também pode **desligar o perfil público** a qualquer momento. Desligado,
 
 Se alguém responder a um comentário seu, podemos enviar um e-mail para o endereço da sua conta avisando da resposta e levando você até a matéria. Esse aviso vem ligado por padrão, e você pode desligá-lo em **Meu perfil** ou pelo link de descadastro que vai em cada e-mail. Para evitar abusos, há limites diários de envio. Guardamos um registro dos avisos (qual comentário gerou o envio e se ele foi enviado) apenas pelo tempo necessário para o envio e para o controle desses limites. As bases legais são a execução do serviço (art. 7º, V) e o nosso legítimo interesse em manter a comunidade ativa (art. 7º, IX).
 
-### 3.9. Mensagens que você nos envia
+### 3.9. Lista de novidades por e-mail (newsletter)
+
+Se você digitar o seu e-mail no campo **Receba as novidades por e-mail**, no rodapé do site, guardamos o seu endereço de e-mail, a data do cadastro, da confirmação e do cancelamento e um código aleatório que identifica os links dos e-mails. Usamos esses dados apenas para enviar o e-mail de confirmação, para avisar você por e-mail quando sair matéria nova no site (depois que você confirmar) e para controlar as entregas e evitar envios repetidos.
+
+O cadastro só vale depois que você clica no link de confirmação enviado ao seu e-mail (dupla confirmação). Todo e-mail traz o link para **cancelar a inscrição**, e o cancelamento vale imediatamente. Para impedir cadastros feitos por robôs ou com o e-mail de outra pessoa, o formulário usa o Cloudflare Turnstile e há limites de cadastros por hora. Não vendemos a lista nem a usamos para publicidade de terceiros. A base legal é o seu consentimento (art. 7º, I).
+
+### 3.10. Mensagens que você nos envia
 
 Se você nos escrever por e-mail, usamos a mensagem e o seu endereço apenas para responder.
 
@@ -90,8 +97,8 @@ Não vendemos os seus dados. Usamos prestadores de serviço que fazem o site fun
 
 - **Supabase:** banco de dados, autenticação e armazenamento das fotos de perfil.
 - **Vercel:** hospedagem e entrega do site, e a medição agregada de visitas (Web Analytics).
-- **Resend:** envio dos e-mails do sistema (confirmação de cadastro, recuperação de senha e avisos de resposta). Recebe o seu endereço de e-mail para fazer a entrega.
-- **Cloudflare (Turnstile):** verificação anti-robô no cadastro e no login. Recebe dados técnicos do navegador, como o endereço IP.
+- **Resend:** envio dos e-mails do sistema (confirmação de cadastro, recuperação de senha, avisos de resposta e, se você se cadastrar na lista de novidades, a confirmação e os avisos de matéria nova). Recebe o seu endereço de e-mail para fazer a entrega.
+- **Cloudflare (Turnstile):** verificação anti-robô no cadastro, no login e no cadastro da lista de novidades. Recebe dados técnicos do navegador, como o endereço IP.
 - **Google:** o login com Google, caso você o escolha, e as fontes de letra do site.
 - **Serviços de entrega de arquivos (cdnjs/Cloudflare, jsDelivr e Tailwind):** fornecem estilos, ícones e scripts, e por isso recebem o endereço IP do visitante.
 - **Imagens das matérias:** algumas podem ser carregadas de servidores de terceiros.
@@ -109,6 +116,7 @@ Alguns desses prestadores armazenam dados em servidores fora do Brasil. Buscamos
 - **Comentários:** até você apagá-los ou até serem removidos pela moderação. Se a conta for excluída, os comentários dela também são.
 - **Matérias salvas, bio, redes, escolha de perfil público e preferências de aviso:** enquanto a conta existir, ou até você remover ou alterar. Tudo isso é apagado junto com a conta.
 - **Lista de lidas recentemente:** fica só no seu navegador, até você limpar os dados do site.
+- **Lista de novidades por e-mail:** enquanto você estiver inscrito. Quem cancela fica registrado apenas como "cancelado" (e-mail e datas), para que o mesmo pedido não seja refeito por engano; você pode pedir a exclusão completa pelo e-mail de contato. Cadastros que nunca foram confirmados não recebem nenhuma mensagem de novidades e também podem ser excluídos a pedido.
 - **Registro dos avisos por e-mail:** pelo tempo necessário para o envio e o controle de limites, e é apagado junto com a conta.
 - **Contadores de leitura e medição de visitas:** são números agregados, sem identificação pessoal.
 - **Registros técnicos de acesso:** pelo prazo definido pelos prestadores ou exigido por lei.
@@ -126,7 +134,7 @@ Pela LGPD (art. 18), você pode pedir, a qualquer momento:
 - informações sobre com quem compartilhamos os dados;
 - a revogação do consentimento.
 
-**Como exercer:** você mesmo pode, no site, em **Meu perfil**, trocar o nome e a foto, editar a bio e as redes, manter ou desligar o perfil público, ligar ou desligar os avisos por e-mail, remover matérias salvas, apagar os seus comentários e **excluir a sua conta**. Para os demais pedidos, escreva para {{EMAIL_LINK}} a partir do e-mail cadastrado. Responderemos em até 15 dias.
+**Como exercer:** você mesmo pode, no site, em **Meu perfil**, trocar o nome e a foto, editar a bio e as redes, manter ou desligar o perfil público, ligar ou desligar os avisos por e-mail, remover matérias salvas, apagar os seus comentários e **excluir a sua conta**. Para sair da lista de novidades, use o link **Cancelar inscrição** em qualquer e-mail dela. Para os demais pedidos, inclusive a exclusão do seu e-mail da lista de novidades, escreva para {{EMAIL_LINK}} a partir do e-mail cadastrado. Responderemos em até 15 dias.
 
 Você também pode apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD), em gov.br/anpd.
 
