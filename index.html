@@ -272,6 +272,17 @@
             <div class="col-span-2">
                 <span class="text-2xl font-black tracking-wider uppercase text-white leading-none cg-logo">CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span></span>
                 <p class="text-gray-400 mt-2 max-w-md">Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.</p>
+                <form id="nl-form" class="mt-5 max-w-md" novalidate>
+                    <label for="nl-email" class="block text-white font-bold uppercase text-[11px] mb-2"><i class="fa-regular fa-envelope text-cyan-400 mr-1"></i> Receba as novidades por e-mail</label>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input id="nl-email" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="seu@email.com" class="h-9 flex-1 basis-44 min-w-0 bg-gray-900 border border-gray-700 hover:border-gray-600 focus:border-cyan-400 focus:outline-none rounded-lg px-3 text-[16px] sm:text-sm text-white placeholder-gray-600 transition">
+                        <input id="nl-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+                        <button id="nl-btn" type="submit" class="inline-flex items-center justify-center h-9 px-4 bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed text-black font-extrabold text-xs rounded-lg transition whitespace-nowrap">Quero receber</button>
+                    </div>
+                    <div id="nlCaptchaBox" class="mt-2"></div>
+                    <p id="nl-msg" class="text-xs mt-2 cg-empty-hide" role="status" aria-live="polite"></p>
+                    <p class="text-[10px] text-gray-500 mt-2 leading-relaxed">Avisamos quando sair matéria nova. Você confirma por e-mail e cancela quando quiser. Veja a <a href="/privacidade/" class="underline hover:text-cyan-400 transition">Política de Privacidade</a>.</p>
+                </form>
             </div>
             <nav aria-label="Categorias">
                 <h4 class="text-white font-bold uppercase mb-3">Categorias</h4>
@@ -291,6 +302,7 @@
                     <li><a href="/politica-editorial/" class="hover:text-cyan-400 transition">Política Editorial</a></li>
                     <li><a href="/privacidade/" class="hover:text-cyan-400 transition">Política de Privacidade</a></li>
                     <li><a href="/termos/" class="hover:text-cyan-400 transition">Termos de Uso</a></li>
+                    <li><a href="/feed.xml" class="hover:text-cyan-400 transition"><i class="fa-solid fa-rss text-orange-400 mr-1"></i> Feed RSS</a></li>
                 </ul>
             </nav>
         </div>
@@ -1857,6 +1869,151 @@
         if (error) { $('notice-error-text').textContent = 'Não foi possível concluir agora. Tente novamente em instantes ou desligue em Meu perfil.'; only('notice-error'); return; }
         if (data !== true) { only('notice-error'); return; }
         only('notice-done');
+    });
+})();
+</script>
+
+<!-- NEWSLETTER: cadastro no rodapé (todas as páginas). Fala com a Edge Function "newsletter"; o anti-robô (Turnstile) só carrega quando a pessoa clica no campo. -->
+<script>
+(function () {
+    const form = document.getElementById('nl-form');
+    if (!form) return;
+    const $ = (id) => document.getElementById(id);
+    const FN_URL = SUPABASE_URL + '/functions/v1/newsletter';
+    const cap = { wid: null, token: '', loading: false, failed: false };
+    const MSG = {
+        invalid_email: 'Digite um e-mail válido.',
+        captcha: 'A verificação de segurança falhou ou expirou. Tente de novo.',
+        limited: 'Muitos cadastros agora. Tente de novo em alguns minutos.',
+        mail: 'Não conseguimos enviar o e-mail de confirmação agora. Tente de novo em instantes.'
+    };
+    function say(text, isError) {
+        const el = $('nl-msg');
+        el.textContent = text || '';
+        el.className = 'text-xs mt-2 cg-empty-hide ' + (isError ? 'text-red-400' : 'text-emerald-400');
+    }
+    function capReset() {
+        cap.token = '';
+        if (cap.wid !== null && window.turnstile) { try { window.turnstile.reset(cap.wid); } catch (e) { /* ignora */ } }
+    }
+    function capRender() {
+        const box = $('nlCaptchaBox');
+        if (!window.turnstile || cap.wid !== null || !box) return;
+        cap.wid = window.turnstile.render(box, {
+            sitekey: CG_TURNSTILE_KEY, theme: 'dark', language: 'pt-br', size: 'flexible', appearance: 'interaction-only',
+            callback: (t) => { cap.token = t; },
+            'expired-callback': () => { cap.token = ''; },
+            'error-callback': () => { cap.token = ''; }
+        });
+    }
+    function capEnsure() {
+        if (!CG_TURNSTILE_KEY || cap.wid !== null || cap.loading) return;
+        if (window.turnstile) { capRender(); return; }
+        cap.loading = true; cap.failed = false;
+        const existing = document.querySelector('script[src^="https://challenges.cloudflare.com/turnstile/v0/api.js"]');
+        if (existing) {   // o login já pediu o script: só espera ele ficar pronto
+            const t0 = Date.now();
+            const wait = setInterval(() => {
+                if (window.turnstile) { clearInterval(wait); cap.loading = false; capRender(); }
+                else if (Date.now() - t0 > 15000) { clearInterval(wait); cap.loading = false; cap.failed = true; }
+            }, 200);
+            return;
+        }
+        const s = document.createElement('script');
+        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        s.async = true;
+        s.onload = () => { cap.loading = false; capRender(); };
+        s.onerror = () => { cap.loading = false; cap.failed = true; s.remove(); };
+        document.head.appendChild(s);
+    }
+    async function capGet() {
+        cap.failed = false;
+        capEnsure();
+        const t0 = Date.now();
+        while (!cap.token) {
+            if (cap.failed || Date.now() - t0 > 30000) return null;
+            await new Promise((r) => setTimeout(r, 200));
+            if (cap.wid === null) capEnsure();
+        }
+        const t = cap.token; cap.token = '';
+        return t;
+    }
+
+    $('nl-email').addEventListener('focus', capEnsure, { once: true });
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = String($('nl-email').value || '').trim().toLowerCase();
+        if (email.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say(MSG.invalid_email, true); return; }
+        const btn = $('nl-btn');
+        btn.disabled = true; say('Enviando…');
+        const token = await capGet();
+        if (token === null) {
+            btn.disabled = false;
+            say('Não foi possível concluir a verificação de segurança. Se você usa bloqueador de anúncios, desative-o para este site e tente de novo.', true);
+            return;
+        }
+        let res = null, data = {};
+        try {
+            res = await fetch(FN_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY },
+                body: JSON.stringify({ action: 'subscribe', email: email, token: token, website: String($('nl-hp').value || '') })
+            });
+            data = await res.json().catch(() => ({}));
+        } catch (err) { res = null; }
+        capReset();
+        btn.disabled = false;
+        if (res && res.ok && data && data.ok) {
+            $('nl-email').value = '';
+            say('Quase lá! Enviamos um e-mail para confirmar o seu cadastro. Confira também a caixa de spam.');
+            return;
+        }
+        say(MSG[data && data.error] || 'Não foi possível cadastrar agora. Tente de novo em instantes.', true);
+    });
+})();
+</script>
+
+<!-- PÁGINA /newsletter/ (confirmar ou cancelar a inscrição pelo link do e-mail; só age quando body[data-page="newsletter"]) -->
+<script>
+(function () {
+    if (document.body.getAttribute('data-page') !== 'newsletter') return;
+    const $ = (id) => document.getElementById(id);
+    const qs = new URLSearchParams(location.search);
+    const action = qs.get('a');
+    const token = (qs.get('t') || '').toLowerCase();
+    const PANELS = ['nlp-confirm-ask', 'nlp-unsub-ask', 'nlp-result'];
+    function only(id) { PANELS.forEach((x) => $(x).classList.toggle('hidden', x !== id)); }
+    function result(ok, title, text) {
+        $('nlp-result-icon').className = ok ? 'fa-solid fa-circle-check text-4xl text-emerald-400 mb-3' : 'fa-regular fa-circle-xmark text-4xl text-gray-600 mb-3';
+        $('nlp-result-title').textContent = title;
+        $('nlp-result-text').textContent = text;
+        only('nlp-result');
+    }
+    const FAIL = 'Não foi possível concluir agora. Tente novamente em instantes.';
+    if (!/^[0-9a-f]{32,128}$/.test(token) || (action !== 'confirm' && action !== 'unsubscribe')) {
+        result(false, 'Link inválido', 'Este link não é válido. Para se cadastrar, use o campo no rodapé do site.');
+        return;
+    }
+    only(action === 'confirm' ? 'nlp-confirm-ask' : 'nlp-unsub-ask');
+    // Os botões só agem no clique (programas de segurança de e-mail que "abrem" o link não confirmam nem cancelam sozinhos)
+    $('nlp-confirm-btn').addEventListener('click', async () => {
+        const btn = $('nlp-confirm-btn'); btn.disabled = true;
+        const { data, error } = await supabaseClient.rpc('newsletter_confirm', { p_token: token });
+        btn.disabled = false;
+        if (error) { result(false, 'Algo deu errado', FAIL); return; }
+        if (data === 'confirmed') result(true, 'Pronto! Inscrição confirmada', 'Você vai receber um e-mail quando sair matéria nova. Em cada e-mail há um link para cancelar quando quiser.');
+        else if (data === 'already') result(true, 'Sua inscrição já está confirmada', 'Está tudo certo: você já recebe os avisos de matéria nova.');
+        else if (data === 'expired') result(false, 'Este link expirou', 'O link vale por 7 dias. Cadastre o seu e-mail de novo no rodapé do site para receber outro.');
+        else result(false, 'Link inválido ou já substituído', 'Se você pediu mais de um e-mail de confirmação, use o mais recente. Ou cadastre-se de novo no rodapé do site.');
+    });
+    $('nlp-unsub-btn').addEventListener('click', async () => {
+        const btn = $('nlp-unsub-btn'); btn.disabled = true;
+        const { data, error } = await supabaseClient.rpc('newsletter_unsubscribe', { p_token: token });
+        btn.disabled = false;
+        if (error) { result(false, 'Algo deu errado', FAIL); return; }
+        if (data === 'unsubscribed') result(true, 'Inscrição cancelada', 'Você não receberá mais os avisos de matéria nova. Mudou de ideia? É só se cadastrar de novo no rodapé do site.');
+        else if (data === 'already') result(true, 'Esta inscrição já estava cancelada', 'Você não está recebendo os avisos de matéria nova.');
+        else result(false, 'Link inválido', 'Este link não é válido. Se continuar recebendo e-mails, escreva para o contato do site.');
     });
 })();
 </script>

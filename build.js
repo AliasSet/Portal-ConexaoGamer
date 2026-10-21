@@ -816,6 +816,43 @@ function buildNoticesPage(template) {
     .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => noticesHtml());
 }
 
+function newsletterHtml() {
+  const panel = (id, inner) => `<div id="${id}" class="hidden bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">${inner}</div>`;
+  return `
+                <div id="nlp-root" class="max-w-xl">
+                    ${panel('nlp-confirm-ask', `
+                        <i class="fa-regular fa-envelope-open text-4xl text-cyan-400 mb-3"></i>
+                        <h1 class="text-lg font-black text-white">Confirmar o seu e-mail</h1>
+                        <p class="text-sm text-gray-400 mt-2 mb-5">Confirme para receber um aviso por e-mail sempre que sair matéria nova no ${SITE_NAME}. Dá para cancelar quando quiser, por um link em cada e-mail.</p>
+                        <button id="nlp-confirm-btn" type="button" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Confirmar meu e-mail</button>
+                        <a href="/" class="block mt-4 text-xs font-bold text-gray-500 hover:text-cyan-400 transition">Voltar ao site</a>`)}
+                    ${panel('nlp-unsub-ask', `
+                        <i class="fa-regular fa-bell-slash text-4xl text-cyan-400 mb-3"></i>
+                        <h1 class="text-lg font-black text-white">Cancelar a inscrição?</h1>
+                        <p class="text-sm text-gray-400 mt-2 mb-5">Você deixará de receber os avisos de matéria nova por e-mail. Se mudar de ideia, é só se cadastrar de novo no rodapé do site.</p>
+                        <button id="nlp-unsub-btn" type="button" class="bg-cyan-400 hover:bg-cyan-300 disabled:opacity-60 text-black font-extrabold text-xs px-6 py-3 rounded-xl transition">Sim, cancelar inscrição</button>
+                        <a href="/" class="block mt-4 text-xs font-bold text-gray-500 hover:text-cyan-400 transition">Não, voltar ao site</a>`)}
+                    ${panel('nlp-result', `
+                        <i id="nlp-result-icon" class="fa-solid fa-circle-check text-4xl text-emerald-400 mb-3"></i>
+                        <h1 id="nlp-result-title" class="text-lg font-black text-white"></h1>
+                        <p id="nlp-result-text" class="text-sm text-gray-400 mt-2"></p>
+                        <a href="/" class="inline-block mt-5 text-xs font-bold text-cyan-400 hover:underline">Ir para o ${SITE_NAME}</a>`)}
+                </div>
+                `;
+}
+
+function buildNewsletterPage(template) {
+  const title = 'Newsletter | ' + SITE_NAME;
+  return template
+    .replace('<!--CG:HEAD-->', headTags({
+      title, description: 'Confirme ou cancele a inscrição na newsletter do ' + SITE_NAME + '.', url: SITE_URL + '/newsletter/', image: '', type: 'website', noAnalytics: true
+    }) + '\n    <meta name="robots" content="noindex, nofollow">')
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace('<body data-page="home"', '<body data-page="newsletter"')
+    .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => newsletterHtml());
+}
+
 function moderationHtml() {
   const tab = (id, label) => `<button type="button" id="mod-tab-${id}" data-tab="${id}" role="tab" class="text-xs font-extrabold py-2 px-4 rounded-lg transition">${label}</button>`;
   return `
@@ -900,10 +937,54 @@ function buildCategoryPage(template, cat, list) {
     .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => categoryHtml(cat, list));
 }
 
+/* ---------- Feed RSS (/feed.xml) ----------
+ * Últimas FEED_ITEMS matérias, só com título, resumo, imagem e link (o texto completo fica no site:
+ * isso leva a visita para cá e dificulta cópia). Para mostrar o texto inteiro no leitor de RSS,
+ * troque o conteúdo de `description` abaixo por p.html. */
+const FEED_ITEMS = 30;
+const xmlClean = (s) => String(s == null ? '' : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+const xmlEsc = (s) => esc(xmlClean(s));
+function buildFeed(posts) {
+  const list = posts.slice(0, FEED_ITEMS);
+  const latest = list.length ? list[0].time : Date.now();
+  const items = list.map((p) => {
+    const link = SITE_URL + p.url;
+    const img = absUrl(p.image);
+    const desc = (img ? `<p><img src="${esc(img)}" alt="${esc(p.title)}" /></p>` : '') +
+      `<p>${esc(p.summary || p.title)}</p>` +
+      `<p><a href="${esc(link)}">Continue lendo no ${esc(SITE_NAME)}</a></p>`;
+    const cats = Array.from(new Set([].concat(p.categories || [], p.tags || []).map((c) => String(c).trim()).filter(Boolean))).slice(0, 8);
+    return [
+      '    <item>',
+      `      <title>${xmlEsc(p.title)}</title>`,
+      `      <link>${xmlEsc(link)}</link>`,
+      `      <guid isPermaLink="true">${xmlEsc(link)}</guid>`,
+      `      <pubDate>${new Date(p.time).toUTCString()}</pubDate>`,
+      `      <dc:creator>${xmlEsc(p.author || SITE_NAME)}</dc:creator>`,
+      ...cats.map((c) => `      <category>${xmlEsc(c)}</category>`),
+      `      <description>${xmlEsc(desc)}</description>`,
+      img ? `      <media:content url="${xmlEsc(img)}" medium="image" />` : '',
+      '    </item>'
+    ].filter(Boolean).join('\n');
+  });
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">\n' +
+    '  <channel>\n' +
+    `    <title>${xmlEsc(SITE_NAME)}</title>\n` +
+    `    <link>${xmlEsc(SITE_URL + '/')}</link>\n` +
+    `    <description>${xmlEsc('Notícias, reviews e lançamentos de games e tecnologia no ' + SITE_NAME + '.')}</description>\n` +
+    '    <language>pt-BR</language>\n' +
+    `    <lastBuildDate>${new Date(latest).toUTCString()}</lastBuildDate>\n` +
+    `    <atom:link href="${xmlEsc(SITE_URL + '/feed.xml')}" rel="self" type="application/rss+xml" />\n` +
+    (items.length ? items.join('\n') + '\n' : '') +
+    '  </channel>\n</rss>\n';
+}
+
 function headTags({ title, description, url, image, type, jsonLd, noAnalytics }) {
   const lines = [
     `<meta name="description" content="${esc(description)}">`,
     `<link rel="canonical" href="${esc(url)}">`,
+    `<link rel="alternate" type="application/rss+xml" title="${esc(SITE_NAME)}" href="${SITE_URL}/feed.xml">`,
     `<meta property="og:site_name" content="${SITE_NAME}">`,
     `<meta property="og:type" content="${type}">`,
     `<meta property="og:locale" content="pt_BR">`,
@@ -1048,6 +1129,8 @@ async function main() {
   fs.writeFileSync(path.join(DIST, 'moderacao', 'index.html'), buildModerationPage(template));
   fs.mkdirSync(path.join(DIST, 'avisos'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'avisos', 'index.html'), buildNoticesPage(template));
+  fs.mkdirSync(path.join(DIST, 'newsletter'), { recursive: true });
+  fs.writeFileSync(path.join(DIST, 'newsletter', 'index.html'), buildNewsletterPage(template));
   fs.mkdirSync(path.join(DIST, 'u'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'u', 'index.html'), buildPublicProfilePage(template));
   fs.mkdirSync(path.join(DIST, 'perfil'), { recursive: true });
@@ -1076,6 +1159,7 @@ async function main() {
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     urls.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('\n') +
     '\n</urlset>\n');
+  fs.writeFileSync(path.join(DIST, 'feed.xml'), buildFeed(posts));
   fs.writeFileSync(path.join(DIST, 'robots.txt'),
     `User-agent: *\nAllow: /\nDisallow: /perfil/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
