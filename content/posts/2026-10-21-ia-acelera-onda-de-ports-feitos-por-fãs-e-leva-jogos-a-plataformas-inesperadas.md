@@ -8,7 +8,7 @@ tags:
   - Inteligência Artificial
   - Ports
   - VibeCoding
-image: https://www.gamespot.com/wp-content/uploads/2026/10/Elden-Mario.jpg
+image: /uploads/elden-mario-465d9050de.webp
 summary: Uma nova onda de ports, emuladores e mods feitos pela comunidade está
   ganhando força com a ajuda da inteligência artificial. De jogos clássicos
   rodando no PS5 a misturas inusitadas como Minecraft em Elden Ring, os projetos
@@ -41,7 +41,7 @@ Outro exemplo que viralizou foi uma demonstração que mistura *Minecraft* e *El
 
 A ideia chamou atenção justamente pelo contraste entre os dois jogos: de um lado, a liberdade de construir e explorar de *Minecraft*; do outro, o combate e a ambientação de fantasia sombria de *Elden Ring*.
 
-[[imagem|https://preview.redd.it/i-made-minecraft-playable-inside-elden-ring-v0-ekqhk8stubth1.jpeg?width=1080&crop=smart&auto=webp&s=9d4361de5c43f3ebbd091570b584c339bf4c1ce5|media|Mod coloca Minecraft dentro do universo de Elden Ring|]]
+[[imagem|/uploads/i-made-minecraft-playable-inside-elden-r-92e3d121cb.webp|media|Mod coloca Minecraft dentro do universo de Elden Ring|]]
 
 Mas existe uma diferença importante entre uma demonstração impressionante e um mod pronto para jogar. Até as informações disponíveis sobre esse projeto, não havia uma versão pública confirmada para download nem uma validação independente de todas as funcionalidades alegadas pelo criador.
 
@@ -55,7 +55,7 @@ A onda de ports feitos por fãs não se limita aos mashups. *Halo: Combat Evolve
 
 Segundo o Windows Central, algumas dessas versões oferecem suporte à campanha e ao multiplayer. O trabalho também acontece em paralelo a outras iniciativas da comunidade, incluindo modificações de *Halo 3* e modos que ampliam o número de jogadores em partidas.
 
-[[imagem|https://arkade.com.br/wp-content/uploads/2026/09/halo-combat-evolved-do-xbox-original-ganha-port-nativo-para-windows-linux-e-andr.webp|media|Halo ganhou versões não oficiais para PC e Android|]]
+[[imagem|/uploads/halo-combat-evolved-do-xbox-original-gan-433aeef483.webp|media|Halo ganhou versões não oficiais para PC e Android|]]
 
 O caso é interessante porque demonstra outro caminho para os ports: em vez de misturar dois jogos, o objetivo é adaptar uma experiência existente para funcionar em ambientes diferentes.
 
@@ -67,7 +67,7 @@ Em projetos desse tipo, técnicas de engenharia reversa e descompilação podem 
 
 O termo *port* é usado quando um jogo ou software é adaptado para funcionar em outra plataforma. Um título originalmente lançado para PC, por exemplo, pode receber um port para um console, com ajustes de código, controles, interface e desempenho.
 
-[[imagem|https://images.gog.com/c079b4b0098b50605f031af1ee4949265535d95f06f9cd55369c7747b90a4de0_glx_vertical_cover.webp?namespace=gamesdb|media|Lendário coop no universo de Mortal Kombat recebeu port nativo para PC|]]
+[[imagem|/uploads/c079b4b0098b50605f031af1ee4949265535d95f-e80a5ec8a3.webp|media|Lendário coop no universo de Mortal Kombat recebeu port nativo para PC|]]
 
 Nos *self-made ports*, esse trabalho é feito por desenvolvedores independentes ou integrantes da comunidade, sem que a adaptação seja necessariamente produzida ou autorizada pela empresa dona do jogo.
 
@@ -97,7 +97,7 @@ A explosão de ports e mods assistidos por IA mostra como a comunidade pode ampl
 
 Para os jogadores, isso pode significar mais possibilidades de preservação, experiências criativas e acesso a títulos em dispositivos diferentes. Para desenvolvedores e empresas, também abre questões sobre propriedade intelectual, segurança e a velocidade com que ferramentas de IA podem ser usadas para analisar ou reconstruir partes de um software.
 
-[[imagem|https://cdn.mos.cms.futurecdn.net/dz78u7jn2wiEyfBAbmj6e3-1920-80.jpg|media|As possibilidades são infinitas, a imaginação é o limite|]]
+[[imagem|/uploads/dz78u7jn2wieyfbabmj6e3-1920-80-0b78a5e595.webp|media|As possibilidades são infinitas, a imaginação é o limite|]]
 
 Ainda é cedo para dizer até onde essa onda vai chegar. Muitos projetos continuarão sendo experimentos de nicho, enquanto outros podem evoluir para ferramentas úteis e adaptações realmente jogáveis.
 
