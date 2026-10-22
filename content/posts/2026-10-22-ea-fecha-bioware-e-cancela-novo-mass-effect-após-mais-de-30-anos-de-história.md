@@ -13,7 +13,7 @@ tags:
   - cancelamento
   - demissões na indústria dos games
   - RPG
-image: https://ncnews.com.br/app/uploads/2026/10/0eabaf37-5448-4363-946b-b1bbff1cc9e1-960x540.webp
+image: /uploads/0eabaf37-5448-4363-946b-b1bbff1cc9e1-960-59d85c2042.webp
 summary: A Electronic Arts confirmou o fechamento da BioWare e o fim do
   desenvolvimento inicial do próximo Mass Effect. A reestruturação também prevê
   cerca de 400 demissões na empresa e acontece após a aquisição da EA por um
@@ -31,7 +31,7 @@ A notícia também faz parte de uma reestruturação mais ampla da EA, que prev�
 
 O próximo *Mass Effect* estava em desenvolvimento inicial, mas a Electronic Arts decidiu não seguir adiante com o projeto. Até o momento, não foram divulgados detalhes que indiquem quanto do jogo já havia sido produzido ou se algum material desenvolvido poderá ser aproveitado em projetos futuros.
 
-[[imagem|https://images.immediate.co.uk/production/volatile/sites/3/2023/11/radio-times-mass-effect-5-ba018f0.jpg?quality=90&resize=980,654|media|Imagem promocional do novo Mass Effect, jogo estava em desenvolvimento até o fechamento do estúdio.|]]
+[[imagem|/uploads/radio-times-mass-effect-5-ba018f0-82a0ee011f.webp|media|Imagem promocional do novo Mass Effect, jogo estava em desenvolvimento até o fechamento do estúdio.|]]
 
 A decisão representa um duro golpe para a franquia de ficção científica, que conquistou uma base fiel de jogadores com sua mistura de exploração espacial, combate, escolhas narrativas e relações entre personagens.
 
@@ -43,7 +43,7 @@ Fundada em 1995, a BioWare construiu sua reputação com jogos que ajudaram a de
 
 Ao longo dos anos, a desenvolvedora ficou conhecida por colocar as escolhas dos jogadores no centro da experiência. Seus jogos frequentemente permitiam construir relacionamentos, tomar decisões moralmente difíceis e acompanhar consequências que se estendiam por boa parte da campanha.
 
-[[imagem|https://cdn.mos.cms.futurecdn.net/v2/t:0,l:420,cw:1080,ch:1080,q:80,w:1080/rfA2xZ2sFHAxGwfnHGM7PB.png|media|Mass Effect e Dragon Age marcaram gerações de jogadores, redefiniram seus gêneros e ajudaram a abrir caminho para o futuro dos RPGs.|]]
+[[imagem|/uploads/rfa2xz2sfhaxgwfnhgm7pb-0e898e8b99.webp|media|Mass Effect e Dragon Age marcaram gerações de jogadores, redefiniram seus gêneros e ajudaram a abrir caminho para o futuro dos RPGs.|]]
 
 A história recente, porém, foi marcada por dificuldades. *Anthem*, lançado em 2019, não conseguiu alcançar o sucesso esperado, enquanto *Dragon Age: The Veilguard* ficou abaixo das expectativas comerciais da EA. O estúdio também passou por demissões e mudanças internas nos últimos anos.
 
