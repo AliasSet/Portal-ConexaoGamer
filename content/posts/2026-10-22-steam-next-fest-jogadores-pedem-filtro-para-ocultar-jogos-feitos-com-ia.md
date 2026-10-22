@@ -12,7 +12,7 @@ tags:
   - jogos indie
   - IA generativa
   - jogos de PC
-image: https://images.antihype.com.br/posts/fb8dbb/steam-next-fest-outubro-2026-demos-ia-generativa-629f94.webp
+image: /uploads/steam-next-fest-outubro-2026-demos-ia-ge-9083fec406.webp
 summary: A quantidade de jogos com conteúdo gerado por inteligência artificial
   no Steam Next Fest levou jogadores a pedir um filtro para ocultar esses
   títulos. A proposta busca facilitar a descoberta de jogos independentes sem
@@ -28,7 +28,7 @@ O evento acontece de 19 a 26 de outubro e reúne milhares de demonstrações jog
 
 Em discussões no Reddit, usuários sugeriram que o Steam permita esconder jogos que utilizam inteligência artificial generativa. A ideia não é necessariamente banir essas produções, mas dar aos jogadores a liberdade de escolher o que desejam encontrar na plataforma.
 
-[[imagem|https://img.odcdn.com.br/wp-content/uploads/2026/10/Steam-Next-Fest-Bonfire-PR-1.png|media|Festival está repleto de bons demos para serem testados gratuitamente.|]]
+[[imagem|/uploads/steam-next-fest-bonfire-pr-1-a893afe78a.webp|media|Festival está repleto de bons demos para serem testados gratuitamente.|]]
 
 Uma das propostas é criar filtros específicos para artes, músicas, diálogos e outros elementos gerados por IA. Assim, seria possível distinguir jogos que utilizam a tecnologia em partes da produção daqueles em que ela assume um papel criativo mais amplo.
 
@@ -42,7 +42,7 @@ O debate também envolve a diferença entre usar IA para tarefas internas, como 
 
 A discussão vai além da quantidade de jogos gerados por IA. Ferramentas recentes também estão facilitando a criação de cópias de jogos independentes, usando referências visuais, mecânicas e, em alguns casos, técnicas de engenharia reversa para reproduzir projetos existentes.
 
-[[imagem|https://static.beebom.com/wp-content/uploads/2026/06/Best-Steam-Next-Fest-2026-demos.jpg?w=1200&quality=75|media||]]
+[[imagem|/uploads/best-steam-next-fest-2026-demos-4ddef8d97a.webp|media||]]
 
 O problema já afeta a maneira como estúdios divulgam seus trabalhos. A Digital Sun, desenvolvedora de *Moonlighter*, restringiu os testes de seu próximo jogo, *ReVamp*, diante do receio de que uma demo pública pudesse ser usada para acelerar a criação de cópias. A Alliance Arts tomou uma decisão semelhante com *Drunken Goddess Reflux*, substituindo a demonstração aberta por sessões controladas.
 
