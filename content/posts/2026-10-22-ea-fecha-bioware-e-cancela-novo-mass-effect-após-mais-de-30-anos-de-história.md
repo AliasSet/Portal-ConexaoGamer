@@ -49,25 +49,23 @@ A história recente, porém, foi marcada por dificuldades. *Anthem*, lançado em
 
 Esses problemas ajudam a contextualizar a decisão, mas não alteram o peso histórico do encerramento: a BioWare foi uma das responsáveis por consolidar o RPG narrativo como um dos gêneros mais influentes dos jogos modernos.
 
-## EA planeja cerca de 400 demissões
+## Demissões e aquisição bilionária marcam reestruturação da EA
 
-O fechamento da BioWare faz parte de uma rodada maior de cortes na Electronic Arts. Segundo informações reportadas pela Bloomberg e repercutidas por veículos como Reuters, aproximadamente 400 funcionários devem ser demitidos em toda a empresa, o equivalente a cerca de 3% de sua força de trabalho. Desse total, cerca de 50 seriam ligados à BioWare.
+O fechamento da BioWare faz parte de uma rodada de cortes na Electronic Arts que pode atingir cerca de 400 funcionários, aproximadamente 3% da força de trabalho, segundo informações da Bloomberg repercutidas pela Reuters. Cerca de 50 demissões estariam ligadas ao estúdio.
+
+A reestruturação acontece após a aquisição de US$ 55 bilhões liderada pelo Fundo de Investimento Público da Arábia Saudita (PIF), com participação da Silver Lake e da Affinity Partners. A EA pretende concentrar investimentos em menos projetos, mantendo em desenvolvimento jogos como o título do Homem de Ferro e o próximo *Star Wars Jedi*. 
+
+
 
 [[imagem|https://www.adrenaline.com.br/wp-content/uploads/2023/07/Star-Wars-Jedi-Survivor-ganha-patch-6.5-com-novas-correcoes.jpg|media|Star Wars Jedi 3 pode ser a maior aventura da franquia até agora!|]]
 
-A EA afirma que pretende concentrar seus investimentos em um número menor de grandes projetos, priorizando produções com maior potencial comercial. Entre os títulos que continuam em desenvolvimento estão o jogo do Homem de Ferro, da Marvel, e o próximo *Star Wars Jedi*.
 
-O cenário mostra que a mudança vai além de um único estúdio: a EA está revendo sua carteira de projetos e a distribuição de recursos entre suas equipes.
 
-## Aquisição bilionária da EA aumenta as preocupações
-
-A reestruturação acontece pouco depois da conclusão de uma aquisição de US$ 55 bilhões que tornou a Electronic Arts uma empresa de capital fechado. O acordo foi liderado pelo Fundo de Investimento Público da Arábia Saudita (PIF), com participação da Silver Lake e da Affinity Partners.
+Embora a proximidade entre a aquisição e os cortes chame a atenção, não é possível atribuir o fechamento da BioWare exclusivamente à mudança de controle. O cenário mostra que a mudança vai além de um único estúdio: a EA está revendo sua carteira de projetos e a distribuição de recursos entre suas equipes.
 
 A operação levantou preocupações sobre o futuro dos estúdios e das franquias da editora, especialmente diante da pressão por redução de custos e maior retorno financeiro. A proximidade entre a aquisição e os novos cortes chama a atenção, embora não seja possível atribuir o fechamento da BioWare exclusivamente à mudança de controle.
 
 ## O que muda para os fãs de Mass Effect e Dragon Age?
-
-Para os jogadores, a consequência mais imediata é o cancelamento do próximo *Mass Effect* e a perda do estúdio que conduziu a franquia ao longo de grande parte de sua história.
 
 A EA não divulgou, até o momento, um plano para transferir a série a outra equipe nem confirmou se pretende retomar o projeto futuramente. Portanto, não há base para afirmar que *Mass Effect* acabou definitivamente como franquia — mas o jogo que estava em desenvolvimento foi cancelado, e o fechamento da BioWare torna o futuro da série incerto.
 
