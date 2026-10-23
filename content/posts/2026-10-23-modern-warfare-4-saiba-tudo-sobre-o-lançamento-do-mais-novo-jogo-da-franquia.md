@@ -15,10 +15,10 @@ tags:
   - Infinity Ward
   - PC Gaming
 image: https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/mw4/play-now/MW4LP_BuyNow_MW4VE.webp
-summary: "Call of Duty: Modern Warfare 4 promete encerrar a atual saga Modern
-  Warfare enquanto a Activision prepara uma nova fase para a franquia. O jogo
-  também chega sem playlists de Open Matchmaking no lançamento. Veja a data, o
-  horário de estreia no Brasil e o que essas mudanças significam para os fãs."
+summary: "Call of Duty: Modern Warfare 4 promete encerrar a saga da Task Force
+  141 enquanto a Activision prepara uma nova fase para a franquia. O jogo também
+  chega sem playlists de Open Matchmaking no lançamento. Veja a data, o horário
+  de estreia no Brasil e o que essas mudanças significam para os fãs."
 author: Redação Conexão Gamer
 date: 22/10/2026T21:43
 ---
