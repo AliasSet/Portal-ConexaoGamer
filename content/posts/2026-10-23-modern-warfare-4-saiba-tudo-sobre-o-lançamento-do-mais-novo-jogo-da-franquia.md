@@ -1,5 +1,5 @@
 ---
-title: "Call of Duty: Modern Warfare 4 marca o fim de uma era — e a franquia já
+title: "Call of Duty: Modern Warfare 4 marca o fim de uma era e a franquia já
   prepara uma nova fase!"
 category:
   - Notícias
