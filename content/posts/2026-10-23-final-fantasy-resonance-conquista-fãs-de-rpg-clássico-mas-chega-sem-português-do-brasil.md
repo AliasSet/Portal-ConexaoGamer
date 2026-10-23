@@ -15,7 +15,7 @@ tags:
   - Brave Exvius
   - PC Gaming
   - Nintendo Switch 2
-image: /uploads/final-fantasy-resonance-tpkx-7a979d9a70.webp
+image: https://image.api.playstation.com/vulcan/ap/rnd/202604/2403/8e22140956f5980e5a33a0f6fa22ced64c3597cfdf20bc0e.png
 summary: Final Fantasy Resonance aposta no combate por turnos, em gráficos HD-2D
   e em referências à história da franquia para conquistar fãs de JRPGs. As
   primeiras análises elogiam a jogabilidade, mas apontam problemas no ritmo da
