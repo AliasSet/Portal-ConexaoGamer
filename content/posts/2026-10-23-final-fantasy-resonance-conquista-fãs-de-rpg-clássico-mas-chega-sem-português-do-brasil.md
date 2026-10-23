@@ -15,7 +15,7 @@ tags:
   - Brave Exvius
   - PC Gaming
   - Nintendo Switch 2
-image: https://sm.ign.com/ign_br/game/f/final-fant/final-fantasy-resonance_tpkx.jpg
+image: /uploads/final-fantasy-resonance-tpkx-7a979d9a70.webp
 summary: Final Fantasy Resonance aposta no combate por turnos, em gráficos HD-2D
   e em referências à história da franquia para conquistar fãs de JRPGs. As
   primeiras análises elogiam a jogabilidade, mas apontam problemas no ritmo da
@@ -33,7 +33,7 @@ A aventura acompanha Rain e Lasswell em uma jornada para impedir que o grupo con
 
 O grande destaque está no combate por turnos. As batalhas exigem atenção às fraquezas dos inimigos e ao momento certo de explorar suas barras de atordoamento, criando oportunidades para combinar ataques e causar dano elevado. O sistema oferece mais estratégia do que parece à primeira vista, embora alguns confrontos possam ficar repetitivos conforme a aventura avança.
 
-[[imagem|https://veja.abril.com.br/wp-content/uploads/2026/10/final-fantasy-resonance-01.jpg|media|Resonance aposta no visual retrô e o clássico combate em turnos que moldou a franquia no passado|Resonance aposta no visual retrô e o clássico combate em turnos que moldou a franquia no passado]]
+[[imagem|/uploads/final-fantasy-resonance-01-91d17db773.webp|media|Resonance aposta no visual retrô e o clássico combate em turnos que moldou a franquia no passado|Resonance aposta no visual retrô e o clássico combate em turnos que moldou a franquia no passado]]
 
 Outro elemento central são as **Visions**, representações de personagens da própria franquia que concedem habilidades e bônus aos integrantes da equipe. Elas permitem experimentar diferentes combinações e montar grupos adaptados ao estilo de cada jogador, além de funcionar como uma homenagem ao legado de *Final Fantasy*.
 
@@ -41,7 +41,7 @@ Outro elemento central são as **Visions**, representações de personagens da p
 
 A direção visual mistura personagens em pixel art com cenários tridimensionais, efeitos modernos e movimentos de câmera mais dinâmicos. O resultado dá uma identidade própria ao jogo e atualiza a aparência clássica da série sem abandonar suas raízes.
 
-[[imagem|https://a.storyblok.com/f/178900/1024x576/77e68905f9/final-fantasy-resonance-batalha.jpg/m/filters:quality(95)format(webp)|media|Resonance tem rostos bastante populares da franquia Final Fantasy|Resonance tem rostos bastante populares da franquia Final Fantasy]]
+[[imagem|/uploads/filters-quality-95-format-webp-d11c451b2a.webp|media|Resonance tem rostos bastante populares da franquia Final Fantasy|Resonance tem rostos bastante populares da franquia Final Fantasy]]
 
 Essa combinação aparece entre os pontos mais elogiados nas análises de veículos como [GamesRadar+](https://www.gamesradar.com/games/final-fantasy/final-fantasy-resonance-review/) e [Omelete](https://www.omelete.com.br/games/criticas/final-fantasy-resonance-e-uma-carta-de-amor-a-franquia-de-rpg-review). A recriação visual, o sistema de batalha e as referências a outros capítulos ajudam *Resonance* a encontrar seu espaço entre os RPGs tradicionais.
 
@@ -51,7 +51,7 @@ Apesar dos elogios, o jogo não agradou a todos da mesma maneira. As análises n
 
 Por outro lado, as qualidades do sistema de batalha e das Visions se destacam positivamente, embora a história previsível e as limitações herdadas do jogo mobile impedem o RPG de alcançar seu potencial máximo.
 
-[[imagem|https://cromossomonerd.com.br/wp-content/uploads/2026/10/final-fantasy-resonance-capa-resumo.jpg|media|Square Enix trás um retorno às origens em clara ode ao início da franquia|Square Enix trás um retorno às origens em clara ode ao início da franquia]]
+[[imagem|/uploads/final-fantasy-resonance-capa-resumo-92c805ad6d.webp|media|Square Enix trás um retorno às origens em clara ode ao início da franquia|Square Enix trás um retorno às origens em clara ode ao início da franquia]]
 
 O panorama, portanto, é positivo, mas não unânime. *Final Fantasy Resonance* parece funcionar melhor para quem procura uma aventura tradicional, com combates estratégicos e referências à franquia, do que para jogadores que esperam uma narrativa revolucionária.
 
