@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%230b0f19'/><path d='M30 65 A 25 25 0 0 1 70 65 M38 53 A 15 15 0 0 1 62 53 M46 41 A 5 5 0 0 1 54 41' stroke='%2300f2fe' stroke-width='8' stroke-linecap='round' fill='none'/><circle cx='50' cy='75' r='5' fill='%2300f2fe'/></svg>">
+    <!-- Ícones em ARQUIVOS (o Google não usa ícone embutido "data:"; arquivos gerados pelo build a partir do favicons.js) -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+    <meta name="theme-color" content="#0b0f19">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conexão Gamer | Portal de Notícias, Reviews e Lançamentos</title>
@@ -2328,6 +2333,20 @@
         card.onclick = function () { location.href = p.url; };
       }
 
+      // Linha de informações dos cards laterais: autor, data e tempo de leitura (igual ao card principal, em versão compacta)
+      function sideMeta(p) {
+        const who = p.author
+          ? '<span class="flex items-center gap-1 min-w-0">' +
+              (p.authorPhoto && okUrl(p.authorPhoto)
+                ? '<img src="' + esc(p.authorPhoto) + '" alt="" referrerpolicy="no-referrer" class="w-4 h-4 rounded-full object-cover flex-shrink-0" onerror="this.remove()">'
+                : '<i class="fa-regular fa-user text-gray-500"></i>') +
+              '<span class="truncate">' + esc(p.author) + '</span></span>'
+          : '';
+        const when = p.time ? '<span class="flex items-center gap-1 whitespace-nowrap"><i class="fa-regular fa-calendar text-cyan-400"></i>' + esc(fmtDateShort(p.time)) + '</span>' : '';
+        const read = p.readMin ? '<span class="flex items-center gap-1 whitespace-nowrap"><i class="fa-regular fa-clock text-cyan-400"></i>' + esc(p.readMin) + ' min</span>' : '';
+        return (who || when || read) ? '<div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1.5 text-[10px] text-gray-400">' + who + when + read + '</div>' : '';
+      }
+
       function renderSide(list) {
         const box = $('hero-side');
         const card = $('hero-card-container');
@@ -2342,6 +2361,7 @@
             '<div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent p-5 flex flex-col justify-end">' +
               '<div class="flex flex-wrap gap-1 mb-1">' + badges(p) + '</div>' +
               '<h3 class="text-sm font-bold text-white group-hover:text-cyan-300 transition line-clamp-2">' + esc(p.title) + '</h3>' +
+              sideMeta(p) +
             '</div>' +
           '</a>').join('');
       }

@@ -1038,7 +1038,14 @@ function buildHome(template, posts) {
       description: 'Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.',
       url: SITE_URL + '/',
       image: first ? absUrl(first.image) : '',
-      type: 'website'
+      type: 'website',
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@graph': [
+          { '@type': 'WebSite', '@id': SITE_URL + '/#website', url: SITE_URL + '/', name: SITE_NAME, alternateName: ['ConexãoGamer', 'Conexao Gamer'], inLanguage: 'pt-BR', publisher: { '@id': SITE_URL + '/#organization' } },
+          { '@type': 'Organization', '@id': SITE_URL + '/#organization', name: SITE_NAME, url: SITE_URL + '/', logo: { '@type': 'ImageObject', url: SITE_URL + '/logo-512x512.png', width: 512, height: 512 } }
+        ]
+      }
     }));
 }
 
@@ -1059,7 +1066,7 @@ function buildPostPage(template, p, posts) {
     author: (p.authorPhoto || p.authorBio)
       ? { '@type': 'Person', name: p.author, ...(absUrl(p.authorPhoto) ? { image: absUrl(p.authorPhoto) } : {}) }
       : { '@type': 'Organization', name: p.author },
-    publisher: { '@type': 'Organization', name: SITE_NAME },
+    publisher: { '@type': 'Organization', name: SITE_NAME, logo: { '@type': 'ImageObject', url: SITE_URL + '/logo-512x512.png' } },
     mainEntityOfPage: url
   };
 
@@ -1160,6 +1167,14 @@ async function main() {
     urls.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('\n') +
     '\n</urlset>\n');
   fs.writeFileSync(path.join(DIST, 'feed.xml'), buildFeed(posts));
+  // Ícones do site na RAIZ (o Google só mostra o ícone/logo de arquivos com endereço próprio; ver favicons.js)
+  let ICONS = {};
+  try { ICONS = require('./favicons'); }
+  catch (e) { console.warn('[build] AVISO: favicons.js não encontrado ou com erro (' + e.message + '). O ícone do site NÃO aparecerá no Google.'); }
+  Object.keys(ICONS).forEach((name) => {
+    const f = ICONS[name];
+    fs.writeFileSync(path.join(DIST, name), f.b64 ? Buffer.from(f.b64, 'base64') : f.text);
+  });
   fs.writeFileSync(path.join(DIST, 'robots.txt'),
     `User-agent: *\nAllow: /\nDisallow: /perfil/\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
