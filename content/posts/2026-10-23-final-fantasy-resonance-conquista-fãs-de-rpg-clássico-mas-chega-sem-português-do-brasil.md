@@ -1,6 +1,6 @@
 ---
 title: Final Fantasy Resonance conquista fãs de RPG clássico, mas chega sem
-  português do Brasil
+  localização ao Brasil
 category:
   - PC
   - Steam
