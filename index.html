@@ -60,12 +60,7 @@
                 
                 <!-- LOGO E IDENTIDADE VISUAL EXCLUSIVA -->
                 <a href="/" class="flex items-center gap-3 group">
-                    <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-fuchsia-600 p-[2px] shadow-[0_0_20px_rgba(0,242,254,0.35)] group-hover:scale-105 transition transform">
-                        <div class="w-full h-full bg-[#0b0f19] rounded-[14px] flex items-center justify-center relative overflow-hidden">
-                            <i class="fa-solid fa-wifi text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-lg group-hover:rotate-12 transition"></i>
-                            <span class="absolute -bottom-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full animate-ping"></span>
-                        </div>
-                    </div>
+                    <img src="/favicon.svg" alt="" width="44" height="44" class="w-11 h-11 shadow-[0_0_20px_rgba(0,242,254,0.35)] rounded-2xl group-hover:scale-105 transition transform">
                     <div class="flex flex-col">
                         <span class="text-2xl font-black tracking-wider uppercase text-white leading-none cg-logo">
                             CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span>
@@ -227,7 +222,7 @@
                         <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2 text-white">
                             <span class="w-3 h-6 bg-cyan-400 rounded-sm"></span> Principais Matérias
                         </h2>
-                        <!-- Abas de página: aparecem sozinhas quando há mais de 10 matérias na lista (montadas pelo JavaScript) -->
+                        <!-- Abas de página: aparecem sozinhas quando há mais de 8 matérias na lista (montadas pelo JavaScript) -->
                         <nav id="home-pages" aria-label="Páginas de matérias" class="flex items-center gap-2 max-w-full overflow-x-auto" style="display:none"></nav>
                     </div>
 
@@ -275,8 +270,8 @@
     <footer class="bg-gray-950 border-t border-gray-800 text-gray-400 text-xs py-10 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div class="col-span-2">
-                <span class="text-2xl font-black tracking-wider uppercase text-white leading-none cg-logo">CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span></span>
-                <p class="text-gray-400 mt-2 max-w-md">Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.</p>
+                <a href="/" class="inline-flex items-center gap-3"><img src="/favicon.svg" alt="" width="36" height="36" class="w-9 h-9 rounded-xl"><span class="text-2xl font-black tracking-wider uppercase text-white leading-none cg-logo">CONEXÃO<span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500">GAMER</span></span></a>
+                <p class="text-gray-400 mt-4 max-w-md">Sua conexão com o universo dos games: lançamentos, notícias em tempo real, reviews e tudo sobre tecnologia.</p>
                 <form id="nl-form" class="mt-5 max-w-md" novalidate>
                     <label for="nl-email" class="block text-white font-bold uppercase text-[11px] mb-2"><i class="fa-regular fa-envelope text-cyan-400 mr-1"></i> Receba as novidades por e-mail</label>
                     <div class="flex flex-wrap items-center gap-2">
@@ -2366,8 +2361,8 @@
           '</a>').join('');
       }
 
-      // ---------- Páginas da home (10 matérias por aba) ----------
-      const PAGE_SIZE = 10;
+      // ---------- Páginas da home (8 matérias por aba) ----------
+      const PAGE_SIZE = 8;
       let homeAll = [];
 
       function pageFromHash() {

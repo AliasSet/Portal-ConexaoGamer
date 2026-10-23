@@ -1017,7 +1017,7 @@ const clip = (s, n) => (s.length <= n ? s : s.slice(0, n - 1).replace(/\s+\S*$/,
 // Quando a página abre, o JavaScript da home troca este conteúdo pelos cards dele, sem mudar nada para o leitor.
 // (Se mudar HOME_PAGE_SIZE, mude também PAGE_SIZE no index.html.)
 const GRID_PLACEHOLDER = '<div id="posts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>';
-const HOME_PAGE_SIZE = 10;
+const HOME_PAGE_SIZE = 8;
 
 function homeGridHtml(posts) {
   const grid = posts.slice(3);
