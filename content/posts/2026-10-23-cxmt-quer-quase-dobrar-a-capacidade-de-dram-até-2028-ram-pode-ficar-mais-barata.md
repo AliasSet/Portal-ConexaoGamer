@@ -1,6 +1,6 @@
 ---
-title: CXMT quer quase dobrar a capacidade de DRAM até 2028; RAM pode ficar mais
-  barata?
+title: CXMT pretende dobrar capacidade produtiva de DRAM até 2028; RAM pode
+  ficar mais barata?
 category:
   - Notícias
   - PC
