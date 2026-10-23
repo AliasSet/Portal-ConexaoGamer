@@ -5,7 +5,7 @@ category:
   - PC
   - Steam
   - Epic Games
-  - Nintendo
+  - Consoles
 tags:
   - Final Fantasy Resonance
   - Square Enix
