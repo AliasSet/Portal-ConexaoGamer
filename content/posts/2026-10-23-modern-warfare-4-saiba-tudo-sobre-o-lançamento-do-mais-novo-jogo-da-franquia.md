@@ -15,10 +15,10 @@ tags:
   - Infinity Ward
   - PC Gaming
 image: https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/mw4/play-now/MW4LP_BuyNow_MW4VE.webp
-summary: "Call of Duty: Modern Warfare 4 chega em 23 de outubro, mas o
-  multiplayer não contará com playlists de Open Matchmaking no lançamento. Veja
-  o horário previsto para o Brasil e entenda o que esperar do provável último
-  jogo da subfranquia Modern Warfare"
+summary: "Call of Duty: Modern Warfare 4 promete encerrar a atual saga Modern
+  Warfare enquanto a Activision prepara uma nova fase para a franquia. O jogo
+  também chega sem playlists de Open Matchmaking no lançamento. Veja a data, o
+  horário de estreia no Brasil e o que essas mudanças significam para os fãs."
 author: Redação Conexão Gamer
 date: 22/10/2026T21:43
 ---
@@ -46,7 +46,7 @@ Embora o recurso tenha sido discutido durante a divulgação dos sistemas de mat
 
 Além das novidades no lançamento, *Modern Warfare 4* tem outra responsabilidade: concluir a atual fase da subfranquia. Tyler Bahl, diretor de marketing da Activision, descreveu o jogo como a conclusão épica da série recente e afirmou que a empresa está pronta para fechar esse capítulo e iniciar outro.
 
-[[imagem|/uploads/x9ec6bx120ae1-1b22a114f7.webp|media|Jogo marca o encerramento da atual fase da saga Modern Warfare. Será o fim de uma era para a franquia?|]]
+[[imagem|https://i.redd.it/x9ec6bx120ae1.jpeg|media|Jogo marca o encerramento da atual fase da saga Modern Warfare. Será o fim de uma era para a franquia?|]]
 
 A mudança acompanha o plano de lançar uma nova subfranquia de *Call of Duty*, que já está em desenvolvimento. Isso não significa que *Modern Warfare* desaparecerá para sempre, mas indica que a Activision pretende mudar de direção após anos alternando principalmente entre as séries *Modern Warfare* e *Black Ops*.
 
