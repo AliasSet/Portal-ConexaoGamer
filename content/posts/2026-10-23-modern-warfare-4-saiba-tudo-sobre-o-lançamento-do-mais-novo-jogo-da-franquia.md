@@ -45,7 +45,7 @@ Embora o recurso tenha sido discutido durante a divulgação dos sistemas de mat
 
 Além das novidades no lançamento, *Modern Warfare 4* tem outra responsabilidade: concluir a atual fase da subfranquia. Tyler Bahl, diretor de marketing da Activision, descreveu o jogo como a conclusão épica da série recente e afirmou que a empresa está pronta para fechar esse capítulo e iniciar outro.
 
-[[imagem|https://i.redd.it/x9ec6bx120ae1.jpeg|media|Jogo marca o encerramento da atual fase da saga Modern Warfare. Será o fim de uma era para a franquia?|]]
+[[imagem|/uploads/x9ec6bx120ae1-1b22a114f7.webp|media|Jogo marca o encerramento da atual fase da saga Modern Warfare. Será o fim de uma era para a franquia?|]]
 
 A mudança acompanha o plano de lançar uma nova subfranquia de *Call of Duty*, que já está em desenvolvimento. Isso não significa que *Modern Warfare* desaparecerá para sempre, mas indica que a Activision pretende mudar de direção após anos alternando principalmente entre as séries *Modern Warfare* e *Black Ops*.
 
