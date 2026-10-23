@@ -15,7 +15,7 @@ tags:
   - inteligência artificial
   - semicondutores
   - TrendForce
-image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmW4LXwvtBqBGALFFxHjRAX_SEmkFAsn8iOvaQnnTvCYYhfgRhk4abTV8P&s=10
+image: /uploads/images-85247e00d2.webp
 summary: A chinesa CXMT pode elevar sua capacidade de DRAM de 320 mil para 600
   mil wafers mensais até 2028. A expansão pode reforçar a oferta de memórias
   para PCs, celulares e outros eletrônicos, mas a demanda provocada pela
@@ -52,7 +52,7 @@ Outro possível fator de crescimento é o interesse atribuído à Apple em diver
 
 Até o momento, esse interesse não deve ser tratado como um contrato comercial confirmado. Mesmo assim, a possibilidade mostra como a escassez de memória está levando grandes empresas a considerar alternativas aos fornecedores tradicionais.
 
-[[imagem|https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZ_vsO4dVC0ALTZiasqKACYEstjucIYuh5BS9VUaDgiEqIGeMP5_j2z1_4&s=10|media|Enquanto gigantes focam na IA, CXMT foca no mercado consumidor|]]
+[[imagem|/uploads/images-d992047ca9.webp|media|Enquanto gigantes focam na IA, CXMT foca no mercado consumidor|]]
 
 A CXMT já atende importantes empresas chinesas, como Huawei, Xiaomi e Lenovo, segundo informações citadas pela Reuters. O avanço da fabricante também faz parte do esforço da China para reduzir sua dependência de componentes estrangeiros.
 
