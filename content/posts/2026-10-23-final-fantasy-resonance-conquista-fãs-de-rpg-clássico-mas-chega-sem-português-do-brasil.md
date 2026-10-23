@@ -15,7 +15,7 @@ tags:
   - Brave Exvius
   - PC Gaming
   - Nintendo Switch 2
-image: https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgamFZSEhPzSPhyAybOmT_E9vw00oOaLJ2iiOhrHcOtOcgdIUF00DLUSIFeZZvl2FG_cybV7YRr1W7fzKBYAvMhEp_IaXydkr8641z4reS2mJkzh0519zjLAJ65PGNuZYx1j_1N8Axfd6pAxWzWPtjN3nqJWdaga6biz0XMI3njUTio07zDwzntzHHMSmk/w1200-h630-p-k-no-nu/BlastCapa.jpg
+image: /uploads/blastcapa-13a3391557.webp
 summary: Final Fantasy Resonance aposta no combate por turnos, em gráficos HD-2D
   e em referências à história da franquia para conquistar fãs de JRPGs. As
   primeiras análises elogiam a jogabilidade, mas apontam problemas no ritmo da
