@@ -175,6 +175,17 @@ const authorImg = (p, size) => p.authorPhoto
 
 /* ---------- Leitura dos posts ---------- */
 
+// Ponto de foco da capa (campos "Foco da imagem" do CMS): "X% Y%" para usar em object-position; '' = centro.
+function parseFocus(x, y) {
+  const one = (v) => {
+    const m = String(v == null ? '' : v).trim().match(/^(\d{1,3})\s*%?$/);
+    return m ? Math.min(100, +m[1]) : 50;
+  };
+  const fx = one(x), fy = one(y);
+  return fx === 50 && fy === 50 ? '' : fx + '% ' + fy + '%';
+}
+const focusAttr = (p) => (p && p.focus ? ` style="object-position:${esc(p.focus)}"` : '');
+
 function parsePost(fileName, text, mdParse) {
   const m = text.replace(/^\uFEFF/, '')
     .match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n([\s\S]*))?$/);
@@ -197,6 +208,7 @@ function parsePost(fileName, text, mdParse) {
     title: String(meta.title || 'Sem título').replace(/\s+/g, ' ').trim(),
     summary: String(meta.summary || '').replace(/\s+/g, ' ').trim(),
     image: meta.image ? String(meta.image) : '',
+    focus: parseFocus(meta.focus_x, meta.focus_y),
     imageCaption: meta.image_caption ? String(meta.image_caption).replace(/\s+/g, ' ').trim() : '',
     categories: toList(meta.category).map((c) => CATEGORY_ALIASES[c] || c),
     tags: toList(meta.tags),
@@ -355,7 +367,7 @@ function relatedCardHtml(q) {
   const cat = (q.categories[0] || 'Notícias');
   return `<a href="${esc(q.url)}" class="group bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col">
                                 <div class="relative h-28 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">
-                                    ${okImg(q.image) ? `<img src="${esc(q.image)}" alt="${esc(q.title)}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
+                                    ${okImg(q.image) ? `<img src="${esc(q.image)}" alt="${esc(q.title)}" loading="lazy" referrerpolicy="no-referrer"${focusAttr(q)} class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
                                     <span class="absolute top-2 left-2 border text-[10px] font-bold px-2 py-0.5 rounded uppercase ${catStyle(cat)}">${esc(cat)}</span>
                                 </div>
                                 <div class="p-3 flex flex-col flex-grow">
@@ -398,7 +410,7 @@ function articleHtml(p, related) {
                         <span><i class="fa-regular fa-clock text-cyan-400 mr-1"></i> ${p.readMin} min de leitura</span>
                     </div>
                     ${shareHtml(p, 'top')}
-                    ${okImg(p.image) ? `<figure class="mt-6"><img src="${esc(p.image)}" alt="${esc(p.title)}" referrerpolicy="no-referrer" class="w-full max-h-[420px] object-cover rounded-2xl border border-gray-800" onerror="this.style.display='none'">${caption ? `<figcaption class="mt-2 text-xs text-gray-500 leading-relaxed">${caption}</figcaption>` : ''}</figure>` : ''}
+                    ${okImg(p.image) ? `<figure class="mt-6"><img src="${esc(p.image)}" alt="${esc(p.title)}" referrerpolicy="no-referrer"${focusAttr(p)} class="w-full max-h-[420px] object-cover rounded-2xl border border-gray-800" onerror="this.style.display='none'">${caption ? `<figcaption class="mt-2 text-xs text-gray-500 leading-relaxed">${caption}</figcaption>` : ''}</figure>` : ''}
                     <div class="article-body mt-6">${bodyHtml}</div>
                     ${tags ? `<div class="flex flex-wrap gap-2 mt-8">${tags}</div>` : ''}
                     ${shareHtml(p, 'bottom')}
@@ -433,7 +445,7 @@ function cardHtml(p) {
   return `
                         <a href="${esc(p.url)}" class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group">
                             <div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">
-                                ${okImg(p.image) ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
+                                ${okImg(p.image) ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" referrerpolicy="no-referrer"${focusAttr(p)} class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
                                 <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 ${p.rating != null ? 'max-w-[68%]' : 'max-w-[calc(100%-1.5rem)]'}">${cats}</div>
                                 ${p.rating != null ? `<span class="absolute top-3 right-3 bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ${esc(p.rating)}</span>` : ''}
                             </div>
@@ -1147,7 +1159,7 @@ async function main() {
   const light = posts.map((p) => ({
     slug: p.slug, url: p.url, title: p.title, summary: p.summary, image: p.image,
     categories: p.categories, tags: p.tags, rating: p.rating, author: p.author, authorPhoto: p.authorPhoto || '',
-    time: p.time, readMin: p.readMin
+    focus: p.focus || '', time: p.time, readMin: p.readMin
   }));
   fs.writeFileSync(path.join(DIST, 'posts.json'), JSON.stringify(light));
 
