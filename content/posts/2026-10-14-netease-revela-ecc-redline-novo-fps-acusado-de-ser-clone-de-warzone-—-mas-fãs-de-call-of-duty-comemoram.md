@@ -39,7 +39,7 @@ Por outro lado, uma parcela significativa da comunidade — cansada do estado at
 
 A principal novidade na fórmula do ECC: Redline fica por conta da adição de habilidades exclusivas e dispositivos táticos para cada operador, aproximando o ritmo do jogo do que se vê em jogos de tiro com heróis.
 
-[[imagem|/uploads/ecc-redline-pc-steam-wallpaper-1-big-79c6d76363.webp|media|ECC: REDLINE chama atenção pela gunplay acelerada e dinamicidade dos combates|ECC: REDLINE chama atenção pela gunplay e dinamicidade dos combates]]
+[[imagem|/uploads/ecc-redline-pc-steam-wallpaper-1-big-79c6d76363.webp|media|ECC: REDLINE chama atenção pela gunplay acelerada e dinamicidade dos combates.|ECC: REDLINE chama atenção pela gunplay e dinamicidade dos combates]]
 
 ## Frustração com a Activision impulsiona o interesse no projeto
 
