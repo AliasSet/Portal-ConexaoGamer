@@ -203,7 +203,7 @@
     else if (words < 300) add(G3, 'warn', 'Texto curto (' + words + ' palavras)', 'Matérias a partir de uns 300 palavras costumam ter melhor desempenho.');
     else add(G3, 'ok', 'Tamanho do texto bom (' + words + ' palavras)', '');
     if (words >= 400 && !/^#{2,3}\s/m.test(body)) add(G3, 'warn', 'Texto longo sem subtítulos', 'Use "## Subtítulo" para dividir. Ajuda quem lê e o Google.');
-    if (!/\]\(\s*(\/(noticias|categoria)\/|https?:\/\/(www\.)?conexaogamer\.com\.br|https?:\/\/[^)\s]*vercel\.app\/)/i.test(body)) add(G3, 'warn', 'Nenhum link para outra matéria do site', 'Linkar matérias relacionadas ajuda o Google a entender o site e mantém o leitor por mais tempo.');
+    if (!/\]\(\s*(\/(noticias|categoria)\/|https?:\/\/(www\.)?conexaogamer\.com\.br|https?:\/\/[^)\s]*vercel\.app\/)/i.test(body)) add(G3, 'warn', 'Nenhum link para outra matéria do site', 'O fim da matéria já tem links automáticos, mas links no meio do texto valem mais: veja "Matérias para linkar no texto" logo abaixo.');
     else add(G3, 'ok', 'Tem link para outra matéria do site', '');
     // imagens dentro do texto sem descrição
     var semAlt = 0, total = 0, m;
@@ -240,6 +240,60 @@
     var E = function (tag, style) {
       return h.apply(null, [tag, { style: style || {} }].concat([].slice.call(arguments, 2)));
     };
+
+    // ---------- Sugestões de links internos ----------
+    // Endereço do site (a prévia roda dentro de um iframe, onde location.origin pode vir "null")
+    function siteOrigin() {
+      try { if (window.origin && window.origin !== 'null') return window.origin; } catch (e) {}
+      try { return window.parent.location.origin; } catch (e) {}
+      return '';
+    }
+    var STOP = {}; ('para com uma uns umas dos das nos nas que mais como mas por sobre entre após apos ate até desde sem sob ' +
+      'seu sua seus suas ele ela eles elas isso esse essa esses essas este esta estes estas aqui ali foi ser são sao tem têm ' +
+      'ter está estao estão vai vão pode podem será serao quando onde qual quais cujo cuja também tambem ainda já muito ' +
+      'muitos muita muitas novo nova novos novas segundo diz disse após depois antes durante contra todo toda todos todas ' +
+      'seja sendo havia haver fazer faz feito ano anos dia dias vez vezes outro outra outros outras mesmo mesma tudo nada').split(' ').forEach(function (w) { STOP[w] = 1; });
+    function norm(t) { return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+    function words(t) {
+      var out = {}; (norm(t).match(/[a-z0-9]+/g) || []).forEach(function (w) { if (w.length >= 4 && !STOP[w]) out[w] = 1; });
+      return out;
+    }
+
+    // Matérias já publicadas que combinam com a que está sendo escrita. Pesos: tag em comum 4; palavra do título
+    // em comum 3; palavra do texto aparecendo no título da outra 1,5; mesma categoria 1 ("Notícias" 0,3).
+    function suggest(d, posts) {
+      var title = norm(d.title).trim();
+      var wTitle = words(d.title), wBody = words(String(d.body || '').replace(/\[\[[^\]]*\]\]/g, ' '));
+      var myTags = {}; (d.tags || []).forEach(function (t) { var k = norm(t).trim(); if (k) myTags[k] = 1; });
+      var myCats = {}; (Array.isArray(d.category) ? d.category : (d.category ? [d.category] : [])).forEach(function (c) { myCats[c] = 1; });
+      var res = [];
+      (posts || []).forEach(function (q) {
+        if (!q || !q.url || !q.title || norm(q.title).trim() === title) return;
+        var qw = words(q.title), score = 0, why = [];
+        Object.keys(qw).forEach(function (w) {
+          if (wTitle[w]) { score += 3; why.push(w); }
+          else if (wBody[w]) { score += 1.5; why.push(w); }
+        });
+        (q.tags || []).forEach(function (t) { var k = norm(t).trim(); if (myTags[k]) { score += 4; why.unshift(String(t)); } });
+        (q.categories || []).forEach(function (c) { if (myCats[c]) score += (c === 'Notícias' ? 0.3 : 1); });
+        if (score >= 3) res.push({ q: q, score: score, why: why.filter(function (x, i, a) { return a.indexOf(x) === i; }).slice(0, 3) });
+      });
+      res.sort(function (a, b) { return (b.score - a.score) || ((b.q.time || 0) - (a.q.time || 0)); });
+      return res.slice(0, 5);
+    }
+
+    function copyText(t) {
+      var fallback = function () {
+        try {
+          var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select(); var ok = document.execCommand('copy'); document.body.removeChild(ta); return ok;
+        } catch (e) { return false; }
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(function () { return true; }, function () { return fallback(); });
+      } catch (e) {}
+      return Promise.resolve(fallback());
+    }
 
     // Formatos reais em que a capa aparece no site (medidas do layout em tela de 1280 px e de celular).
     // pct = largura relativa à coluna principal (805 px) só para caber no painel; a PROPORÇÃO é a real.
@@ -293,8 +347,24 @@
     }
 
     var Checker = createClass({
-      getInitialState: function () { return { img: { status: 'none' } }; },
-      componentDidMount: function () { this._dead = false; this.measure(); },
+      getInitialState: function () { return { img: { status: 'none' }, posts: null, copied: '' }; },
+      componentDidMount: function () {
+        this._dead = false; this.measure();
+        var self = this;
+        try {
+          fetch(siteOrigin() + '/posts.json', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+            .then(function (list) { if (!self._dead) self.setState({ posts: Array.isArray(list) ? list : 'erro' }); })
+            .catch(function () { if (!self._dead) self.setState({ posts: 'erro' }); });
+        } catch (e) { this.setState({ posts: 'erro' }); }
+      },
+      copyLink: function (q) {
+        var self = this, md = '[' + q.title + '](' + q.url + ')';
+        copyText(md).then(function (ok) {
+          if (self._dead) return;
+          self.setState({ copied: ok ? q.url : '' });
+          setTimeout(function () { if (!self._dead && self.state.copied === q.url) self.setState({ copied: '' }); }, 2500);
+        });
+      },
       componentDidUpdate: function () { this.measure(); },
       componentWillUnmount: function () { this._dead = true; },
 
@@ -307,7 +377,7 @@
           var u = String(this.props.getAsset(path, f) || '');
           if (u) return u;
         } catch (e) { /* usa o caminho cru */ }
-        return path.charAt(0) === '/' ? location.origin + path : path;
+        return path.charAt(0) === '/' ? siteOrigin() + path : path;
       },
 
       measure: function () {
@@ -388,16 +458,39 @@
 
         var panelStyle = { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '14px 16px', margin: '0 0 18px', fontFamily: font.fontFamily };
         var panel = h.apply(null, ['div', { style: panelStyle }, headEl, googleBox].concat(blocks));
+        var self = this, sg = null;
+        var sgStyle = { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '14px 16px', margin: '0 0 18px', fontFamily: font.fontFamily, fontSize: '13px', lineHeight: 1.45 };
+        var sgTitle = E('div', { fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em', color: '#6b7280', margin: '0 0 6px' }, 'Matérias para linkar no texto');
+        var sgHelp = E('div', { color: '#4b5563', marginBottom: '8px' }, 'Links no meio do texto ajudam o Google e o leitor. Clique em "Copiar link", volte ao editor e cole no ponto certo (troque o texto entre colchetes por uma palavra que descreva o assunto).');
+        if (this.state.posts === null) sg = E('div', sgStyle, sgTitle, 'Carregando as matérias do site…');
+        else if (this.state.posts === 'erro') sg = E('div', sgStyle, sgTitle, 'Não consegui carregar a lista de matérias do site (/posts.json). Verifique a conexão ou tente novamente.');
+        else {
+          var found = suggest(d, this.state.posts);
+          if (!found.length) sg = E('div', sgStyle, sgTitle, 'Ainda não achei matéria parecida. Preencha o título, as tags e o texto para eu sugerir.');
+          else {
+            var rows = found.map(function (f) {
+              var q = f.q, done = self.state.copied === q.url;
+              return E('div', { display: 'flex', gap: '10px', alignItems: 'center', padding: '6px 0', borderTop: '1px solid #e5e7eb' },
+                E('div', { flex: 1, minWidth: 0 },
+                  E('div', { fontWeight: 700, color: '#111827' }, q.title),
+                  E('div', { fontSize: '11px', color: '#6b7280' }, (q.categories && q.categories[0] || 'Notícias') + (f.why.length ? ' · em comum: ' + f.why.join(', ') : '') + ' · ' + q.url)
+                ),
+                h('button', { type: 'button', onClick: function () { self.copyLink(q); }, style: { flexShrink: 0, cursor: 'pointer', border: '1px solid ' + (done ? '#15803d' : '#d1d5db'), background: done ? '#dcfce7' : '#fff', color: done ? '#15803d' : '#111827', borderRadius: '6px', padding: '5px 10px', fontSize: '12px', fontWeight: 700 } }, done ? 'Copiado!' : 'Copiar link')
+              );
+            });
+            sg = h.apply(null, ['div', { style: sgStyle }, sgTitle, sgHelp].concat(rows));
+          }
+        }
         var catList = d.category; if (typeof catList === 'string') catList = [catList];
         var fx = /^\d{1,3}%$/.test(String(d.focus_x || '')) ? d.focus_x : '50%';
         var fy = /^\d{1,3}%$/.test(String(d.focus_y || '')) ? d.focus_y : '50%';
         var crops = cropSection(src, this.state.img, title, catList || [], fx + ' ' + fy);
-        return E('div', { padding: '4px' }, panel, crops, article);
+        return E('div', { padding: '4px' }, panel, sg, crops, article);
       }
     });
 
     CMS.registerPreviewTemplate('posts', Checker);
-    window.__cgAnalyze = analyze;   // usado nos testes
+    window.__cgAnalyze = analyze; window.__cgSuggest = suggest;   // usado nos testes
   }
 
 })();
