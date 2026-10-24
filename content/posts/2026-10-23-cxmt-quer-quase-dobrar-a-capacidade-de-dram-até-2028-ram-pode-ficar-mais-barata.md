@@ -32,7 +32,7 @@ A expansão acontece em um momento complicado para o mercado de semicondutores. 
 
 Nesse cenário, a CXMT busca fortalecer sua presença no segmento de DRAM convencional, utilizado em computadores, notebooks, smartphones e outros dispositivos eletrônicos. Uma oferta maior poderia ampliar as alternativas disponíveis para fabricantes que enfrentam custos elevados e dificuldades para garantir o fornecimento de memória.
 
-[[imagem|https://www.adrenaline.com.br/wp-content/uploads/2025/05/cxmt-encerra-ddr4-01.jpg|media|Empresa chinesa vê na escassez uma oportunidade de mercado|CXMT]]
+[[imagem|/uploads/cxmt-encerra-ddr4-01-e29d6c4b95.webp|media|Empresa chinesa vê na escassez uma oportunidade de mercado|CXMT]]
 
 A empresa também vem investindo em capacidade industrial. Em agosto, a Reuters informou que a CXMT avaliava construir outra fábrica de memória em Pequim, além de instalações que já estavam sendo desenvolvidas em outras localidades chinesas. A agência destacou que os projetos de expansão poderiam elevar a capacidade total para mais de 600 mil wafers mensais quando estivessem plenamente operacionais.
 
