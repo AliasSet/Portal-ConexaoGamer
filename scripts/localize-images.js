@@ -29,7 +29,7 @@ const MAX_WIDTH = 1600;
 const WEBP_QUALITY = 82;
 let sharp = null;
 try { sharp = require('sharp'); } catch (e) { console.warn('[imagens] AVISO: pacote "sharp" não encontrado: as imagens serão guardadas sem otimização.'); }
-const OWN_HOSTS = (process.env.OWN_HOSTS || 'conexaogamer-seven.vercel.app').split(',').map((s) => s.trim()).filter(Boolean);
+const OWN_HOSTS = (process.env.OWN_HOSTS || 'conexaogamer.com.br,www.conexaogamer.com.br,conexaogamer-seven.vercel.app').split(',').map((s) => s.trim()).filter(Boolean);
 
 // Tipo real do arquivo pelos primeiros bytes (não confia na extensão nem no cabeçalho do site)
 function sniff(buf) {
@@ -80,15 +80,26 @@ function findExisting(hash) {
   return fs.readdirSync(UPLOADS).find((f) => f.includes('-' + hash + '.')) || null;
 }
 
-async function download(u) {
+// Alguns sites (Cloudflare, WordPress) devolvem erro 403/520 para quem se apresenta como "robô".
+// Por isso tentamos, em ordem: (1) navegador comum com o site de origem como referência,
+// (2) navegador comum sem referência, (3) o nome do nosso robô. Para no primeiro que funcionar.
+const CHROME = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
+function headerProfiles(u) {
+  let origin = '';
+  try { origin = new URL(u).origin + '/'; } catch (e) {}
+  const accept = 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8';
+  return [
+    { 'User-Agent': CHROME, 'Accept': accept, 'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8', 'Referer': origin },
+    { 'User-Agent': CHROME, 'Accept': accept, 'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8' },
+    { 'User-Agent': 'Mozilla/5.0 (compatible; ConexaoGamerBot/1.0)', 'Accept': accept }
+  ];
+}
+
+async function downloadOnce(u, headers) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
-    const res = await fetch(u, {
-      signal: ctrl.signal,
-      redirect: 'follow',
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ConexaoGamerBot/1.0)', 'Accept': 'image/avif,image/webp,image/*,*/*;q=0.8' }
-    });
+    const res = await fetch(u, { signal: ctrl.signal, redirect: 'follow', headers });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const len = Number(res.headers.get('content-length') || 0);
     if (len > MAX_BYTES) throw new Error('arquivo grande demais (' + Math.round(len / 1048576) + ' MB)');
@@ -98,6 +109,18 @@ async function download(u) {
     if (!ext) throw new Error('não é PNG/JPG/GIF/WEBP/AVIF');
     return { buf, ext };
   } finally { clearTimeout(timer); }
+}
+
+async function download(u) {
+  let lastErr = null;
+  for (const h of headerProfiles(u)) {
+    try { return await downloadOnce(u, h); }
+    catch (e) {
+      lastErr = e;
+      if (/grande demais|não é PNG/.test(e.message)) break;   // tentar de novo não adianta
+    }
+  }
+  throw lastErr;
 }
 
 // Links de imagem encontrados no arquivo
@@ -141,7 +164,10 @@ async function main() {
             console.log('[imagens] baixada: ' + u + ' -> ' + local + ' (' + Math.round(buf.length / 1024) + ' KB' + (buf.length < dl.buf.length ? ', antes ' + Math.round(dl.buf.length / 1024) + ' KB' : '') + ')');
           } catch (e) {
             failed++;
-            console.warn('[imagens] AVISO: não consegui baixar ' + u + ' (' + (e.name === 'AbortError' ? 'demorou demais' : e.message) + '). O link original foi mantido.');
+            const why = e.name === 'AbortError' ? 'demorou demais' : e.message;
+            console.warn('[imagens] AVISO: não consegui baixar ' + u + ' (' + why + '). O link original foi mantido.');
+            // aparece em destaque na página do GitHub Actions (anotação amarela), sem reprovar o processo
+            if (process.env.GITHUB_ACTIONS) console.log('::warning title=Imagem externa não guardada::' + path.relative(ROOT, file) + ' -> ' + u + ' (' + why + ')');
           }
         }
         done.set(u, local);
