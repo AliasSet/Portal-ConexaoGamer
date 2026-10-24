@@ -382,20 +382,22 @@ function relatedCardHtml(q) {
 function moreLinksHtml(more) {
   if (!more || !more.length) return '';
   const items = more.map((q) => `<li><a href="${esc(q.url)}" class="text-cyan-300 hover:text-cyan-200 hover:underline font-semibold">${esc(q.title)}</a> <span class="text-gray-500 text-xs">· ${esc(q.categories[0] || 'Notícias')}</span></li>`).join('\n                            ');
-  return `
-                        <h3 class="mt-6 text-sm font-black uppercase tracking-wide text-gray-400">Continue explorando</h3>
+  return `<section class="mt-8 pt-6 border-t border-gray-800" aria-label="Continue explorando">
+                        <h2 class="text-lg font-black text-white flex items-center gap-2"><i class="fa-solid fa-compass text-cyan-400"></i> Continue explorando</h2>
                         <ul class="mt-3 space-y-2 text-sm list-disc list-inside marker:text-cyan-400">
                             ${items}
-                        </ul>`;
+                        </ul>
+                    </section>
+                    `;
 }
 
 function relatedHtml(list, more) {
   if (!list || !list.length) return '';
-  return `<section class="mt-10 pt-8 border-t border-gray-800" aria-label="Leia também">
+  return moreLinksHtml(more) + `<section class="mt-8 pt-6 border-t border-gray-800" aria-label="Leia também">
                         <h2 class="text-lg font-black text-white flex items-center gap-2"><i class="fa-solid fa-book-open text-cyan-400"></i> Leia também</h2>
                         <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                             ${list.map(relatedCardHtml).join('\n                            ')}
-                        </div>${moreLinksHtml(more)}
+                        </div>
                     </section>`;
 }
 
