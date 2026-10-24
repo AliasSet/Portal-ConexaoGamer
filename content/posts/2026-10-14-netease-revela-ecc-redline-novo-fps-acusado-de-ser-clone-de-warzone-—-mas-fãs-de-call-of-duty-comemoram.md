@@ -6,7 +6,7 @@ tags:
   - "ECC: Redline"
   - Call of Duty
   - Warzone
-image: /uploads/sddefault-14d8a49ad6.webp
+image: https://i.ytimg.com/vi/PLZ5m4-qMe8/sddefault.jpg?v=6ad8061f
 summary: "Anunciado pela NetEase, ECC: Redline virou assunto nas redes sociais
   por trazer movimentação, interface e gunplay idênticos ao Warzone original.
   Apesar das acusações de cópia, jogadores frustrados com a franquia da
@@ -39,7 +39,7 @@ Por outro lado, uma parcela significativa da comunidade — cansada do estado at
 
 A principal novidade na fórmula do ECC: Redline fica por conta da adição de habilidades exclusivas e dispositivos táticos para cada operador, aproximando o ritmo do jogo do que se vê em jogos de tiro com heróis.
 
-[[imagem|https://mmorpgbr.com.br/wp-content/uploads/2026/10/r1791903074324505.webp|media|ECC: REDLINE chama atenção pela gunplay e dinamicidade dos combates|]]
+[[imagem|https://mmorpgbr.com.br/wp-content/uploads/2026/10/r1791903074324505.webp|media|ECC: REDLINE chama atenção pela gunplay e dinamicidade dos combates|ECC: REDLINE chama atenção pela gunplay e dinamicidade dos combates]]
 
 ## Frustração com a Activision impulsiona o interesse no projeto
 
