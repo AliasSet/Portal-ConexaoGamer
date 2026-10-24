@@ -5,7 +5,7 @@ category:
   - Steam
 tags:
   - Aion 2
-image: https://dropsdejogos.uai.com.br/wp-content/uploads/sites/10/2026/07/aion-2-1-scaled.jpg
+image: /uploads/aion-2-1-scaled-7af80b73ee.webp
 summary: Jogadores de AION 2 estão reclamando da progressão no endgame, marcada
   por equipamentos raros, crafting com chances de falha e longas sessões sem
   melhorias. A falta de alternativas para evoluir também virou alvo de críticas.
