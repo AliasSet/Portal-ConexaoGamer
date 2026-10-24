@@ -14,7 +14,7 @@ tags:
   - Activision
   - Infinity Ward
   - PC Gaming
-image: https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/mw4/play-now/MW4LP_BuyNow_MW4VE.webp
+image: /uploads/mw4lp-buynow-mw4ve-95cbd69d57.webp
 summary: "Call of Duty: Modern Warfare 4 promete encerrar a saga da Task Force
   141 enquanto a Activision prepara uma nova fase para a franquia. O jogo também
   chega sem playlists de Open Matchmaking no lançamento. Veja a data, o horário
@@ -36,7 +36,7 @@ O novo capítulo da franquia chega com campanha e multiplayer, além do retorno 
 
 Outro ponto que chamou atenção foi a ausência das playlists de Open Matchmaking. A opção busca reduzir a influência do Skill-Based Matchmaking (SBMM), sistema que considera o desempenho dos jogadores para montar partidas.
 
-[[imagem|https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/blog/body/mw4/reveal/MW4-REVEAL-TOUT.jpg|media|Call of Duty: Modern Warfare 4 chega em 23 de outubro, prometendo combates intensos, uma nova campanha cinematográfica e muita ação no multiplayer.|]]
+[[imagem|/uploads/mw4-reveal-tout-fcce2e63d0.webp|media|Call of Duty: Modern Warfare 4 chega em 23 de outubro, prometendo combates intensos, uma nova campanha cinematográfica e muita ação no multiplayer.|]]
 
 Na prática, o Open Matchmaking oferece a possibilidade de encontrar confrontos com maior variedade de habilidades, enquanto o sistema tradicional tende a priorizar partidas mais equilibradas com base no desempenho. Para jogadores que preferem partidas menos previsíveis, a falta dessa alternativa pode ser frustrante.
 
