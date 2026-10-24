@@ -357,12 +357,13 @@
             .catch(function () { if (!self._dead) self.setState({ posts: 'erro' }); });
         } catch (e) { this.setState({ posts: 'erro' }); }
       },
-      copyLink: function (q) {
-        var self = this, md = '[' + q.title + '](' + q.url + ')';
-        copyText(md).then(function (ok) {
+      // mode 'md' copia [Título](/noticias/x/) (para o modo Markdown); 'url' copia só /noticias/x/ (para o botão de link do Rich Text)
+      copyLink: function (q, mode) {
+        var self = this, txt = mode === 'url' ? q.url : '[' + q.title + '](' + q.url + ')', key = q.url + '|' + mode;
+        copyText(txt).then(function (ok) {
           if (self._dead) return;
-          self.setState({ copied: ok ? q.url : '' });
-          setTimeout(function () { if (!self._dead && self.state.copied === q.url) self.setState({ copied: '' }); }, 2500);
+          self.setState({ copied: ok ? key : '' });
+          setTimeout(function () { if (!self._dead && self.state.copied === key) self.setState({ copied: '' }); }, 2500);
         });
       },
       componentDidUpdate: function () { this.measure(); },
@@ -461,7 +462,7 @@
         var self = this, sg = null;
         var sgStyle = { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '14px 16px', margin: '0 0 18px', fontFamily: font.fontFamily, fontSize: '13px', lineHeight: 1.45 };
         var sgTitle = E('div', { fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em', color: '#6b7280', margin: '0 0 6px' }, 'Matérias para linkar no texto');
-        var sgHelp = E('div', { color: '#4b5563', marginBottom: '8px' }, 'Links no meio do texto ajudam o Google e o leitor. Clique em "Copiar link", volte ao editor e cole no ponto certo (troque o texto entre colchetes por uma palavra que descreva o assunto).');
+        var sgHelp = E('div', { color: '#4b5563', marginBottom: '8px' }, 'Links no meio do texto ajudam o Google e o leitor. Dois jeitos: (1) no editor, passe para o modo "Markdown" (botão acima do texto), clique em "Copiar link (Markdown)" e cole onde quiser, trocando o texto entre colchetes por uma palavra que descreva o assunto; ou (2) no modo normal, selecione uma palavra do texto, clique no botão de link do editor e cole o endereço copiado em "Copiar só o endereço".');
         if (this.state.posts === null) sg = E('div', sgStyle, sgTitle, 'Carregando as matérias do site…');
         else if (this.state.posts === 'erro') sg = E('div', sgStyle, sgTitle, 'Não consegui carregar a lista de matérias do site (/posts.json). Verifique a conexão ou tente novamente.');
         else {
@@ -469,13 +470,18 @@
           if (!found.length) sg = E('div', sgStyle, sgTitle, 'Ainda não achei matéria parecida. Preencha o título, as tags e o texto para eu sugerir.');
           else {
             var rows = found.map(function (f) {
-              var q = f.q, done = self.state.copied === q.url;
+              var q = f.q, doneMd = self.state.copied === q.url + '|md', doneUrl = self.state.copied === q.url + '|url';
+              var btn = function (label, okLabel, done, mode) {
+                return h('button', { type: 'button', onClick: function () { self.copyLink(q, mode); }, style: { cursor: 'pointer', border: '1px solid ' + (done ? '#15803d' : '#d1d5db'), background: done ? '#dcfce7' : '#fff', color: done ? '#15803d' : '#111827', borderRadius: '6px', padding: '5px 10px', fontSize: '12px', fontWeight: 700, whiteSpace: 'nowrap' } }, done ? okLabel : label);
+              };
               return E('div', { display: 'flex', gap: '10px', alignItems: 'center', padding: '6px 0', borderTop: '1px solid #e5e7eb' },
                 E('div', { flex: 1, minWidth: 0 },
                   E('div', { fontWeight: 700, color: '#111827' }, q.title),
                   E('div', { fontSize: '11px', color: '#6b7280' }, (q.categories && q.categories[0] || 'Notícias') + (f.why.length ? ' · em comum: ' + f.why.join(', ') : '') + ' · ' + q.url)
                 ),
-                h('button', { type: 'button', onClick: function () { self.copyLink(q); }, style: { flexShrink: 0, cursor: 'pointer', border: '1px solid ' + (done ? '#15803d' : '#d1d5db'), background: done ? '#dcfce7' : '#fff', color: done ? '#15803d' : '#111827', borderRadius: '6px', padding: '5px 10px', fontSize: '12px', fontWeight: 700 } }, done ? 'Copiado!' : 'Copiar link')
+                E('div', { display: 'flex', flexDirection: 'column', gap: '4px', flexShrink: 0 },
+                  btn('Copiar link (Markdown)', 'Copiado!', doneMd, 'md'),
+                  btn('Copiar só o endereço', 'Copiado!', doneUrl, 'url'))
               );
             });
             sg = h.apply(null, ['div', { style: sgStyle }, sgTitle, sgHelp].concat(rows));
