@@ -8,6 +8,7 @@ category:
 tags:
   - Forza Horizon 6
 image: /uploads/forza-horizon-6-teaser-cdea95d06d.webp
+image_caption: "Imagem: Divulgação/Estúdio"
 summary: Uma nova onda de denúncias em massa no Forza Horizon 6 resultou no
   banimento de diversos criadores de conteúdo e jogadores no Japão por
   utilizarem pinturas no estilo Itasha (carros decorados com personagens de
