@@ -24,7 +24,7 @@ const ROOT = path.join(__dirname, '..');
 const UPLOADS = path.join(ROOT, 'uploads');
 const DIRS = ['content/posts', 'content/authors'].map((d) => path.join(ROOT, d));
 const MAX_BYTES = 15 * 1024 * 1024;
-const TIMEOUT_MS = 20000;
+const TIMEOUT_MS = 45000;
 const MAX_WIDTH = 1600;
 const WEBP_QUALITY = 82;
 let sharp = null;
