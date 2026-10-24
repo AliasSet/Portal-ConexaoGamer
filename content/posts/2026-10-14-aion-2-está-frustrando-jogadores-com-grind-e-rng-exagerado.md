@@ -5,7 +5,7 @@ category:
   - Steam
 tags:
   - Aion 2
-image: https://mmorpgbr.com.br/wp-content/uploads/2026/03/aion-2-release-date.webp
+image: https://dropsdejogos.uai.com.br/wp-content/uploads/sites/10/2026/07/aion-2-1-scaled.jpg
 summary: Jogadores de AION 2 estão reclamando da progressão no endgame, marcada
   por equipamentos raros, crafting com chances de falha e longas sessões sem
   melhorias. A falta de alternativas para evoluir também virou alvo de críticas.
