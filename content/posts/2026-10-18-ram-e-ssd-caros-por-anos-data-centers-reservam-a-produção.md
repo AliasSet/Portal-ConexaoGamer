@@ -14,7 +14,7 @@ tags:
   - Micron
   - Samsung
   - TrendForce
-image: https://seletronic.com.br/wp-content/uploads/2025/12/grafico-preco-memoria-ram-alto.jpg
+image: /uploads/grafico-preco-memoria-ram-alto-a5077833b0.webp
 summary: Micron, Samsung, SanDisk e Kioxia estão reservando de 50% a 70% da
   produção para poucos clientes de data center, o que pode acabar com as quedas
   históricas de preço da memória. Análise do GamersNexus aponta RAM e SSD caros
