@@ -6,7 +6,7 @@ tags:
   - "ECC: Redline"
   - Call of Duty
   - Warzone
-image: /uploads/header-ff588723b4.webp
+image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThfP_1zVkDFYE0sXO3bWdbq-OjQVDDe66l-zCqT80d7NwsMGGzs5M0Epk&s=10
 summary: "Anunciado pela NetEase, ECC: Redline virou assunto nas redes sociais
   por trazer movimentação, interface e gunplay idênticos ao Warzone original.
   Apesar das acusações de cópia, jogadores frustrados com a franquia da
