@@ -55,7 +55,7 @@ O fechamento da BioWare faz parte de uma rodada de cortes na Electronic Arts que
 
 A reestruturação acontece após a aquisição de US$ 55 bilhões liderada pelo Fundo de Investimento Público da Arábia Saudita (PIF), com participação da Silver Lake e da Affinity Partners. A EA pretende concentrar investimentos em menos projetos, mantendo em desenvolvimento jogos como o título do Homem de Ferro e o próximo *Star Wars Jedi*. 
 
-[[imagem|https://assetsio.gnwcdn.com/jedi_fallen_order.jpeg?width=1200&height=600&fit=crop&enable=upscale&auto=webp|media|Star Wars Jedi 3 pode ser a maior aventura da franquia até agora!|]]
+[[imagem|/uploads/jedi-fallen-order-950090e41b.webp|media|Star Wars Jedi 3 pode ser a maior aventura da franquia até agora!|]]
 
 Embora a proximidade entre a aquisição e os cortes chame a atenção, não é possível atribuir o fechamento da BioWare exclusivamente à mudança de controle. O cenário mostra que a mudança vai além de um único estúdio: a EA está revendo sua carteira de projetos e a distribuição de recursos entre suas equipes.
 
