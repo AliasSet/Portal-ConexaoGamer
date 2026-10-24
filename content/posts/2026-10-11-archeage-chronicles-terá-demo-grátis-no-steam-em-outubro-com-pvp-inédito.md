@@ -9,6 +9,7 @@ tags:
   - RPG
   - MMORPG
 image: /uploads/tndo5wug9rru65uhcy8qs74g-hn-g6w-rkzddsck-caf482a80f.jpg
+image_caption: "Imagem: Divulgação/Estúdio"
 summary: ArcheAge Chronicles terá uma demo gratuita no Steam Next Fest, de 19 a
   26 de outubro. Os jogadores poderão explorar Diamond Shores, testar quatro
   classes e experimentar o PvP antes do lançamento do MMORPG.
