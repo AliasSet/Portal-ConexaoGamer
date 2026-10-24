@@ -27,7 +27,7 @@ O caso gerou forte comoção no X (antigo Twitter) e fóruns especializados, com
 
 Literalmente traduzido como "carro doloroso" ou "carro vergonhoso", o estilo *Itasha* nasceu nos anos 80 e se consolidou nos anos 2000 no Japão, sendo celebrado em grandes eventos de customização pelo país. Nos jogos de corrida, a recriação dessas artes virtuais exige dezenas de horas de trabalho minucioso usando as ferramentas de edição de vinil do próprio jogo.
 
-[[imagem|/uploads/ryhgslcemxfoiqzrairts4-970-80-jpg-506d7ce5ba.webp|media|Itasha, prática que usa pinturas em homenagem à personagens enfrenta proibições mesmo quando completamente inofensivas.|]]
+[[imagem|/uploads/ryhgslcemxfoiqzrairts4-970-80-jpg-506d7ce5ba.webp|media|Prática do "Itasha" enfrenta proibições mesmo quando completamente inofensivas.|]]
 
 A controvérsia atual estourou quando vários designs populares, criados por artistas respeitados na comunidade, começaram a ser removidos do catálogo online após receberem relatórios de denúncia em massa.
 
