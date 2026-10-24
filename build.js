@@ -355,7 +355,7 @@ function relatedCardHtml(q) {
   const cat = (q.categories[0] || 'Notícias');
   return `<a href="${esc(q.url)}" class="group bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col">
                                 <div class="relative h-28 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">
-                                    ${okImg(q.image) ? `<img src="${esc(q.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
+                                    ${okImg(q.image) ? `<img src="${esc(q.image)}" alt="${esc(q.title)}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
                                     <span class="absolute top-2 left-2 border text-[10px] font-bold px-2 py-0.5 rounded uppercase ${catStyle(cat)}">${esc(cat)}</span>
                                 </div>
                                 <div class="p-3 flex flex-col flex-grow">
@@ -433,7 +433,7 @@ function cardHtml(p) {
   return `
                         <a href="${esc(p.url)}" class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group">
                             <div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">
-                                ${okImg(p.image) ? `<img src="${esc(p.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
+                                ${okImg(p.image) ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.style.display='none'">` : ''}
                                 <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 ${p.rating != null ? 'max-w-[68%]' : 'max-w-[calc(100%-1.5rem)]'}">${cats}</div>
                                 ${p.rating != null ? `<span class="absolute top-3 right-3 bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ${esc(p.rating)}</span>` : ''}
                             </div>
@@ -697,7 +697,7 @@ function loadLegalPage(def, mdParse, contact) {
 
 function buildLegalPage(template, pg) {
   const url = SITE_URL + pg.url;
-  const title = pg.title + ' | ' + SITE_NAME;
+  const title = seoTitle(pg.title);
   const main = `
                 <article class="pb-8">
                     <h1 class="text-3xl sm:text-4xl font-black text-white leading-tight">${esc(pg.title)}</h1>
@@ -706,7 +706,7 @@ function buildLegalPage(template, pg) {
                 </article>
                 `;
   return template
-    .replace('<!--CG:HEAD-->', headTags({ title, description: pg.description || pg.title, url, image: '', type: 'website' }))
+    .replace('<!--CG:HEAD-->', headTags({ title, description: pg.description || pg.title, url, image: '', type: 'website', rich: true }))
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace('<body data-page="home"', '<body data-page="page"')
     .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
@@ -929,7 +929,7 @@ function buildCategoryPage(template, cat, list) {
   const withImg = list.find((p) => absUrl(p.image));
   return template
     .replace('<!--CG:HEAD-->', headTags({
-      title, description: cat.desc, url, image: withImg ? absUrl(withImg.image) : '', type: 'website'
+      title, description: cat.desc, url, image: withImg ? absUrl(withImg.image) : '', type: 'website', rich: true
     }))
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace('<body data-page="home"', '<body data-page="category"')
@@ -944,6 +944,37 @@ function buildCategoryPage(template, cat, list) {
 const FEED_ITEMS = 30;
 const xmlClean = (s) => String(s == null ? '' : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
 const xmlEsc = (s) => esc(xmlClean(s));
+// llms.txt: um "cartão de visita" em texto simples para buscadores e assistentes de IA (ChatGPT, Perplexity,
+// Claude...) entenderem o site. Lista o que é o portal, as seções, as páginas de confiança e as matérias recentes.
+function buildLlmsTxt(posts, legalPages) {
+  const L = [];
+  L.push('# ' + SITE_NAME, '');
+  L.push('> Portal brasileiro de notícias, reviews e lançamentos de games e tecnologia, com apuração própria. Conteúdo em português do Brasil.', '');
+  L.push('## Seções', '');
+  for (const c of CATEGORIES) L.push('- [' + c.name + '](' + SITE_URL + '/categoria/' + c.slug + '/)' + (c.desc ? ': ' + String(c.desc).replace(/\s+/g, ' ') : ''));
+  L.push('', '## Sobre o site', '');
+  for (const pg of legalPages) L.push('- [' + pg.title + '](' + SITE_URL + pg.url + ')' + (pg.description ? ': ' + String(pg.description).replace(/\s+/g, ' ') : ''));
+  L.push('', '## Matérias recentes', '');
+  for (const p of posts.slice(0, 30)) L.push('- [' + p.title.replace(/[\[\]]/g, '') + '](' + SITE_URL + p.url + ')' + (p.summary ? ': ' + clip(String(p.summary).replace(/\s+/g, ' '), 140) : ''));
+  L.push('', '## Assinar', '', '- [Feed RSS](' + SITE_URL + '/feed.xml)', '- [Mapa do site](' + SITE_URL + '/sitemap.xml)', '');
+  return L.join('\n');
+}
+
+// Avisa no log do deploy quais matérias usam capa hospedada em OUTRO site. Se esse site tirar a imagem do ar
+// (ou bloquear), a capa quebra; além disso, imagem de terceiros pode ter direitos autorais. Não derruba o build.
+function warnExternalCovers(posts) {
+  let siteHost = '';
+  try { siteHost = new URL(SITE_URL).host; } catch (e) {}
+  const ext = posts.filter((p) => {
+    const u = absUrl(p.image);
+    if (!u) return false;
+    try { const h = new URL(u).host; return h !== siteHost && !/supabase\.co$/.test(h); } catch (e) { return false; }
+  });
+  if (!ext.length) return;
+  console.warn('[build] AVISO: ' + ext.length + ' matéria(s) usam capa hospedada em outro site (pode quebrar ou ter direitos autorais). Prefira enviar a imagem pelo painel:');
+  ext.slice(0, 20).forEach((p) => console.warn('  - ' + p.url + '  ->  ' + absUrl(p.image)));
+}
+
 function buildFeed(posts) {
   const list = posts.slice(0, FEED_ITEMS);
   const latest = list.length ? list[0].time : Date.now();
@@ -980,10 +1011,11 @@ function buildFeed(posts) {
     '  </channel>\n</rss>\n';
 }
 
-function headTags({ title, description, url, image, type, jsonLd, noAnalytics }) {
+function headTags({ title, description, url, image, type, jsonLd, noAnalytics, rich }) {
   const lines = [
     `<meta name="description" content="${esc(description)}">`,
     `<link rel="canonical" href="${esc(url)}">`,
+    ...(rich ? ['<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">'] : []),
     `<link rel="alternate" type="application/rss+xml" title="${esc(SITE_NAME)}" href="${SITE_URL}/feed.xml">`,
     `<meta property="og:site_name" content="${SITE_NAME}">`,
     `<meta property="og:type" content="${type}">`,
@@ -1007,6 +1039,15 @@ function headTags({ title, description, url, image, type, jsonLd, noAnalytics })
     lines.push(`<script defer src="/_vercel/insights/script.js"></script>`);
   }
   return lines.join('\n    ');
+}
+
+// Título da aba/Google (<title>): o Google corta perto de 60-70 caracteres. Se "Título | Conexão Gamer"
+// couber em 70, mantém a marca; senão usa só o título e, se ainda passar de 70, corta numa palavra inteira.
+function seoTitle(base) {
+  const full = base + ' | ' + SITE_NAME;
+  if (full.length <= 70) return full;
+  if (base.length <= 70) return base;
+  return base.slice(0, 69).replace(/\s+\S*$/, '').replace(/[\s,;:\-–—]+$/, '') + '…';
 }
 
 const clip = (s, n) => (s.length <= n ? s : s.slice(0, n - 1).replace(/\s+\S*$/, '') + '…');
@@ -1039,6 +1080,7 @@ function buildHome(template, posts) {
       url: SITE_URL + '/',
       image: first ? absUrl(first.image) : '',
       type: 'website',
+      rich: true,
       jsonLd: {
         '@context': 'https://schema.org',
         '@graph': [
@@ -1052,7 +1094,7 @@ function buildHome(template, posts) {
 function buildPostPage(template, p, posts) {
   const url = SITE_URL + p.url;
   const image = absUrl(p.image);
-  const title = p.title + ' | ' + SITE_NAME;
+  const title = seoTitle(p.title);
   const description = clip(p.summary || p.title, 160);
 
   const jsonLd = {
@@ -1071,7 +1113,7 @@ function buildPostPage(template, p, posts) {
   };
 
   let html = template
-    .replace('<!--CG:HEAD-->', headTags({ title, description, url, image, type: 'article', jsonLd }))
+    .replace('<!--CG:HEAD-->', headTags({ title, description, url, image, type: 'article', jsonLd, rich: true }))
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace('<body data-page="home"', `<body data-slug="${esc(p.slug)}" data-page="post"`)
     .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
@@ -1167,6 +1209,8 @@ async function main() {
     urls.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}</url>`).join('\n') +
     '\n</urlset>\n');
   fs.writeFileSync(path.join(DIST, 'feed.xml'), buildFeed(posts));
+  fs.writeFileSync(path.join(DIST, 'llms.txt'), buildLlmsTxt(posts, legalPages));
+  warnExternalCovers(posts);
   // Ícones do site na RAIZ (o Google só mostra o ícone/logo de arquivos com endereço próprio; ver favicons.js)
   let ICONS = {};
   try { ICONS = require('./favicons'); }

@@ -2287,9 +2287,9 @@
       const fmtDateShort = (t) => t ? new Date(t).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
       const okUrl = (u) => /^(https?:)?\/\//i.test(u) || (u && u.charAt(0) === '/');
 
-      function img(url, cls) {
+      function img(url, cls, alt) {
         if (!url || !okUrl(url)) return '';
-        return '<img src="' + esc(url) + '" alt="" loading="lazy" referrerpolicy="no-referrer" class="' + cls +
+        return '<img src="' + esc(url) + '" alt="' + esc(alt || '') + '" loading="lazy" referrerpolicy="no-referrer" class="' + cls +
                '" onerror="this.style.display=\'none\'">';
       }
 
@@ -2321,6 +2321,7 @@
         const im = $('hero-image');
         if (p.image && okUrl(p.image)) {
           im.onerror = function () { im.classList.add('hidden'); };
+          im.alt = p.title || '';
           im.src = p.image;
           im.classList.remove('hidden');
         }
@@ -2352,7 +2353,7 @@
         }
         box.innerHTML = list.map((p) =>
           '<a href="' + href(p) + '" class="relative rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-br from-gray-900 to-gray-950 h-[232px] group block">' +
-            img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500') +
+            img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500', p.title) +
             '<div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent p-5 flex flex-col justify-end">' +
               '<div class="flex flex-wrap gap-1 mb-1">' + badges(p) + '</div>' +
               '<h3 class="text-sm font-bold text-white group-hover:text-cyan-300 transition line-clamp-2">' + esc(p.title) + '</h3>' +
@@ -2429,7 +2430,7 @@
         box.innerHTML = list.map((p) =>
           '<a href="' + href(p) + '" class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden card-hover flex flex-col group">' +
             '<div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-950">' +
-              img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500') +
+              img(p.image, 'w-full h-full object-cover group-hover:scale-105 transition duration-500', p.title) +
               '<div class="absolute top-3 left-3 flex flex-wrap gap-1.5 ' + (p.rating != null ? 'max-w-[68%]' : 'max-w-[calc(100%-1.5rem)]') + '">' + badges(p) + '</div>' +
               (p.rating != null ? '<span class="absolute top-3 right-3 bg-cyan-400 text-black font-black text-xs px-2 py-0.5 rounded">NOTA ' + esc(p.rating) + '</span>' : '') +
             '</div>' +
@@ -2459,7 +2460,7 @@
         box.innerHTML = list.map((p) =>
           '<a href="' + href(p) + '" class="flex gap-3 group items-center">' +
             '<span class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800 block">' +
-              img(p.image, 'w-14 h-14 object-cover group-hover:scale-105 transition') +
+              img(p.image, 'w-14 h-14 object-cover group-hover:scale-105 transition', p.title) +
             '</span>' +
             '<div class="flex flex-col min-w-0">' +
               '<span class="text-[10px] text-cyan-400 font-semibold uppercase">' + esc(fmtDateShort(p.time)) + '</span>' +
@@ -2582,7 +2583,7 @@
         box.innerHTML = ranked.map((x, i) =>
           '<a href="' + href(x.post) + '" class="flex gap-3 group items-center">' +
             '<span class="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800 block">' +
-              img(x.post.image, 'w-14 h-14 object-cover group-hover:scale-105 transition') +
+              img(x.post.image, 'w-14 h-14 object-cover group-hover:scale-105 transition', x.post.title) +
               '<span class="absolute top-0 left-0 min-w-[1.25rem] h-5 px-1 flex items-center justify-center rounded-br-lg text-[10px] font-black text-white ' + (i === 0 ? 'bg-orange-500' : 'bg-black/70') + '">' + (i + 1) + '</span>' +
             '</span>' +
             '<div class="flex flex-col min-w-0">' +
