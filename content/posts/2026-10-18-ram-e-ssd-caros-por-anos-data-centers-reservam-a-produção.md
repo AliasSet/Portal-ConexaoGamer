@@ -14,7 +14,7 @@ tags:
   - Micron
   - Samsung
   - TrendForce
-image: https://www.adrenaline.com.br/wp-content/uploads/2026/01/48-memoria-ddr-4-em-alta.jpg
+image: https://seletronic.com.br/wp-content/uploads/2025/12/grafico-preco-memoria-ram-alto.jpg
 summary: Micron, Samsung, SanDisk e Kioxia estão reservando de 50% a 70% da
   produção para poucos clientes de data center, o que pode acabar com as quedas
   históricas de preço da memória. Análise do GamersNexus aponta RAM e SSD caros
