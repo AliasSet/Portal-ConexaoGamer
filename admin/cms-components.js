@@ -295,6 +295,21 @@
       return Promise.resolve(fallback());
     }
 
+    // Cabeçalho clicável (▾ aberto / ▸ fechado) dos quadros recolhíveis
+    function toggleHeader(text, color, open, onToggle, summary, sumColor) {
+      return h('button', { type: 'button', onClick: onToggle, 'aria-expanded': String(!!open), title: open ? 'Clique para ocultar' : 'Clique para mostrar',
+        style: { display: 'flex', alignItems: 'center', gap: '8px', width: '100%', background: 'none', border: 0, padding: 0, cursor: 'pointer', textAlign: 'left', color: color, font: 'inherit' } },
+        E('span', { fontSize: '13px', width: '12px' }, open ? '▾' : '▸'),
+        E('span', { fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em' }, text),
+        summary ? E('span', { marginLeft: 'auto', fontSize: '11px', fontWeight: 700, color: sumColor || color }, summary) : null);
+    }
+    var OPEN_KEY = 'cgPainelAberto';
+    function loadOpen() {
+      var o = { crops: true, links: true };
+      try { var v = JSON.parse(localStorage.getItem(OPEN_KEY) || 'null'); if (v) { if (v.crops === false) o.crops = false; if (v.links === false) o.links = false; } } catch (e) {}
+      return o;
+    }
+
     // Formatos reais em que a capa aparece no site (medidas do layout em tela de 1280 px e de celular).
     // pct = largura relativa à coluna principal (805 px) só para caber no painel; a PROPORÇÃO é a real.
     var FORMATS = [
@@ -308,7 +323,7 @@
       { n: 'Compartilhamento (WhatsApp, X, Facebook)', pct: 62, w: 1200, h: 630, ov: null, center: true }
     ];
 
-    function cropSection(src, info, title, cats, focus) {
+    function cropSection(src, info, title, cats, focus, open, onToggle) {
       var label = { fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em', color: '#9ca3af', margin: '0 0 8px' };
       if (!src) {
         return E('div', { background: '#0b0f19', borderRadius: '10px', padding: '14px 16px', margin: '0 0 18px', color: '#9ca3af', fontSize: '13px', fontFamily: 'system-ui, sans-serif' },
@@ -316,6 +331,7 @@
       }
       var known = info && info.status === 'ok' && info.w && info.h;
       var r = known ? info.w / info.h : null;
+      var warnN = 0;
       var cards = FORMATS.map(function (f) {
         var t = f.h === 'auto' ? Math.max(r || 1.917, 805 / 420) : f.w / f.h;   // na matéria, a altura máxima é 420 px
         var note = '', warn = false;
@@ -325,6 +341,7 @@
           else if (r < t / 1.01) { var vh = Math.round(r / t * 100); note += 'Mostra ' + vh + '% da altura (corta em cima e embaixo)'; warn = vh < 80; }
           else note += 'Aparece inteira';
         }
+        if (warn && !f.center) warnN++;
         var box = { position: 'relative', overflow: 'hidden', borderRadius: '10px', border: '1px solid #1f2937', background: '#111827', aspectRatio: String(t) };
         var kids = [h('img', { key: 'i', src: src, alt: '', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: f.center ? '50% 50%' : focus } })];
         if (f.ov === 'title') {
@@ -339,15 +356,19 @@
           note ? E('div', { fontSize: '11px', color: warn ? '#fbbf24' : '#9ca3af' }, (warn ? '⚠️ ' : '') + note) : null
         );
       });
-      return E('div', { background: '#0b0f19', borderRadius: '10px', padding: '14px 16px', margin: '0 0 18px', fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif' },
-        E('div', label, 'Prévia dos cortes da capa (como aparece no site)'),
-        E('div', { fontSize: '12px', color: '#9ca3af', marginBottom: '10px', lineHeight: 1.4 }, 'O site corta o que passa do quadro, mantendo visível o ponto de foco (campos "Foco da imagem" acima; sem escolher, é o centro). Foco atual: ' + focus + '. Deixe o assunto principal longe das bordas.' + (known ? ' Proporção da sua imagem: ' + (Math.round(r * 100) / 100).toString().replace('.', ',') + ':1.' : '')),
+      var sum = known ? (warnN ? '⚠️ ' + warnN + ' corte(s) forte(s)' : '✅ cortes tranquilos') : '';
+      var head = toggleHeader('Prévia dos cortes da capa (como aparece no site)', '#9ca3af', open, onToggle, sum, warnN ? '#fbbf24' : '#86efac');
+      var wrap = { background: '#0b0f19', borderRadius: '10px', padding: '14px 16px', margin: '0 0 18px', fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif' };
+      if (!open) return E('div', wrap, head);
+      return E('div', wrap,
+        head,
+        E('div', { fontSize: '12px', color: '#9ca3af', margin: '8px 0 10px', lineHeight: 1.4 }, 'O site corta o que passa do quadro, mantendo visível o ponto de foco (campos "Foco da imagem" acima; sem escolher, é o centro). Foco atual: ' + focus + '. Deixe o assunto principal longe das bordas.' + (known ? ' Proporção da sua imagem: ' + (Math.round(r * 100) / 100).toString().replace('.', ',') + ':1.' : '')),
         h.apply(null, ['div', { style: { display: 'flex', flexWrap: 'wrap', gap: '12px 8px', alignItems: 'flex-start' } }].concat(cards))
       );
     }
 
     var Checker = createClass({
-      getInitialState: function () { return { img: { status: 'none' }, posts: null, copied: '' }; },
+      getInitialState: function () { return { img: { status: 'none' }, posts: null, copied: '', open: loadOpen() }; },
       componentDidMount: function () {
         this._dead = false; this.measure();
         var self = this;
@@ -356,6 +377,12 @@
             .then(function (list) { if (!self._dead) self.setState({ posts: Array.isArray(list) ? list : 'erro' }); })
             .catch(function () { if (!self._dead) self.setState({ posts: 'erro' }); });
         } catch (e) { this.setState({ posts: 'erro' }); }
+      },
+      toggle: function (key) {
+        var o = { crops: this.state.open.crops, links: this.state.open.links };
+        o[key] = !o[key];
+        try { localStorage.setItem(OPEN_KEY, JSON.stringify(o)); } catch (e) {}   // lembra a escolha nas próximas matérias
+        this.setState({ open: o });
       },
       // mode 'md' copia [Título](/noticias/x/) (para o modo Markdown); 'url' copia só /noticias/x/ (para o botão de link do Rich Text)
       copyLink: function (q, mode) {
@@ -458,18 +485,21 @@
         );
 
         var panelStyle = { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '14px 16px', margin: '0 0 18px', fontFamily: font.fontFamily };
-        var panel = h.apply(null, ['div', { style: panelStyle }, headEl, googleBox].concat(blocks));
+        var ver = E('div', { fontSize: '10px', color: '#9ca3af', marginTop: '10px', textAlign: 'right' }, 'Painel de checagem v6 (checagem + cortes + foco + links + quadros recolhíveis)');
+        var panel = h.apply(null, ['div', { style: panelStyle }, headEl, googleBox].concat(blocks).concat([ver]));
         var self = this, sg = null;
         var sgStyle = { background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '10px', padding: '14px 16px', margin: '0 0 18px', fontFamily: font.fontFamily, fontSize: '13px', lineHeight: 1.45 };
-        var sgTitle = E('div', { fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em', color: '#6b7280', margin: '0 0 6px' }, 'Matérias para linkar no texto');
-        var sgHelp = E('div', { color: '#4b5563', marginBottom: '8px' }, 'Links no meio do texto ajudam o Google e o leitor. Dois jeitos: (1) no editor, passe para o modo "Markdown" (botão acima do texto), clique em "Copiar link (Markdown)" e cole onde quiser, trocando o texto entre colchetes por uma palavra que descreva o assunto; ou (2) no modo normal, selecione uma palavra do texto, clique no botão de link do editor e cole o endereço copiado em "Copiar só o endereço".');
-        if (this.state.posts === null) sg = E('div', sgStyle, sgTitle, 'Carregando as matérias do site…');
-        else if (this.state.posts === 'erro') sg = E('div', sgStyle, sgTitle, 'Não consegui carregar a lista de matérias do site (/posts.json). Verifique a conexão ou tente novamente.');
+        var sgOpen = this.state.open.links;
+        var sgHelp = E('div', { color: '#4b5563', margin: '8px 0', fontSize: '13px' }, 'Links no meio do texto ajudam o Google e o leitor. Dois jeitos: (1) no editor, passe para o modo "Markdown" (botão acima do texto), clique em "Copiar link (Markdown)" e cole onde quiser, trocando o texto entre colchetes por uma palavra que descreva o assunto; ou (2) no modo normal, selecione uma palavra do texto, clique no botão de link do editor e cole o endereço copiado em "Copiar só o endereço".');
+        var sgSum = '', sgBody = [];
+        if (this.state.posts === null) sgBody = ['Carregando as matérias do site…'];
+        else if (this.state.posts === 'erro') sgBody = ['Não consegui carregar a lista de matérias do site (/posts.json). Verifique a conexão ou tente novamente.'];
         else {
           var found = suggest(d, this.state.posts);
-          if (!found.length) sg = E('div', sgStyle, sgTitle, 'Ainda não achei matéria parecida. Preencha o título, as tags e o texto para eu sugerir.');
+          if (!found.length) sgBody = ['Ainda não achei matéria parecida. Preencha o título, as tags e o texto para eu sugerir.'];
           else {
-            var rows = found.map(function (f) {
+            sgSum = found.length + ' sugest' + (found.length > 1 ? 'ões' : 'ão');
+            sgBody = [sgHelp].concat(found.map(function (f) {
               var q = f.q, doneMd = self.state.copied === q.url + '|md', doneUrl = self.state.copied === q.url + '|url';
               var btn = function (label, okLabel, done, mode) {
                 return h('button', { type: 'button', onClick: function () { self.copyLink(q, mode); }, style: { cursor: 'pointer', border: '1px solid ' + (done ? '#15803d' : '#d1d5db'), background: done ? '#dcfce7' : '#fff', color: done ? '#15803d' : '#111827', borderRadius: '6px', padding: '5px 10px', fontSize: '12px', fontWeight: 700, whiteSpace: 'nowrap' } }, done ? okLabel : label);
@@ -483,14 +513,15 @@
                   btn('Copiar link (Markdown)', 'Copiado!', doneMd, 'md'),
                   btn('Copiar só o endereço', 'Copiado!', doneUrl, 'url'))
               );
-            });
-            sg = h.apply(null, ['div', { style: sgStyle }, sgTitle, sgHelp].concat(rows));
+            }));
           }
         }
+        var sgHead = toggleHeader('Matérias para linkar no texto', '#6b7280', sgOpen, function () { self.toggle('links'); }, sgSum, '#15803d');
+        sg = h.apply(null, ['div', { style: sgStyle }, sgHead].concat(sgOpen ? [E('div', { height: '4px' })].concat(sgBody) : []));
         var catList = d.category; if (typeof catList === 'string') catList = [catList];
         var fx = /^\d{1,3}%$/.test(String(d.focus_x || '')) ? d.focus_x : '50%';
         var fy = /^\d{1,3}%$/.test(String(d.focus_y || '')) ? d.focus_y : '50%';
-        var crops = cropSection(src, this.state.img, title, catList || [], fx + ' ' + fy);
+        var crops = cropSection(src, this.state.img, title, catList || [], fx + ' ' + fy, this.state.open.crops, function () { self.toggle('crops'); });
         return E('div', { padding: '4px' }, panel, sg, crops, article);
       }
     });
