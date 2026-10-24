@@ -377,17 +377,29 @@ function relatedCardHtml(q) {
                             </a>`;
 }
 
-function relatedHtml(list) {
+// Lista de links em texto (mais 5 matérias parecidas, além dos 3 cards). Links de texto com o título como âncora:
+// bons para o Google entender a relação entre as matérias.
+function moreLinksHtml(more) {
+  if (!more || !more.length) return '';
+  const items = more.map((q) => `<li><a href="${esc(q.url)}" class="text-cyan-300 hover:text-cyan-200 hover:underline font-semibold">${esc(q.title)}</a> <span class="text-gray-500 text-xs">· ${esc(q.categories[0] || 'Notícias')}</span></li>`).join('\n                            ');
+  return `
+                        <h3 class="mt-6 text-sm font-black uppercase tracking-wide text-gray-400">Continue explorando</h3>
+                        <ul class="mt-3 space-y-2 text-sm list-disc list-inside marker:text-cyan-400">
+                            ${items}
+                        </ul>`;
+}
+
+function relatedHtml(list, more) {
   if (!list || !list.length) return '';
   return `<section class="mt-10 pt-8 border-t border-gray-800" aria-label="Leia também">
                         <h2 class="text-lg font-black text-white flex items-center gap-2"><i class="fa-solid fa-book-open text-cyan-400"></i> Leia também</h2>
                         <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                             ${list.map(relatedCardHtml).join('\n                            ')}
-                        </div>
+                        </div>${moreLinksHtml(more)}
                     </section>`;
 }
 
-function articleHtml(p, related) {
+function articleHtml(p, related, more) {
   const { html: bodyHtml, caption } = splitCaption(p);
   const cats = p.categories.map((c) => {
     const cls = `text-[10px] border px-2.5 py-0.5 rounded font-bold uppercase ${catStyle(c)}`;
@@ -423,7 +435,7 @@ function articleHtml(p, related) {
                         </div>
                     </aside>` : ''}
 
-                    ${relatedHtml(related)}
+                    ${relatedHtml(related, more)}
 
                     <section id="comments" class="mt-10 pt-8 border-t border-gray-800 scroll-mt-24">
                         <h2 class="text-lg font-black text-white flex items-center gap-2"><i class="fa-regular fa-comments text-cyan-400"></i> Comentários <span id="comments-count" class="text-xs font-semibold text-gray-500"></span></h2>
@@ -1129,7 +1141,7 @@ function buildPostPage(template, p, posts) {
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace('<body data-page="home"', `<body data-slug="${esc(p.slug)}" data-page="post"`)
     .replace(/<!--CG:HERO-->[\s\S]*?<!--\/CG:HERO-->/, '')
-    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => articleHtml(p, relatedPosts(p, posts || [], 3)));
+    .replace(/<!--CG:MAIN-->[\s\S]*?<!--\/CG:MAIN-->/, () => articleHtml(p, ...((r) => [r.slice(0, 3), r.slice(3)])(relatedPosts(p, posts || [], 8))));
   return html;
 }
 
